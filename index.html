@@ -42,6 +42,12 @@
   .hidden { display:none; }
   ol.steps { padding-left: 20px; margin: 8px 0 4px; }
   ol.steps li { margin: 7px 0; font-size: 15px; }
+  .stopbox { display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .stopbox .num { font-weight:700; min-width:22px; text-align:center; color:#5a6478; }
+  .stopbox input { flex:1; }
+  .stopbox .check { min-width:24px; text-align:center; font-weight:700; color:#188038; visibility:hidden; }
+  .stopbox.filled input { border-color:#188038; border-width:2px; }
+  .stopbox.filled .check { visibility:visible; }
   a.buttonlink { display:block; text-align:center; background: var(--dark); color:#fff; text-decoration:none; border-radius:10px; padding:12px; font-size:16px; font-weight:700; margin-top:12px; }
   footer { text-align:center; font-size:13px; color:#5a6478; padding: 8px 16px 28px; }
 </style>
@@ -79,13 +85,15 @@
     <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 36239 Emeralda Ave, Leesburg, FL">
     <label for="destination" data-i18n="destLabel">Final destination</label>
     <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 12911 Sunstone Ave, Orlando, FL">
-    <label data-i18n="stopsLabel">Stops — one address per line</label>
-    <textarea id="stops" data-i18n-ph="stopsPh" placeholder="One address per line"></textarea>
-    <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route.</p>
+    <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
+    <div id="stopboxes"></div>
+    <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
     <p id="status"></p>
     <div id="result" class="hidden">
       <ol id="ordered"></ol>
+      <p id="methodnote" class="hint"></p>
+      <p id="esttime" class="hint"></p>
       <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener" data-i18n="openMaps">Open route in Google Maps</a>
       <label for="routename" data-i18n="routeNameLabel">Name for this route</label>
       <input type="text" id="routename" data-i18n-ph="routeNamePh" placeholder="e.g. Pharmacies — Friday">
@@ -123,15 +131,16 @@ const STR = {
     buildTitle: "2. Build a route",
     originLabel: "Start (where you leave from)", originPh: "e.g. 36239 Emeralda Ave, Leesburg, FL",
     destLabel: "Final destination", destPh: "e.g. 12911 Sunstone Ave, Orlando, FL",
-    stopsLabel: "Stops — one address per line", stopsPh: "One address per line",
-    limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route.",
+    stopsLabel: "Stops — one address per box, in any order", stopsPh: "One address per line",
+    stopWord: "Stop",
+    limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.",
     buildBtn: "Order my stops", openMaps: "Open route in Google Maps",
     routeNameLabel: "Name for this route", routeNamePh: "e.g. Pharmacies — Friday",
     saveRouteBtn: "Save this route",
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.2 — draft, in progress.",
+    footerText: "Version 0.3 — draft, in progress.",
     keySaved: "Key saved on this phone.",
     needKeyPaste: "Paste your key in the field first.",
     needKey: "Paste your HERE API key first (step 1).",
@@ -139,6 +148,10 @@ const STR = {
     needStops: "Write at least one stop.",
     tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
     working: "Finding each address on the map…",
+    optimizing: "Asking HERE for the real road times between all points…",
+    optRoad: "Order optimized with real road times from HERE: this is the fastest order for these stops.",
+    optLine: "Real road times were not available this time, so the order is by straight-line closeness.",
+    estTime: "Estimated driving time for the whole route: ",
     notFound: "Address not found: ",
     routeSaved: "Route saved. Find it below in Saved routes.",
     needName: "Give the route a name first.",
@@ -163,15 +176,16 @@ const STR = {
     buildTitle: "2. Armar una ruta",
     originLabel: "Salida (desde dónde sales)", originPh: "ej. 36239 Emeralda Ave, Leesburg, FL",
     destLabel: "Destino final", destPh: "ej. 12911 Sunstone Ave, Orlando, FL",
-    stopsLabel: "Paradas — una dirección por línea", stopsPh: "Una dirección por línea",
-    limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta.",
+    stopsLabel: "Paradas — una dirección por casilla, en cualquier orden", stopsPh: "Una dirección por línea",
+    stopWord: "Parada",
+    limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta. Las casillas llenas se marcan con un check; las vacías se ignoran.",
     buildBtn: "Ordenar mis paradas", openMaps: "Abrir la ruta en Google Maps",
     routeNameLabel: "Nombre para esta ruta", routeNamePh: "ej. Farmacias — viernes",
     saveRouteBtn: "Guardar esta ruta",
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.2 — borrador, en avance.",
+    footerText: "Versión 0.3 — borrador, en avance.",
     keySaved: "Clave guardada en este teléfono.",
     needKeyPaste: "Primero pega tu clave en el campo.",
     needKey: "Primero pega tu clave API de HERE (paso 1).",
@@ -179,6 +193,10 @@ const STR = {
     needStops: "Escribe al menos una parada.",
     tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
     working: "Buscando cada dirección en el mapa…",
+    optimizing: "Pidiendo a HERE los tiempos reales por calle entre todos los puntos…",
+    optRoad: "Orden optimizado con los tiempos reales por calle de HERE: es el orden más rápido para estas paradas.",
+    optLine: "Los tiempos reales por calle no estuvieron disponibles esta vez; el orden es por cercanía en línea recta.",
+    estTime: "Tiempo estimado de manejo de toda la ruta: ",
     notFound: "Dirección no encontrada: ",
     routeSaved: "Ruta guardada. Está abajo, en Rutas guardadas.",
     needName: "Primero ponle un nombre a la ruta.",
@@ -196,6 +214,7 @@ function applyLang(){
   document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.getElementById("btn-en").classList.toggle("active", lang === "en");
   document.getElementById("btn-es").classList.toggle("active", lang === "es");
+  if (typeof refreshBoxPlaceholders === "function") refreshBoxPlaceholders();
   renderSaved();
 }
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
@@ -240,6 +259,88 @@ function mapsUrl(route){
   return u;
 }
 
+/* ---------- Stop boxes: 8 individual fields ---------- */
+const MAXSTOPS = 8;
+const boxWrap = document.getElementById("stopboxes");
+const boxInputs = [];
+for (let i = 0; i < MAXSTOPS; i++) {
+  const row = document.createElement("div"); row.className = "stopbox";
+  const num = document.createElement("span"); num.className = "num"; num.textContent = i + 1;
+  const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
+  const chk = document.createElement("span"); chk.className = "check"; chk.textContent = "✓";
+  row.append(num, inp, chk); boxWrap.appendChild(row);
+  boxInputs.push(inp);
+  inp.addEventListener("input", () => row.classList.toggle("filled", !!inp.value.trim()));
+  inp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); const nx = boxInputs[i + 1]; if (nx) nx.focus(); }
+  });
+  inp.addEventListener("paste", (e) => {
+    const text = (e.clipboardData || window.clipboardData).getData("text");
+    if (text && text.indexOf("\n") >= 0) {
+      e.preventDefault();
+      text.split("\n").map(s => s.trim()).filter(Boolean).forEach((line, j) => {
+        const target = boxInputs[i + j];
+        if (target) { target.value = line; target.dispatchEvent(new Event("input")); }
+      });
+    }
+  });
+}
+function refreshBoxPlaceholders(){ boxInputs.forEach((inp, i) => { inp.placeholder = t("stopWord") + " " + (i + 1); }); }
+function collectStopTexts(){ return boxInputs.map(b => b.value.trim()).filter(Boolean); }
+function fillBoxes(labels){ boxInputs.forEach((inp, i) => { inp.value = labels[i] || ""; inp.dispatchEvent(new Event("input")); }); }
+
+/* ---------- HERE Matrix: real road travel times ---------- */
+async function fetchTimeMatrix(points, key){
+  const coords = points.map(p => ({ lat: p.lat, lng: p.lng }));
+  const res = await fetch("https://matrix.router.hereapi.com/v8/matrix?apiKey=" + encodeURIComponent(key), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ origins: coords, destinations: coords, regionDefinition: { type: "world" }, profile: "car", matrixAttributes: ["travelTimes"] })
+  });
+  if (!res.ok) throw new Error("matrix " + res.status);
+  const data = await res.json();
+  const m = data.matrix;
+  if (!m || !m.travelTimes) throw new Error("matrix empty");
+  const n = points.length, times = [];
+  for (let i = 0; i < n; i++) {
+    const row = [];
+    for (let j = 0; j < n; j++) {
+      const v = m.travelTimes[i * n + j];
+      row.push((typeof v === "number" && v >= 0) ? v : Infinity);
+    }
+    times.push(row);
+  }
+  return times;
+}
+/* Nodes are [origin, ...stops, destination]. Tries every order of the stops
+   (at most 8, so at most 40320 orders) and keeps the fastest total time. */
+function bestOrderByTime(times, stopCount){
+  if (stopCount === 0) return { order: [], total: times[0][1] };
+  const destIdx = stopCount + 1;
+  const idxs = []; for (let i = 1; i <= stopCount; i++) idxs.push(i);
+  let best = null, bestCost = Infinity;
+  (function permute(arr, l){
+    if (l === arr.length) {
+      let cost = times[0][arr[0]];
+      for (let k = 0; k + 1 < arr.length; k++) cost += times[arr[k]][arr[k + 1]];
+      cost += times[arr[arr.length - 1]][destIdx];
+      if (cost < bestCost) { bestCost = cost; best = arr.slice(); }
+      return;
+    }
+    for (let i = l; i < arr.length; i++) {
+      const tmp = arr[l]; arr[l] = arr[i]; arr[i] = tmp;
+      permute(arr, l + 1);
+      const tmp2 = arr[l]; arr[l] = arr[i]; arr[i] = tmp2;
+    }
+  })(idxs, 0);
+  if (!best || !isFinite(bestCost)) return null;
+  return { order: best.map(i => i - 1), total: bestCost };
+}
+function fmtDuration(sec){
+  const m = Math.round(sec / 60), h = Math.floor(m / 60), mm = m % 60;
+  return h > 0 ? (h + " h " + String(mm).padStart(2, "0") + " min") : (m + " min");
+}
+
 /* ---------- Build route ---------- */
 let currentRoute = null;   // last ordered route
 let editingId = null;      // saved route being edited, if any
@@ -248,13 +349,12 @@ document.getElementById("build").addEventListener("click", async () => {
   const key = (localStorage.getItem("stopedia.key") || "").trim();
   const originTxt = document.getElementById("origin").value.trim();
   const destTxt = document.getElementById("destination").value.trim();
-  const stopTxts = document.getElementById("stops").value.split("\n").map(s => s.trim()).filter(Boolean);
+  const stopTxts = collectStopTexts();
   statusEl.textContent = "";
   if (!key) { statusEl.textContent = t("needKey"); return; }
   if (!originTxt) { statusEl.textContent = t("needOrigin"); return; }
   if (!destTxt) { statusEl.textContent = t("needDest"); return; }
   if (!stopTxts.length) { statusEl.textContent = t("needStops"); return; }
-  if (stopTxts.length + 2 > 10) { statusEl.textContent = t("tooMany"); return; }
   statusEl.textContent = t("working");
   try {
     const origin = await geocode(originTxt, key);
@@ -267,15 +367,25 @@ document.getElementById("build").addEventListener("click", async () => {
       if (!g) { statusEl.textContent = t("notFound") + s; return; }
       pts.push(g);
     }
-    // Nearest-neighbour ordering starting from the origin
-    const ordered = [];
-    let cursor = origin;
-    const pool = pts.slice();
-    while (pool.length) {
-      let best = 0, bestD = Infinity;
-      pool.forEach((p, i) => { const d = dist(cursor, p); if (d < bestD) { bestD = d; best = i; } });
-      cursor = pool.splice(best, 1)[0];
-      ordered.push(cursor);
+    // First choice: optimize with real road times from HERE (fastest order overall).
+    statusEl.textContent = t("optimizing");
+    let ordered = null, method = "line", totalSec = null;
+    try {
+      const times = await fetchTimeMatrix([origin, ...pts, destination], key);
+      const best = bestOrderByTime(times, pts.length);
+      if (best) { ordered = best.order.map(i => pts[i]); method = "road"; totalSec = best.total; }
+    } catch (e) { /* road times unavailable: fall back below */ }
+    if (!ordered) {
+      // Fallback: nearest-neighbour by straight-line distance.
+      ordered = [];
+      let cursor = origin;
+      const pool = pts.slice();
+      while (pool.length) {
+        let bi = 0, bd = Infinity;
+        pool.forEach((p, i) => { const d = dist(cursor, p); if (d < bd) { bd = d; bi = i; } });
+        cursor = pool.splice(bi, 1)[0];
+        ordered.push(cursor);
+      }
     }
     currentRoute = { origin, destination, stops: ordered };
     const ol = document.getElementById("ordered");
@@ -283,6 +393,8 @@ document.getElementById("build").addEventListener("click", async () => {
     [origin, ...ordered, destination].forEach(p => {
       const li = document.createElement("li"); li.textContent = p.label; ol.appendChild(li);
     });
+    document.getElementById("methodnote").textContent = (method === "road") ? t("optRoad") : t("optLine");
+    document.getElementById("esttime").textContent = (method === "road" && totalSec !== null) ? (t("estTime") + fmtDuration(totalSec)) : "";
     document.getElementById("mapslink").href = mapsUrl(currentRoute);
     document.getElementById("result").classList.remove("hidden");
     statusEl.textContent = "";
@@ -325,7 +437,7 @@ function renderSaved(){
     edit.addEventListener("click", () => {
       document.getElementById("origin").value = r.origin.label;
       document.getElementById("destination").value = r.destination.label;
-      document.getElementById("stops").value = r.stops.map(s => s.label).join("\n");
+      fillBoxes(r.stops.map(s => s.label));
       document.getElementById("routename").value = r.name;
       editingId = r.id;
       statusEl.textContent = t("editing");
