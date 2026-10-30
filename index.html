@@ -40,6 +40,9 @@
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
   a.mapslink { display:block; text-align:center; background:#188038; color:#fff; text-decoration:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; margin-top:12px; }
   .hidden { display:none; }
+  ol.steps { padding-left: 20px; margin: 8px 0 4px; }
+  ol.steps li { margin: 7px 0; font-size: 15px; }
+  a.buttonlink { display:block; text-align:center; background: var(--dark); color:#fff; text-decoration:none; border-radius:10px; padding:12px; font-size:16px; font-weight:700; margin-top:12px; }
   footer { text-align:center; font-size:13px; color:#5a6478; padding: 8px 16px 28px; }
 </style>
 </head>
@@ -56,10 +59,17 @@
 
   <section id="setup">
     <h2 data-i18n="setupTitle">1. Your HERE key</h2>
-    <p class="hint" data-i18n="setupText">Stopedia uses the HERE geocoding service to turn addresses into map points. Create a free account at platform.here.com, create a project, and copy your API key here. You only do this once: the key stays saved on this phone, never on the internet.</p>
+    <p class="hint" data-i18n="setupText">Stopedia finds addresses with HERE, a map service. Each person uses their own free HERE account — about 30,000 free lookups a month. Follow these steps once:</p>
+    <ol class="steps">
+      <li data-i18n="step1">Tap the button below to open HERE and create your free account (your email and a password, on HERE's own site).</li>
+      <li data-i18n="step2">Inside HERE, create a project — any name works, for example “Stopedia”.</li>
+      <li data-i18n="step3">In your project, find “API keys” and create a key. Copy it.</li>
+      <li data-i18n="step4">Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.</li>
+    </ol>
+    <a class="buttonlink" href="https://platform.here.com" target="_blank" rel="noopener" data-i18n="openHere">Open HERE and create my free account</a>
     <label for="apikey" data-i18n="keyLabel">HERE API key</label>
     <input type="text" id="apikey" autocomplete="off" spellcheck="false" placeholder="...">
-    <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save key</button>
+    <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save and test my key</button>
     <p id="keystatus" class="hint"></p>
   </section>
 
@@ -100,8 +110,16 @@ const STR = {
   en: {
     tagline: "Your stops, in the right order.",
     setupTitle: "1. Your HERE key",
-    setupText: "Stopedia uses the HERE geocoding service to turn addresses into map points. Create a free account at platform.here.com, create a project, and copy your API key here. You only do this once: the key stays saved on this phone, never on the internet.",
-    keyLabel: "HERE API key", saveKey: "Save key",
+    setupText: "Stopedia finds addresses with HERE, a map service. Each person uses their own free HERE account — about 30,000 free lookups a month. Follow these steps once:",
+    step1: "Tap the button below to open HERE and create your free account (your email and a password, on HERE's own site).",
+    step2: "Inside HERE, create a project — any name works, for example “Stopedia”.",
+    step3: "In your project, find “API keys” and create a key. Copy it.",
+    step4: "Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.",
+    openHere: "Open HERE and create my free account",
+    keyLabel: "HERE API key", saveKey: "Save and test my key",
+    testing: "Testing your key…",
+    keyWorks: "Your key works. You can build routes now.",
+    keyFails: "That key did not work. Check that you copied the whole key and try again.",
     buildTitle: "2. Build a route",
     originLabel: "Start (where you leave from)", originPh: "e.g. 36239 Emeralda Ave, Leesburg, FL",
     destLabel: "Final destination", destPh: "e.g. 12911 Sunstone Ave, Orlando, FL",
@@ -113,8 +131,9 @@ const STR = {
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.1 — draft, in progress.",
+    footerText: "Version 0.2 — draft, in progress.",
     keySaved: "Key saved on this phone.",
+    needKeyPaste: "Paste your key in the field first.",
     needKey: "Paste your HERE API key first (step 1).",
     needOrigin: "Write the start address.", needDest: "Write the final destination.",
     needStops: "Write at least one stop.",
@@ -131,8 +150,16 @@ const STR = {
   es: {
     tagline: "Tus paradas, en el orden correcto.",
     setupTitle: "1. Tu clave de HERE",
-    setupText: "Stopedia usa el servicio de geocodificación de HERE para convertir direcciones en puntos del mapa. Crea una cuenta gratuita en platform.here.com, crea un proyecto y copia aquí tu clave API. Lo haces una sola vez: la clave queda guardada en este teléfono, nunca en internet.",
-    keyLabel: "Clave API de HERE", saveKey: "Guardar clave",
+    setupText: "Stopedia busca las direcciones con HERE, un servicio de mapas. Cada persona usa su propia cuenta gratuita de HERE: unas 30.000 consultas gratis al mes. Sigue estos pasos una sola vez:",
+    step1: "Toca el botón de abajo para abrir HERE y crear tu cuenta gratuita (tu correo y una contraseña, en el sitio de HERE).",
+    step2: "Dentro de HERE, crea un proyecto: cualquier nombre sirve, por ejemplo «Stopedia».",
+    step3: "En tu proyecto, busca «API keys» y crea una clave. Cópiala.",
+    step4: "Vuelve aquí, pega la clave abajo y toca «Guardar y probar mi clave». Stopedia verifica que funciona.",
+    openHere: "Abrir HERE y crear mi cuenta gratuita",
+    keyLabel: "Clave API de HERE", saveKey: "Guardar y probar mi clave",
+    testing: "Probando tu clave…",
+    keyWorks: "Tu clave funciona. Ya puedes armar rutas.",
+    keyFails: "Esa clave no funcionó. Revisa que la hayas copiado completa e inténtalo de nuevo.",
     buildTitle: "2. Armar una ruta",
     originLabel: "Salida (desde dónde sales)", originPh: "ej. 36239 Emeralda Ave, Leesburg, FL",
     destLabel: "Destino final", destPh: "ej. 12911 Sunstone Ave, Orlando, FL",
@@ -144,8 +171,9 @@ const STR = {
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.1 — borrador, en avance.",
+    footerText: "Versión 0.2 — borrador, en avance.",
     keySaved: "Clave guardada en este teléfono.",
+    needKeyPaste: "Primero pega tu clave en el campo.",
     needKey: "Primero pega tu clave API de HERE (paso 1).",
     needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
     needStops: "Escribe al menos una parada.",
@@ -176,9 +204,18 @@ document.getElementById("btn-es").addEventListener("click", () => { lang = "es";
 /* ---------- HERE key ---------- */
 const keyInput = document.getElementById("apikey");
 keyInput.value = localStorage.getItem("stopedia.key") || "";
-document.getElementById("savekey").addEventListener("click", () => {
-  localStorage.setItem("stopedia.key", keyInput.value.trim());
-  document.getElementById("keystatus").textContent = t("keySaved");
+document.getElementById("savekey").addEventListener("click", async () => {
+  const ks = document.getElementById("keystatus");
+  const key = keyInput.value.trim();
+  if (!key) { ks.textContent = t("needKeyPaste"); return; }
+  localStorage.setItem("stopedia.key", key);
+  ks.textContent = t("testing");
+  try {
+    const probe = await geocode("Orlando, FL", key);
+    ks.textContent = probe ? t("keyWorks") : t("keyFails");
+  } catch (e) {
+    ks.textContent = t("keyFails");
+  }
 });
 
 /* ---------- Geocoding (HERE) ---------- */

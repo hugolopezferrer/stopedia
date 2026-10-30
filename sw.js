@@ -1,6 +1,6 @@
 // Stopedia service worker — caches the app shell so Stopedia opens offline.
 // Saved routes and the HERE key live in localStorage, not in this cache.
-const CACHE = "stopedia-v0.1.1";
+const CACHE = "stopedia-v0.2";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

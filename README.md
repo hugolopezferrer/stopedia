@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.1** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.2** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.2: a guided setup inside the app — numbered steps, a button that opens HERE to create the free account, and an automatic test that confirms the pasted API key works.
 
 **Your stops, in the right order.**
 
@@ -36,7 +38,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.1** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.2** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.2: una guía de instalación dentro de la app — pasos numerados, un botón que abre HERE para crear la cuenta gratuita, y una prueba automática que confirma que la clave API pegada funciona.
 
 **Tus paradas, en el orden correcto.**
 
