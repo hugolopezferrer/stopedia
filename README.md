@@ -1,5 +1,7 @@
 # Stopedia
 
+**Version 0.1** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
 **Your stops, in the right order.**
 
 Stopedia is a small web app (PWA) for people who visit several addresses in one trip — delivery drivers, shoppers, field workers, anyone with a list of stops.
@@ -33,6 +35,8 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 ---
 
 # Stopedia (español)
+
+**Versión 0.1** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
 
 **Tus paradas, en el orden correcto.**
 
