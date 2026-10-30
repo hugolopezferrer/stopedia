@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopedia — Route stops, ordered</title>
+<meta name="description" content="Stopedia turns a list of addresses into an ordered route that opens in Google Maps, and lets you save routes to reuse and edit later.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b5fff">
+<style>
+  :root { --blue:#0b5fff; --dark:#14213d; --light:#f4f6fb; --line:#d7dce6; --danger:#c0392b; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--light); color: var(--dark); }
+  header { background: var(--dark); color:#fff; padding: 18px 16px 14px; }
+  header h1 { margin:0; font-size: 30px; letter-spacing: .5px; }
+  header p { margin:4px 0 0; font-size: 15px; opacity:.85; }
+  .langbar { display:flex; gap:8px; margin-top:10px; }
+  .langbar button { background:transparent; color:#fff; border:1px solid #fff; border-radius:20px; padding:4px 14px; font-size:14px; cursor:pointer; }
+  .langbar button.active { background:#fff; color:var(--dark); font-weight:700; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  section { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  h2 { margin:0 0 10px; font-size:20px; }
+  label { display:block; font-size:14px; font-weight:600; margin:12px 0 4px; }
+  input[type="text"], textarea { width:100%; padding:10px; font-size:16px; border:1px solid var(--line); border-radius:8px; }
+  textarea { min-height:110px; resize:vertical; }
+  .hint { font-size:13px; color:#5a6478; margin-top:6px; }
+  button.primary { width:100%; background:var(--blue); color:#fff; border:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; cursor:pointer; margin-top:14px; }
+  button.secondary { background:#fff; color:var(--blue); border:2px solid var(--blue); border-radius:10px; padding:10px 14px; font-size:15px; font-weight:700; cursor:pointer; }
+  button.small { padding:6px 10px; font-size:13px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  button.danger { color:var(--danger); border-color:var(--danger); }
+  .stoprow { display:flex; gap:6px; align-items:center; margin-top:8px; }
+  .stoprow input { flex:1; }
+  .stoprow .num { font-weight:700; min-width:22px; text-align:center; }
+  #status { font-size:14px; margin-top:10px; min-height:20px; }
+  #result ol { padding-left:22px; margin:10px 0; }
+  #result li { margin:6px 0; font-size:15px; }
+  .route-card { border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:10px; }
+  .route-card h3 { margin:0 0 4px; font-size:17px; }
+  .route-card .meta { font-size:13px; color:#5a6478; margin-bottom:8px; }
+  .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
+  a.mapslink { display:block; text-align:center; background:#188038; color:#fff; text-decoration:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; margin-top:12px; }
+  .hidden { display:none; }
+  footer { text-align:center; font-size:13px; color:#5a6478; padding: 8px 16px 28px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Stopedia</h1>
+  <p data-i18n="tagline">Your stops, in the right order.</p>
+  <div class="langbar">
+    <button id="btn-en" type="button">EN</button>
+    <button id="btn-es" type="button">ES</button>
+  </div>
+</header>
+<main>
+
+  <section id="setup">
+    <h2 data-i18n="setupTitle">1. Your HERE key</h2>
+    <p class="hint" data-i18n="setupText">Stopedia uses the HERE geocoding service to turn addresses into map points. Create a free account at platform.here.com, create a project, and copy your API key here. You only do this once: the key stays saved on this phone, never on the internet.</p>
+    <label for="apikey" data-i18n="keyLabel">HERE API key</label>
+    <input type="text" id="apikey" autocomplete="off" spellcheck="false" placeholder="...">
+    <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save key</button>
+    <p id="keystatus" class="hint"></p>
+  </section>
+
+  <section id="builder">
+    <h2 data-i18n="buildTitle">2. Build a route</h2>
+    <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
+    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 36239 Emeralda Ave, Leesburg, FL">
+    <label for="destination" data-i18n="destLabel">Final destination</label>
+    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 12911 Sunstone Ave, Orlando, FL">
+    <label data-i18n="stopsLabel">Stops — one address per line</label>
+    <textarea id="stops" data-i18n-ph="stopsPh" placeholder="One address per line"></textarea>
+    <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route.</p>
+    <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
+    <p id="status"></p>
+    <div id="result" class="hidden">
+      <ol id="ordered"></ol>
+      <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener" data-i18n="openMaps">Open route in Google Maps</a>
+      <label for="routename" data-i18n="routeNameLabel">Name for this route</label>
+      <input type="text" id="routename" data-i18n-ph="routeNamePh" placeholder="e.g. Pharmacies — Friday">
+      <button class="primary" id="saveroute" type="button" data-i18n="saveRouteBtn">Save this route</button>
+    </div>
+  </section>
+
+  <section id="saved">
+    <h2 data-i18n="savedTitle">3. Saved routes</h2>
+    <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
+    <div id="savedlist"></div>
+    <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
+  </section>
+
+</main>
+<footer>Stopedia · <span data-i18n="footerText">Draft version — built for testing.</span></footer>
+
+<script>
+"use strict";
+/* ---------- i18n ---------- */
+const STR = {
+  en: {
+    tagline: "Your stops, in the right order.",
+    setupTitle: "1. Your HERE key",
+    setupText: "Stopedia uses the HERE geocoding service to turn addresses into map points. Create a free account at platform.here.com, create a project, and copy your API key here. You only do this once: the key stays saved on this phone, never on the internet.",
+    keyLabel: "HERE API key", saveKey: "Save key",
+    buildTitle: "2. Build a route",
+    originLabel: "Start (where you leave from)", originPh: "e.g. 36239 Emeralda Ave, Leesburg, FL",
+    destLabel: "Final destination", destPh: "e.g. 12911 Sunstone Ave, Orlando, FL",
+    stopsLabel: "Stops — one address per line", stopsPh: "One address per line",
+    limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route.",
+    buildBtn: "Order my stops", openMaps: "Open route in Google Maps",
+    routeNameLabel: "Name for this route", routeNamePh: "e.g. Pharmacies — Friday",
+    saveRouteBtn: "Save this route",
+    savedTitle: "3. Saved routes",
+    savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
+    noRoutes: "No saved routes yet.",
+    footerText: "Draft version — built for testing.",
+    keySaved: "Key saved on this phone.",
+    needKey: "Paste your HERE API key first (step 1).",
+    needOrigin: "Write the start address.", needDest: "Write the final destination.",
+    needStops: "Write at least one stop.",
+    tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
+    working: "Finding each address on the map…",
+    notFound: "Address not found: ",
+    routeSaved: "Route saved. Find it below in Saved routes.",
+    needName: "Give the route a name first.",
+    open: "Open in Maps", edit: "Edit", del: "Delete",
+    confirmDel: "Delete this saved route?",
+    stopsWord: "stops", savedOn: "Saved",
+    editing: "Loaded for editing. Change the addresses above and order again; saving will replace the old version."
+  },
+  es: {
+    tagline: "Tus paradas, en el orden correcto.",
+    setupTitle: "1. Tu clave de HERE",
+    setupText: "Stopedia usa el servicio de geocodificación de HERE para convertir direcciones en puntos del mapa. Crea una cuenta gratuita en platform.here.com, crea un proyecto y copia aquí tu clave API. Lo haces una sola vez: la clave queda guardada en este teléfono, nunca en internet.",
+    keyLabel: "Clave API de HERE", saveKey: "Guardar clave",
+    buildTitle: "2. Armar una ruta",
+    originLabel: "Salida (desde dónde sales)", originPh: "ej. 36239 Emeralda Ave, Leesburg, FL",
+    destLabel: "Destino final", destPh: "ej. 12911 Sunstone Ave, Orlando, FL",
+    stopsLabel: "Paradas — una dirección por línea", stopsPh: "Una dirección por línea",
+    limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta.",
+    buildBtn: "Ordenar mis paradas", openMaps: "Abrir la ruta en Google Maps",
+    routeNameLabel: "Nombre para esta ruta", routeNamePh: "ej. Farmacias — viernes",
+    saveRouteBtn: "Guardar esta ruta",
+    savedTitle: "3. Rutas guardadas",
+    savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
+    noRoutes: "Todavía no hay rutas guardadas.",
+    footerText: "Versión borrador — hecha para probar.",
+    keySaved: "Clave guardada en este teléfono.",
+    needKey: "Primero pega tu clave API de HERE (paso 1).",
+    needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
+    needStops: "Escribe al menos una parada.",
+    tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
+    working: "Buscando cada dirección en el mapa…",
+    notFound: "Dirección no encontrada: ",
+    routeSaved: "Ruta guardada. Está abajo, en Rutas guardadas.",
+    needName: "Primero ponle un nombre a la ruta.",
+    open: "Abrir en Maps", edit: "Editar", del: "Borrar",
+    confirmDel: "¿Borrar esta ruta guardada?",
+    stopsWord: "paradas", savedOn: "Guardada el",
+    editing: "Cargada para editar. Cambia las direcciones arriba y ordena de nuevo; al guardar se reemplaza la versión anterior."
+  }
+};
+let lang = localStorage.getItem("stopedia.lang") || "en";
+function t(k){ return STR[lang][k]; }
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  document.getElementById("btn-en").classList.toggle("active", lang === "en");
+  document.getElementById("btn-es").classList.toggle("active", lang === "es");
+  renderSaved();
+}
+document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
+document.getElementById("btn-es").addEventListener("click", () => { lang = "es"; localStorage.setItem("stopedia.lang","es"); applyLang(); });
+
+/* ---------- HERE key ---------- */
+const keyInput = document.getElementById("apikey");
+keyInput.value = localStorage.getItem("stopedia.key") || "";
+document.getElementById("savekey").addEventListener("click", () => {
+  localStorage.setItem("stopedia.key", keyInput.value.trim());
+  document.getElementById("keystatus").textContent = t("keySaved");
+});
+
+/* ---------- Geocoding (HERE) ---------- */
+async function geocode(address, key){
+  const url = "https://geocode.search.hereapi.com/v1/geocode?q=" + encodeURIComponent(address) + "&apiKey=" + encodeURIComponent(key);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("HERE " + res.status);
+  const data = await res.json();
+  if (!data.items || !data.items.length) return null;
+  const p = data.items[0].position;
+  return { label: address, lat: p.lat, lng: p.lng };
+}
+function dist(a, b){
+  const R = 6371, dLat = (b.lat-a.lat)*Math.PI/180, dLng = (b.lng-a.lng)*Math.PI/180;
+  const s = Math.sin(dLat/2)**2 + Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.sqrt(s));
+}
+function mapsUrl(route){
+  const enc = p => encodeURIComponent(p.lat + "," + p.lng);
+  let u = "https://www.google.com/maps/dir/?api=1&origin=" + enc(route.origin) + "&destination=" + enc(route.destination) + "&travelmode=driving";
+  if (route.stops.length) u += "&waypoints=" + route.stops.map(enc).join("%7C");
+  return u;
+}
+
+/* ---------- Build route ---------- */
+let currentRoute = null;   // last ordered route
+let editingId = null;      // saved route being edited, if any
+const statusEl = document.getElementById("status");
+document.getElementById("build").addEventListener("click", async () => {
+  const key = (localStorage.getItem("stopedia.key") || "").trim();
+  const originTxt = document.getElementById("origin").value.trim();
+  const destTxt = document.getElementById("destination").value.trim();
+  const stopTxts = document.getElementById("stops").value.split("\n").map(s => s.trim()).filter(Boolean);
+  statusEl.textContent = "";
+  if (!key) { statusEl.textContent = t("needKey"); return; }
+  if (!originTxt) { statusEl.textContent = t("needOrigin"); return; }
+  if (!destTxt) { statusEl.textContent = t("needDest"); return; }
+  if (!stopTxts.length) { statusEl.textContent = t("needStops"); return; }
+  if (stopTxts.length + 2 > 10) { statusEl.textContent = t("tooMany"); return; }
+  statusEl.textContent = t("working");
+  try {
+    const origin = await geocode(originTxt, key);
+    if (!origin) { statusEl.textContent = t("notFound") + originTxt; return; }
+    const destination = await geocode(destTxt, key);
+    if (!destination) { statusEl.textContent = t("notFound") + destTxt; return; }
+    const pts = [];
+    for (const s of stopTxts) {
+      const g = await geocode(s, key);
+      if (!g) { statusEl.textContent = t("notFound") + s; return; }
+      pts.push(g);
+    }
+    // Nearest-neighbour ordering starting from the origin
+    const ordered = [];
+    let cursor = origin;
+    const pool = pts.slice();
+    while (pool.length) {
+      let best = 0, bestD = Infinity;
+      pool.forEach((p, i) => { const d = dist(cursor, p); if (d < bestD) { bestD = d; best = i; } });
+      cursor = pool.splice(best, 1)[0];
+      ordered.push(cursor);
+    }
+    currentRoute = { origin, destination, stops: ordered };
+    const ol = document.getElementById("ordered");
+    ol.innerHTML = "";
+    [origin, ...ordered, destination].forEach(p => {
+      const li = document.createElement("li"); li.textContent = p.label; ol.appendChild(li);
+    });
+    document.getElementById("mapslink").href = mapsUrl(currentRoute);
+    document.getElementById("result").classList.remove("hidden");
+    statusEl.textContent = "";
+  } catch (e) {
+    statusEl.textContent = "Error: " + e.message;
+  }
+});
+
+/* ---------- Saved routes (localStorage) ---------- */
+function loadRoutes(){ try { return JSON.parse(localStorage.getItem("stopedia.routes") || "[]"); } catch { return []; } }
+function storeRoutes(r){ localStorage.setItem("stopedia.routes", JSON.stringify(r)); }
+document.getElementById("saveroute").addEventListener("click", () => {
+  if (!currentRoute) return;
+  const name = document.getElementById("routename").value.trim();
+  if (!name) { statusEl.textContent = t("needName"); return; }
+  const routes = loadRoutes();
+  const rec = { id: editingId || Date.now(), name, origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops, createdAt: new Date().toISOString().slice(0,10) };
+  const idx = routes.findIndex(r => r.id === rec.id);
+  if (idx >= 0) routes[idx] = rec; else routes.push(rec);
+  storeRoutes(routes);
+  editingId = null;
+  statusEl.textContent = t("routeSaved");
+  renderSaved();
+});
+function renderSaved(){
+  const routes = loadRoutes();
+  const list = document.getElementById("savedlist");
+  list.innerHTML = "";
+  document.getElementById("noroutes").style.display = routes.length ? "none" : "block";
+  routes.forEach(r => {
+    const card = document.createElement("div"); card.className = "route-card";
+    const h = document.createElement("h3"); h.textContent = r.name; card.appendChild(h);
+    const meta = document.createElement("div"); meta.className = "meta";
+    meta.textContent = r.stops.length + " " + t("stopsWord") + " · " + t("savedOn") + " " + r.createdAt;
+    card.appendChild(meta);
+    const acts = document.createElement("div"); acts.className = "actions";
+    const open = document.createElement("button"); open.className = "small"; open.textContent = t("open");
+    open.addEventListener("click", () => window.open(mapsUrl(r), "_blank"));
+    const edit = document.createElement("button"); edit.className = "small"; edit.textContent = t("edit");
+    edit.addEventListener("click", () => {
+      document.getElementById("origin").value = r.origin.label;
+      document.getElementById("destination").value = r.destination.label;
+      document.getElementById("stops").value = r.stops.map(s => s.label).join("\n");
+      document.getElementById("routename").value = r.name;
+      editingId = r.id;
+      statusEl.textContent = t("editing");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    const del = document.createElement("button"); del.className = "small danger"; del.textContent = t("del");
+    del.addEventListener("click", () => {
+      if (!confirm(t("confirmDel"))) return;
+      storeRoutes(loadRoutes().filter(x => x.id !== r.id));
+      renderSaved();
+    });
+    acts.append(open, edit, del);
+    card.appendChild(acts);
+    list.appendChild(card);
+  });
+}
+applyLang();
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(() => {}); }
+</script>
+</body>
+</html>
