@@ -22,29 +22,6 @@
     background-color: var(--paper);
     background-image: radial-gradient(rgba(255,248,238,.05) 1px, transparent 1.4px);
     background-size: 24px 24px; }
-  header { max-width:760px; margin:0 auto; padding: 26px 20px 6px; }
-  .eyebrow { margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color: var(--accent); }
-  header h1 { margin:0; font-size:44px; font-weight:600; letter-spacing:-.5px; color: var(--ink); }
-  header p { margin:8px 0 0; font-size:17px; color: var(--muted); }
-  /* ---------- Satellite header band (0.18) ---------- */
-  .satband { position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line); box-shadow: var(--shadow); aspect-ratio: 1024 / 470; background: var(--surface-2); }
-  .satband .satimg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; animation: kenburns 26s ease-in-out infinite alternate; }
-  @keyframes kenburns { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.09) translate(-1.2%, -1.6%); } }
-  .satband .satroute { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
-  .satline { fill:none; stroke: var(--accent); stroke-width:5; stroke-linecap:round; stroke-dasharray:16 13; filter: drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
-  .satmaskpath { fill:none; stroke:#ffffff; stroke-width:12; stroke-dasharray:100; stroke-dashoffset:100; animation: satdraw 1.6s ease-out .35s forwards; }
-  @keyframes satdraw { to { stroke-dashoffset: 0; } }
-  .satpin { position:absolute; width:54px; transform: translate(-50%,-88%); pointer-events:none; filter: drop-shadow(0 4px 8px rgba(0,0,0,.5)); animation: satpop .45s cubic-bezier(.2,1.4,.4,1) both; }
-  .satpin img { display:block; width:100%; height:auto; }
-  .satpin::after { content:""; position:absolute; left:50%; bottom:-7px; transform: translateX(-50%); border:6px solid transparent; border-top:8px solid var(--accent); border-bottom:0; }
-  .satpin.p2 { animation-delay:.15s; }
-  @keyframes satpop { from { opacity:0; transform: translate(-50%,-88%) scale(.6); } to { opacity:1; transform: translate(-50%,-88%) scale(1); } }
-  .satpin .pulse { position:absolute; inset:-9px; border-radius:50%; border:2px solid rgba(240,120,67,.75); opacity:0; pointer-events:none; animation: satpulse 1.6s ease-out .55s 1 forwards; }
-  @keyframes satpulse { from { opacity:.9; transform: scale(.72); } to { opacity:0; transform: scale(1.25); } }
-  .sattext { position:absolute; left:0; right:0; bottom:0; padding:44px 18px 14px; background: linear-gradient(transparent, rgba(9,27,37,.88)); pointer-events:none; }
-  .sattext .eyebrow { margin-bottom:6px; }
-  .sattext h1 { margin:0; font-size:clamp(30px, 9vw, 44px); font-weight:600; letter-spacing:-.5px; color: var(--ink); }
-  .sattext p { margin:5px 0 0; font-size:clamp(14px, 4vw, 17px); color: var(--muted); }
   /* ---------- Sticky top bar + dropdown menus (0.17) ---------- */
   .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .25s ease, background-color .25s ease; }
   .topbar.scrolled { border-bottom-color: var(--line); background: rgba(9,27,37,.88); }
@@ -218,7 +195,6 @@
   footer a.footerlink:hover { color: var(--accent); }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-    .satband .satimg { animation: none !important; }
     .hme-drift { animation: none !important; }
   }
 </style>
@@ -236,36 +212,16 @@
     </div>
   </div>
 </div>
-<header>
-  <div class="satband">
-    <img class="satimg" src="header-ny-satellite.webp" alt="" aria-hidden="true">
-    <svg class="satroute" viewBox="0 0 1024 470" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <defs>
-        <mask id="satmask">
-          <path class="satmaskpath" d="M425,284 C490,225 590,200 662,186" pathLength="100" />
-        </mask>
-      </defs>
-      <path class="satline" d="M425,284 C490,225 590,200 662,186" mask="url(#satmask)" />
-    </svg>
-    <span class="satpin p1" style="left:41.5%; top:60.4%;"><span class="pulse"></span><img src="logo-badge.png" alt=""></span>
-    <span class="satpin p2" style="left:64.6%; top:39.6%;"><img src="logo-badge.png" alt=""></span>
-    <div class="sattext">
-      <p class="eyebrow" data-i18n="eyebrow">Route planner</p>
-      <h1>Stopedia</h1>
-      <p data-i18n="tagline">Your stops, in the right order.</p>
-    </div>
-  </div>
-</header>
 <main>
 
   <div class="tabbar" role="tablist" id="maintabbar">
-    <button type="button" class="tabbtn" role="tab" id="tab-home" aria-selected="false" aria-controls="page-home"><span data-i18n="tabHome">Home</span></button>
-    <button type="button" class="tabbtn active" role="tab" id="tab-route" aria-selected="true" aria-controls="page-route"><span data-i18n="panelRouteTitle">Build a route</span></button>
+    <button type="button" class="tabbtn active" role="tab" id="tab-home" aria-selected="true" aria-controls="page-home"><span data-i18n="tabHome">Home</span></button>
+    <button type="button" class="tabbtn" role="tab" id="tab-route" aria-selected="false" aria-controls="page-route"><span data-i18n="panelRouteTitle">Build a route</span></button>
     <button type="button" class="tabbtn" role="tab" id="tab-key" aria-selected="false" aria-controls="page-key"><span data-i18n="panelKeyTitle">Your TomTom key</span></button>
     <button type="button" class="tabbtn" role="tab" id="tab-saved" aria-selected="false" aria-controls="page-saved"><span data-i18n="savedTitle">Saved routes</span></button>
   </div>
 
-  <div class="tabpage hidden" id="page-home" role="tabpanel" aria-labelledby="tab-home">
+  <div class="tabpage active" id="page-home" role="tabpanel" aria-labelledby="tab-home">
   <section id="homeshow">
     <div class="hmescene" id="hmescene" role="img" aria-label="Animated demo: scattered stops glide into the best order on a satellite map, the route draws itself, and the total time and distance appear.">
       <div class="hme-drift">
@@ -300,7 +256,7 @@
   </section>
   </div>
 
-  <div class="tabpage active" id="page-route" role="tabpanel" aria-labelledby="tab-route">
+  <div class="tabpage hidden" id="page-route" role="tabpanel" aria-labelledby="tab-route">
     <div class="subtabbar" role="tablist" id="subtabbar">
       <button type="button" class="subtabbtn active" role="tab" id="subtab-addresses" aria-selected="true" aria-controls="subpage-addresses"><span data-i18n="subAddresses">Addresses</span></button>
       <button type="button" class="subtabbtn" role="tab" id="subtab-photo" aria-selected="false" aria-controls="subpage-photo"><span data-i18n="subPhoto">Photo or list</span></button>
@@ -473,15 +429,13 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.23 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.24 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
 /* ---------- i18n ---------- */
 const STR = {
   en: {
-    eyebrow: "Route planner",
-    tagline: "Your stops, in the right order.",
     setupTitle: "Your TomTom key",
     panelRouteTitle: "Build a route",
     panelKeyTitle: "Your TomTom key",
@@ -543,7 +497,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.23 — draft, in progress.",
+    footerText: "Version 0.24 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -622,8 +576,6 @@ const STR = {
     langCurrent: "English"
   },
   es: {
-    eyebrow: "Planificador de rutas",
-    tagline: "Tus paradas, en el orden correcto.",
     setupTitle: "Tu clave de TomTom",
     panelRouteTitle: "Armar una ruta",
     panelKeyTitle: "Tu clave de TomTom",
@@ -685,7 +637,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.23 — borrador, en avance.",
+    footerText: "Versión 0.24 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -851,13 +803,14 @@ document.getElementById("cancelkey").addEventListener("click", () => {
 
 /* ---------- Main tabs + route subtabs (0.19, Home added 0.21) ---------- */
 /* The 0.9 accordion panels are gone: the app is a tab interface now.
-   Four main tabs (Home / Route / Key / Saved) sit under the satellite
-   header; the Route tab carries three subtabs (Addresses / Photo or
-   list / Result). Switching animates the incoming page with the family
-   motion (fade + 6px rise, 200ms ease-out — .tabpage/.subpage in the
-   CSS). The Result subtab exists only while a route result exists.
-   Home (0.21) is the showcase tab and the landing tab whenever no work
-   is in progress — see initTabs(). */
+   Four main tabs (Home / Route / Key / Saved) sit under the slim top
+   bar (the satellite header band was removed in 0.24 — its photo
+   duplicated the Home scene); the Route tab carries three subtabs
+   (Addresses / Photo or list / Result). Switching animates the
+   incoming page with the family motion (fade + 6px rise, 200ms
+   ease-out — .tabpage/.subpage in the CSS). The Result subtab exists
+   only while a route result exists. Home (0.21) is the showcase tab
+   and, since 0.24, ALWAYS the landing tab — see initTabs(). */
 function hasKey(){ return !!(localStorage.getItem("stopedia.key") || "").trim(); }
 let activeTab = "route";        // "home" | "route" | "key" | "saved"
 let activeSubtab = "addresses"; // "addresses" | "photo" | "result"
@@ -931,26 +884,20 @@ function wireTabArrows(barId, names, btns, getActive, activate){
 }
 wireTabArrows("maintabbar", ["home", "route", "key", "saved"], TAB_BTNS, () => activeTab, activateTab);
 wireTabArrows("subtabbar", ["addresses", "photo", "result"], SUB_BTNS, () => activeSubtab, activateSubtab);
-/* First paint landing rule (0.21): "meaningful work" = any address box
-   filled (start, destination or any stop) OR a restored route result.
-   - A saved key that TomTom rejected (keybad) still opens the Key tab,
-     as before: it has to be fixed before anything else works.
-   - With work in progress, the persisted tab is restored (default
-     Route) — exactly as 0.19 behaved.
-   - With nothing in progress, the Home showcase opens first, the way
-     x.ai's first screen shows what the product does before asking for
-     anything. Building without a key still hits the no-key guard,
-     which opens the Key tab with the steps. */
+/* Landing rule (0.24): the app ALWAYS opens on Home, the way every
+   website opens on its homepage — regardless of the persisted tab or
+   any work in progress. The working state itself (address boxes,
+   order, result, checks) is still restored exactly as before inside
+   the Route tab by restoreWorkState(); only the LANDING changed.
+   (The tab is still persisted in the working state, but initTabs no
+   longer reads restoredTab.) From Home, the "Build my route" button
+   routes by key state: valid key → Route/Addresses; no key or a
+   rejected key (keybad) → the Key tab. Building from the Route tab
+   without a key still hits the no-key guard, which opens the Key tab
+   with the steps. */
 function initTabs(){
-  const keybad = localStorage.getItem("stopedia.keybad") === "1";
   document.getElementById("nokeynotice").classList.toggle("hidden", hasKey());
-  const hasWork = !!currentRoute
-    || !!document.getElementById("origin").value.trim()
-    || !!document.getElementById("destination").value.trim()
-    || boxInputs.some(b => !!b.value.trim());
-  if (keybad) activeTab = "key";
-  else if (hasWork) activeTab = (restoredTab && TAB_PAGES[restoredTab]) ? restoredTab : "route";
-  else activeTab = "home";
+  activeTab = "home";
   activeSubtab = currentRoute ? "result" : (restoredSubtab === "photo" ? "photo" : "addresses");
   syncResultSubtab();
   applyTabState();
@@ -2193,7 +2140,18 @@ function refreshHomeLang(){
   if (hmeScene) hmeScene.setAttribute("aria-label", t("homeSceneLabel"));
 }
 document.addEventListener("visibilitychange", syncHomeScene);
-document.getElementById("homecta").addEventListener("click", () => { activateTab("route"); activateSubtab("addresses"); });
+/* Home CTA (0.24): "Build my route" routes by key state. With a saved,
+   working key it lands on Route/Addresses as before. With NO key — or
+   a saved key TomTom rejected (stopedia.keybad) — it goes to the Key
+   tab instead: renderKeyPanel() already shows that tab in edit mode
+   with the "saved key did not work" warning when keybad is set, and
+   the no-key notice with the step-by-step guide when there is no key. */
+document.getElementById("homecta").addEventListener("click", () => {
+  const keybad = localStorage.getItem("stopedia.keybad") === "1";
+  if (!hasKey() || keybad) { activateTab("key"); return; }
+  activateTab("route");
+  activateSubtab("addresses");
+});
 
 renderKeyPanel();
 restoreWorkState();
