@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.4** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.5** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.5: drag to reorder by hand. Every stop box and every stop in the ordered route has a ⠿ handle — press and hold it (finger or mouse) and drag. The optimized order is the starting point; the order you leave is the order the Google Maps link and the saved route use.
 
 New in 0.4: the map provider is now TomTom (no credit card required). Address lookup uses TomTom's search service, and the stop order comes from TomTom's own waypoint optimizer, which returns the fastest order directly. The in-app key guide now matches TomTom step by step, including how to copy the full key from the keys list.
 
@@ -42,7 +44,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.4** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.5** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.5: arrastrar para reordenar a mano. Cada casilla de parada y cada parada de la ruta ordenada tiene un asa ⠿: mantenla pulsada (dedo o mouse) y arrastra. El orden optimizado es el punto de partida; el orden que dejes es el que usan el enlace de Google Maps y la ruta guardada.
 
 Nuevo en la 0.4: el proveedor de mapas ahora es TomTom (no pide tarjeta). La búsqueda de direcciones usa el servicio de búsqueda de TomTom, y el orden de las paradas lo da el optimizador de rutas de TomTom, que devuelve directamente el orden más rápido. La guía de la clave dentro de la app ahora sigue a TomTom paso a paso, incluido cómo copiar la clave completa desde la lista de llaves.
 

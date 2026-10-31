@@ -48,6 +48,11 @@
   .stopbox .check { min-width:24px; text-align:center; font-weight:700; color:#188038; visibility:hidden; }
   .stopbox.filled input { border-color:#188038; border-width:2px; }
   .stopbox.filled .check { visibility:visible; }
+  .draghandle { touch-action:none; cursor:grab; font-size:20px; line-height:1; padding:8px 6px; color:#5a6478; user-select:none; -webkit-user-select:none; }
+  .draghandle:active { cursor:grabbing; }
+  .dragging { opacity:.6; background:#eef3ff; border-radius:8px; }
+  #result li.stopitem { display:flex; align-items:center; gap:6px; }
+  #result li .draghandle { padding:4px; font-size:17px; }
   a.buttonlink { display:block; text-align:center; background: var(--dark); color:#fff; text-decoration:none; border-radius:10px; padding:12px; font-size:16px; font-weight:700; margin-top:12px; }
   footer { text-align:center; font-size:13px; color:#5a6478; padding: 8px 16px 28px; }
 </style>
@@ -88,6 +93,7 @@
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
+    <p class="hint" data-i18n="dragHint">Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.</p>
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
     <p id="status"></p>
     <div id="result" class="hidden">
@@ -140,7 +146,9 @@ const STR = {
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.4 — draft, in progress.",
+    footerText: "Version 0.5 — draft, in progress.",
+    dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
+    manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
     needKeyPaste: "Paste your key in the field first.",
     needKey: "Paste your TomTom API key first (step 1).",
@@ -185,7 +193,9 @@ const STR = {
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.4 — borrador, en avance.",
+    footerText: "Versión 0.5 — borrador, en avance.",
+    dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
+    manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
     needKeyPaste: "Primero pega tu clave en el campo.",
     needKey: "Primero pega tu clave API de TomTom (paso 1).",
@@ -259,16 +269,75 @@ function mapsUrl(route){
   return u;
 }
 
+/* ---------- Drag to reorder (pointer events: mouse + touch) ---------- */
+/* Press-and-hold the handle and drag. Siblings slide out of the way live;
+   on drop, getItems order is rearranged and onReorder runs. */
+function attachDrag(handle, item, getItems, onReorder){
+  handle.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    const items = getItems();
+    const idx0 = items.indexOf(item);
+    if (idx0 < 0) return;
+    const rects = items.map(el => el.getBoundingClientRect());
+    const startY = e.clientY;
+    let target = idx0;
+    item.classList.add("dragging");
+    item.style.position = "relative"; item.style.zIndex = "5";
+    try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+    function mv(ev){
+      const dy = ev.clientY - startY;
+      item.style.transform = "translateY(" + dy + "px)";
+      let tIdx = idx0;
+      for (let i = 0; i < items.length; i++) {
+        if (ev.clientY > rects[i].top + rects[i].height / 2) tIdx = i;
+      }
+      target = tIdx;
+      items.forEach((el, i) => {
+        if (el === item) return;
+        let off = 0;
+        if (idx0 < target && i > idx0 && i <= target) off = -rects[idx0].height;
+        else if (idx0 > target && i < idx0 && i >= target) off = rects[idx0].height;
+        el.style.transition = "transform .15s";
+        el.style.transform = off ? "translateY(" + off + "px)" : "";
+      });
+    }
+    function up(){
+      handle.removeEventListener("pointermove", mv);
+      handle.removeEventListener("pointerup", up);
+      handle.removeEventListener("pointercancel", up);
+      items.forEach(el => { el.style.transform = ""; el.style.transition = ""; });
+      item.classList.remove("dragging");
+      item.style.position = ""; item.style.zIndex = "";
+      if (target !== idx0) {
+        const arr = getItems();
+        const moved = arr.splice(idx0, 1)[0];
+        arr.splice(target, 0, moved);
+        onReorder(arr);
+      }
+    }
+    handle.addEventListener("pointermove", mv);
+    handle.addEventListener("pointerup", up);
+    handle.addEventListener("pointercancel", up);
+  });
+}
+
 /* ---------- Stop boxes: 8 individual fields ---------- */
 const MAXSTOPS = 8;
 const boxWrap = document.getElementById("stopboxes");
 const boxInputs = [];
 for (let i = 0; i < MAXSTOPS; i++) {
   const row = document.createElement("div"); row.className = "stopbox";
+  const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
   const num = document.createElement("span"); num.className = "num"; num.textContent = i + 1;
   const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
   const chk = document.createElement("span"); chk.className = "check"; chk.textContent = "✓";
-  row.append(num, inp, chk); boxWrap.appendChild(row);
+  row.append(handle, num, inp, chk); boxWrap.appendChild(row);
+  row._input = inp;
+  attachDrag(handle, row, () => Array.from(boxWrap.children), (rows) => {
+    boxInputs.length = 0;
+    rows.forEach(r => { boxWrap.appendChild(r); boxInputs.push(r._input); });
+    refreshBoxPlaceholders();
+  });
   boxInputs.push(inp);
   inp.addEventListener("input", () => row.classList.toggle("filled", !!inp.value.trim()));
   inp.addEventListener("keydown", (e) => {
@@ -367,9 +436,27 @@ document.getElementById("build").addEventListener("click", async () => {
     currentRoute = { origin, destination, stops: ordered };
     const ol = document.getElementById("ordered");
     ol.innerHTML = "";
-    [origin, ...ordered, destination].forEach(p => {
-      const li = document.createElement("li"); li.textContent = p.label; ol.appendChild(li);
+    const mkFixed = (p) => { const li = document.createElement("li"); li.textContent = p.label; return li; };
+    const originLi = mkFixed(origin), destLi = mkFixed(destination);
+    ol.appendChild(originLi);
+    ordered.forEach(p => {
+      const li = document.createElement("li"); li.className = "stopitem";
+      const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
+      const lab = document.createElement("span"); lab.textContent = p.label;
+      li.append(handle, lab);
+      li._point = p;
+      attachDrag(handle, li, () => Array.from(ol.querySelectorAll(".stopitem")), (lis) => {
+        currentRoute.stops = lis.map(x => x._point);
+        ol.appendChild(originLi);
+        lis.forEach(x => ol.appendChild(x));
+        ol.appendChild(destLi);
+        document.getElementById("mapslink").href = mapsUrl(currentRoute);
+        document.getElementById("methodnote").textContent = t("manualNote");
+        document.getElementById("esttime").textContent = "";
+      });
+      ol.appendChild(li);
     });
+    ol.appendChild(destLi);
     document.getElementById("methodnote").textContent = (method === "road") ? t("optRoad") : t("optLine");
     document.getElementById("esttime").textContent = (method === "road" && totalSec !== null) ? (t("estTime") + fmtDuration(totalSec)) : "";
     document.getElementById("mapslink").href = mapsUrl(currentRoute);
