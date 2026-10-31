@@ -156,6 +156,40 @@
   .subtabbtn:hover { color:var(--ink); }
   .subtabbtn.active { background:var(--accent); color:var(--paper); }
   .subpage > section:last-child, .tabpage > section:last-child { margin-bottom:0; }
+  /* ---------- Home tab showcase (0.21) ---------- */
+  .hmescene { position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line); box-shadow: var(--shadow); aspect-ratio: 16 / 10; background: var(--surface-2); margin-bottom:18px; }
+  .hme-drift { position:absolute; inset:-3.5%; animation: hmedrift 24s ease-in-out infinite alternate; transition: opacity .5s ease; }
+  @keyframes hmedrift { from { transform: scale(1.04) translate(0, 0); } to { transform: scale(1.10) translate(-1%, -1.2%); } }
+  .hme-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .hme-svg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .hme-tangle { fill:none; stroke:#c7d1d3; stroke-width:6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:14 12; opacity:.5; transition: opacity .5s ease; filter: drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+  .hmescene.glide .hme-tangle { opacity:0; }
+  .hme-route { fill:none; stroke: var(--accent); stroke-width:10; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:100; stroke-dashoffset:100; transition: stroke-dashoffset 1.6s ease-in-out; filter: drop-shadow(0 2px 4px rgba(0,0,0,.55)); }
+  .hmescene.drawn .hme-route { stroke-dashoffset:0; }
+  .hme-pin, .hme-badge { position:absolute; width:46px; transform: translate(-50%,-88%); filter: drop-shadow(0 4px 8px rgba(0,0,0,.5)); transition: left .9s cubic-bezier(.45,.02,.25,1), top .9s cubic-bezier(.45,.02,.25,1), opacity .4s ease, transform .45s ease; pointer-events:none; z-index:2; }
+  .hme-badge { width:40px; z-index:1; }
+  .hme-pin img, .hme-badge img { display:block; width:100%; height:auto; }
+  .hme-pin::after, .hme-badge::after { content:""; position:absolute; left:50%; bottom:-6px; transform: translateX(-50%); border:5px solid transparent; border-top:7px solid var(--accent); border-bottom:0; }
+  .hme-badge.dest::after { border-top-color: var(--terra); }
+  .hme-pin.pre, .hme-badge.pre { opacity:0; transform: translate(-50%,-135%) scale(.6); }
+  .hme-num { position:absolute; top:-7px; right:-9px; min-width:22px; height:22px; padding:0 4px; border-radius:11px; background: var(--paper); color: var(--ink); border:2px solid var(--accent); font-size:13px; font-weight:800; line-height:18px; text-align:center; transition: opacity .18s ease, transform .18s ease; }
+  .hme-num.swap { opacity:0; transform: scale(.4); }
+  .hme-flag { position:absolute; top:-7px; right:-9px; min-width:22px; height:22px; padding:0 4px; border-radius:11px; background: var(--terra); color: var(--ink); font-size:12px; font-weight:800; line-height:20px; text-align:center; }
+  .hme-totals { position:absolute; left:50%; bottom:12px; transform: translate(-50%, 14px); opacity:0; pointer-events:none; transition: opacity .45s ease, transform .45s ease; background: rgba(9,27,37,.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border:1px solid var(--line); border-radius:14px; padding:10px 16px; display:flex; align-items:center; gap:14px; z-index:3; white-space:nowrap; max-width: calc(100% - 16px); }
+  .hmescene.totals .hme-totals { opacity:1; transform: translate(-50%, 0); }
+  .hme-totals .hme-num-wrap { text-align:center; }
+  .hme-totals b { display:block; font-size:25px; font-weight:700; letter-spacing:.2px; color: var(--ink); line-height:1.1; }
+  .hme-totals small { display:block; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: var(--muted); margin-top:2px; }
+  .hme-dot { color: var(--line-strong); font-size:20px; }
+  .hme-chip { background: var(--accent); color: var(--paper); border-radius:999px; padding:5px 11px; font-size:13px; font-weight:700; }
+  .hmescene.fadeout .hme-drift { opacity:0; }
+  .hmescene.fadeout .hme-totals { opacity:0; transform: translate(-50%, 10px); }
+  .hmescene.hme-reset *, .hmescene.hme-reset *::before, .hmescene.hme-reset *::after { transition: none !important; }
+  .homeheadline { margin:2px 0 8px; font-size:26px; }
+  .homesub { margin:0 0 14px; font-size:16px; color: var(--muted); line-height:1.5; }
+  .homebenefits { list-style:none; margin:0 0 6px; padding:0; }
+  .homebenefits li { display:flex; align-items:center; gap:11px; padding:8px 0; font-size:15.5px; font-weight:600; color: var(--ink); }
+  .homebenefits svg { flex:0 0 auto; }
   .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
   .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
   .keyappliedline { font-weight:650; font-size:16px; margin:14px 0 8px; color: var(--ink); }
@@ -182,6 +216,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
     .satband .satimg { animation: none !important; }
+    .hme-drift { animation: none !important; }
   }
 </style>
 </head>
@@ -221,9 +256,44 @@
 <main>
 
   <div class="tabbar" role="tablist" id="maintabbar">
+    <button type="button" class="tabbtn" role="tab" id="tab-home" aria-selected="false" aria-controls="page-home"><span data-i18n="tabHome">Home</span></button>
     <button type="button" class="tabbtn active" role="tab" id="tab-route" aria-selected="true" aria-controls="page-route"><span data-i18n="panelRouteTitle">Build a route</span></button>
     <button type="button" class="tabbtn" role="tab" id="tab-key" aria-selected="false" aria-controls="page-key"><span data-i18n="panelKeyTitle">Your TomTom key</span></button>
     <button type="button" class="tabbtn" role="tab" id="tab-saved" aria-selected="false" aria-controls="page-saved"><span data-i18n="savedTitle">Saved routes</span></button>
+  </div>
+
+  <div class="tabpage hidden" id="page-home" role="tabpanel" aria-labelledby="tab-home">
+  <section id="homeshow">
+    <div class="hmescene" id="hmescene" role="img" aria-label="Animated demo: scattered stops glide into the best order on a satellite map, the route draws itself, and the total time and distance appear.">
+      <div class="hme-drift">
+        <img class="hme-img" src="home-map.webp" alt="" aria-hidden="true">
+        <svg class="hme-svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <path id="hme-tangle" class="hme-tangle" d="M468,150 L830,620 L1150,130 L520,430 L1010,300 L452,872" />
+          <path id="hme-route" class="hme-route" pathLength="100" d="M468,150 L698,152 L690,205 L640,340 L592,478 L555,575 L520,668 L488,775 L452,872" />
+        </svg>
+        <span class="hme-badge pre" style="left:29.25%; top:15%;"><img src="logo-badge.png" alt=""></span>
+        <span class="hme-badge dest pre" style="left:28.25%; top:87.2%;"><img src="logo-badge.png" alt=""><span class="hme-flag" aria-hidden="true">⚑</span></span>
+        <span class="hme-pin pre" style="left:63.13%; top:30%;" data-sx="63.13" data-sy="30" data-ox="43.63" data-oy="15.2" data-sl="4" data-ol="1"><img src="logo-badge.png" alt=""><span class="hme-num">4</span></span>
+        <span class="hme-pin pre" style="left:32.5%; top:43%;" data-sx="32.5" data-sy="43" data-ox="43" data-oy="20.5" data-sl="3" data-ol="2"><img src="logo-badge.png" alt=""><span class="hme-num">3</span></span>
+        <span class="hme-pin pre" style="left:51.88%; top:62%;" data-sx="51.88" data-sy="62" data-ox="37" data-oy="47.8" data-sl="1" data-ol="3"><img src="logo-badge.png" alt=""><span class="hme-num">1</span></span>
+        <span class="hme-pin pre" style="left:71.88%; top:13%;" data-sx="71.88" data-sy="13" data-ox="32.5" data-oy="66.8" data-sl="2" data-ol="4"><img src="logo-badge.png" alt=""><span class="hme-num">2</span></span>
+      </div>
+      <div class="hme-totals" id="hme-totals">
+        <span class="hme-num-wrap"><b id="hme-time">0 min</b><small data-i18n="totalTimeLabel">Total time</small></span>
+        <span class="hme-dot" aria-hidden="true">·</span>
+        <span class="hme-num-wrap"><b id="hme-dist">0.0 mi</b><small data-i18n="totalDistLabel">Total distance</small></span>
+        <span class="hme-chip" data-i18n="homeSaved">Optimized: −19 min</span>
+      </div>
+    </div>
+    <h2 class="homeheadline" data-i18n="homeHeadline">Your stops, in the best order.</h2>
+    <p class="homesub" data-i18n="homeSubline">Type, paste or scan your addresses — Stopedia puts them in order and hands you the route.</p>
+    <ul class="homebenefits">
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f07843" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg><span data-i18n="homeBenefit1">Type, paste or scan a photo</span></li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f07843" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg><span data-i18n="homeBenefit2">One tap optimizes the order</span></li>
+      <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f07843" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span data-i18n="homeBenefit3">Open it in Google Maps, Apple Maps or Waze</span></li>
+    </ul>
+    <button class="primary" id="homecta" type="button" data-i18n="homeCta">Build my route</button>
+  </section>
   </div>
 
   <div class="tabpage active" id="page-route" role="tabpanel" aria-labelledby="tab-route">
@@ -399,7 +469,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.20 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.21 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span></footer>
 
 <script>
 "use strict";
@@ -414,6 +484,16 @@ const STR = {
     subAddresses: "Addresses",
     subPhoto: "Photo or list",
     subResult: "Result",
+    tabHome: "Home",
+    homeHeadline: "Your stops, in the best order.",
+    homeSubline: "Type, paste or scan your addresses — Stopedia puts them in order and hands you the route.",
+    homeBenefit1: "Type, paste or scan a photo",
+    homeBenefit2: "One tap optimizes the order",
+    homeBenefit3: "Open it in Google Maps, Apple Maps or Waze",
+    homeCta: "Build my route",
+    homeSaved: "Optimized: −19 min",
+    homeSceneLabel: "Animated demo: scattered stops glide into the best order on a satellite map, the route draws itself, and the total time and distance appear.",
+    ttCredit: "Routing & maps by TomTom © TomTom",
     noKeyTitle: "You need your free TomTom key first",
     noKeyText: "Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:",
     noKeyStep1: "Create a free account at developer.tomtom.com (no credit card needed).",
@@ -459,7 +539,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.20 — draft, in progress.",
+    footerText: "Version 0.21 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
@@ -544,6 +624,16 @@ const STR = {
     subAddresses: "Direcciones",
     subPhoto: "Foto o lista",
     subResult: "Resultado",
+    tabHome: "Inicio",
+    homeHeadline: "Tus paradas, en el mejor orden.",
+    homeSubline: "Escribe, pega o escanea tus direcciones — Stopedia las ordena y te entrega la ruta.",
+    homeBenefit1: "Escribe, pega o escanea una foto",
+    homeBenefit2: "Un toque optimiza el orden",
+    homeBenefit3: "Ábrela en Google Maps, Apple Maps o Waze",
+    homeCta: "Armar mi ruta",
+    homeSaved: "Optimizada: −19 min",
+    homeSceneLabel: "Demostración animada: las paradas desordenadas se mueven al mejor orden sobre un mapa satelital, la ruta se dibuja sola y aparecen el tiempo y la distancia totales.",
+    ttCredit: "Rutas y mapas por TomTom © TomTom",
     noKeyTitle: "Primero necesitas tu clave gratuita de TomTom",
     noKeyText: "Stopedia busca las direcciones con TomTom, así que necesita una clave de tu propia cuenta gratuita de TomTom. Toma un par de minutos y se hace una sola vez:",
     noKeyStep1: "Crea una cuenta gratuita en developer.tomtom.com (no pide tarjeta).",
@@ -589,7 +679,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.20 — borrador, en avance.",
+    footerText: "Versión 0.21 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
@@ -676,6 +766,7 @@ function applyLang(){
   document.getElementById("btn-es").classList.toggle("active", lang === "es");
   if (typeof refreshBoxPlaceholders === "function") refreshBoxPlaceholders();
   if (typeof renderCountryOptions === "function") renderCountryOptions();
+  if (typeof refreshHomeLang === "function") refreshHomeLang();
   renderSaved();
   if (window.__stopediaBooted) {
     if (typeof currentRoute !== "undefined" && currentRoute && typeof renderResult === "function") renderResult();
@@ -750,19 +841,21 @@ document.getElementById("cancelkey").addEventListener("click", () => {
   renderKeyPanel();
 });
 
-/* ---------- Main tabs + route subtabs (0.19) ---------- */
+/* ---------- Main tabs + route subtabs (0.19, Home added 0.21) ---------- */
 /* The 0.9 accordion panels are gone: the app is a tab interface now.
-   Three main tabs (Route / Key / Saved) sit under the satellite header;
-   the Route tab carries three subtabs (Addresses / Photo or list /
-   Result). Switching animates the incoming page with the family motion
-   (fade + 6px rise, 200ms ease-out — .tabpage/.subpage in the CSS).
-   The Result subtab exists only while a route result exists. */
+   Four main tabs (Home / Route / Key / Saved) sit under the satellite
+   header; the Route tab carries three subtabs (Addresses / Photo or
+   list / Result). Switching animates the incoming page with the family
+   motion (fade + 6px rise, 200ms ease-out — .tabpage/.subpage in the
+   CSS). The Result subtab exists only while a route result exists.
+   Home (0.21) is the showcase tab and the landing tab whenever no work
+   is in progress — see initTabs(). */
 function hasKey(){ return !!(localStorage.getItem("stopedia.key") || "").trim(); }
-let activeTab = "route";        // "route" | "key" | "saved"
+let activeTab = "route";        // "home" | "route" | "key" | "saved"
 let activeSubtab = "addresses"; // "addresses" | "photo" | "result"
 let restoredTab = null, restoredSubtab = null; // filled in by restoreWorkState()
-const TAB_PAGES = { route: "page-route", key: "page-key", saved: "page-saved" };
-const TAB_BTNS = { route: "tab-route", key: "tab-key", saved: "tab-saved" };
+const TAB_PAGES = { home: "page-home", route: "page-route", key: "page-key", saved: "page-saved" };
+const TAB_BTNS = { home: "tab-home", route: "tab-route", key: "tab-key", saved: "tab-saved" };
 const SUB_PAGES = { addresses: "subpage-addresses", photo: "subpage-photo", result: "subpage-result" };
 const SUB_BTNS = { addresses: "subtab-addresses", photo: "subtab-photo", result: "subtab-result" };
 function applyTabState(){
@@ -784,6 +877,7 @@ function applyTabState(){
     btn.classList.toggle("active", on);
     btn.setAttribute("aria-selected", on ? "true" : "false");
   });
+  if (typeof syncHomeScene === "function") syncHomeScene();
 }
 function activateTab(name){
   if (!TAB_PAGES[name]) return;
@@ -827,16 +921,28 @@ function wireTabArrows(barId, names, btns, getActive, activate){
     e.preventDefault();
   });
 }
-wireTabArrows("maintabbar", ["route", "key", "saved"], TAB_BTNS, () => activeTab, activateTab);
+wireTabArrows("maintabbar", ["home", "route", "key", "saved"], TAB_BTNS, () => activeTab, activateTab);
 wireTabArrows("subtabbar", ["addresses", "photo", "result"], SUB_BTNS, () => activeSubtab, activateSubtab);
-/* First paint: with no usable key the Key tab opens (the 0.9 panel did
-   the same); otherwise the persisted tab is restored. A restored route
-   result activates the Result subtab; otherwise the persisted subtab
-   (Addresses by default). */
+/* First paint landing rule (0.21): "meaningful work" = any address box
+   filled (start, destination or any stop) OR a restored route result.
+   - A saved key that TomTom rejected (keybad) still opens the Key tab,
+     as before: it has to be fixed before anything else works.
+   - With work in progress, the persisted tab is restored (default
+     Route) — exactly as 0.19 behaved.
+   - With nothing in progress, the Home showcase opens first, the way
+     x.ai's first screen shows what the product does before asking for
+     anything. Building without a key still hits the no-key guard,
+     which opens the Key tab with the steps. */
 function initTabs(){
-  const keyed = hasKey() && localStorage.getItem("stopedia.keybad") !== "1";
+  const keybad = localStorage.getItem("stopedia.keybad") === "1";
   document.getElementById("nokeynotice").classList.toggle("hidden", hasKey());
-  activeTab = keyed ? (restoredTab && TAB_PAGES[restoredTab] ? restoredTab : "route") : "key";
+  const hasWork = !!currentRoute
+    || !!document.getElementById("origin").value.trim()
+    || !!document.getElementById("destination").value.trim()
+    || boxInputs.some(b => !!b.value.trim());
+  if (keybad) activeTab = "key";
+  else if (hasWork) activeTab = (restoredTab && TAB_PAGES[restoredTab]) ? restoredTab : "route";
+  else activeTab = "home";
   activeSubtab = currentRoute ? "result" : (restoredSubtab === "photo" ? "photo" : "addresses");
   syncResultSubtab();
   applyTabState();
@@ -1959,6 +2065,127 @@ const _topbar = document.getElementById("topbar");
 function syncTopbar(){ if (_topbar) _topbar.classList.toggle("scrolled", window.scrollY > 4); }
 window.addEventListener("scroll", syncTopbar, { passive: true });
 syncTopbar();
+
+/* ---------- Home tab: animated satellite showcase (0.21) ---------- */
+/* A real satellite photograph of Lower Manhattan (Esri World Imagery,
+   stitched into home-map.webp) drifts slowly inside a dark card while
+   the story of the app plays on top of it: four logo pins drop in at
+   scattered spots wearing the WRONG numbers (3, 1, 4, 2 left to right)
+   with a tangled dashed line visiting them in that wrong order; the
+   tangle fades, the pins glide to their best-order spots and renumber
+   themselves 1–4, the orange route draws itself along the streets
+   (Broadway's diagonal), and a totals card counts up to an illustrative
+   32 min · 18.4 mi with an "Optimized: −19 min" chip. The numbers are a
+   static demo — nothing is computed and no TomTom call is made. The
+   pins, the line and the photo all live in one drifting layer, so the
+   route stays glued to the streets while the photo moves.
+   Timeline (one loop ≈ 9.5s): drop-in ~0–0.9s · glide at 2.2s (0.9s) ·
+   renumber mid-glide · route draws at 3.2s (1.6s) · totals at 4.3s
+   (count-up 0.8s) · hold · fade out at 8.8s · restart.
+   The loop runs ONLY while the Home tab is active and the document is
+   visible (syncHomeScene, hooked from applyTabState + visibilitychange);
+   leaving the tab stops the timers and the next visit restarts the
+   story from the top. With prefers-reduced-motion the finished frame —
+   ordered pins, drawn route, totals — is rendered statically and the
+   photo does not drift (CSS kills the drift animation). */
+const HME_REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+const hmeScene = document.getElementById("hmescene");
+const hmePins = hmeScene ? Array.from(hmeScene.querySelectorAll(".hme-pin")) : [];
+const hmeBadges = hmeScene ? Array.from(hmeScene.querySelectorAll(".hme-badge")) : [];
+const HME_TIME_SEC = 1920;   // illustrative demo totals: 32 min
+const HME_DIST_M = 29612;    // 18.4 mi in meters; fmtDistance localizes the unit
+let hmeRunning = false, hmeTimers = [], hmeRaf = null;
+function hmeLater(fn, ms){ hmeTimers.push(setTimeout(fn, ms)); }
+function hmeSetPin(pin, x, y){ pin.style.left = x + "%"; pin.style.top = y + "%"; }
+function hmeResetScene(){
+  if (!hmeScene) return;
+  hmeScene.classList.add("hme-reset");
+  hmeScene.classList.remove("glide", "drawn", "totals", "fadeout");
+  hmePins.forEach(pin => {
+    hmeSetPin(pin, pin.dataset.sx, pin.dataset.sy);
+    const num = pin.querySelector(".hme-num");
+    num.classList.remove("swap");
+    num.textContent = pin.dataset.sl;
+    pin.classList.add("pre");
+  });
+  hmeBadges.forEach(b => b.classList.add("pre"));
+  document.getElementById("hme-time").textContent = fmtDuration(0);
+  document.getElementById("hme-dist").textContent = fmtDistance(0, getCountry());
+  void hmeScene.offsetWidth; // flush the reset before transitions return
+  hmeScene.classList.remove("hme-reset");
+}
+function hmeCountUp(){
+  const timeEl = document.getElementById("hme-time"), distEl = document.getElementById("hme-dist");
+  const cc = getCountry(), t0 = performance.now(), dur = 800;
+  const step = (now) => {
+    const p = Math.min(1, (now - t0) / dur);
+    timeEl.textContent = fmtDuration(Math.round(HME_TIME_SEC * p));
+    distEl.textContent = fmtDistance(HME_DIST_M * p, cc);
+    if (p < 1 && hmeRunning) hmeRaf = requestAnimationFrame(step);
+  };
+  hmeRaf = requestAnimationFrame(step);
+}
+function hmeCycle(){
+  if (!hmeRunning) return;
+  hmeResetScene();
+  const drops = [...hmeBadges, ...hmePins];
+  drops.forEach((el, i) => { el.style.transitionDelay = (i * 90) + "ms"; el.classList.remove("pre"); });
+  hmeLater(() => { drops.forEach(el => { el.style.transitionDelay = ""; }); }, 900);
+  hmeLater(() => {
+    hmeScene.classList.add("glide");
+    hmePins.forEach(pin => hmeSetPin(pin, pin.dataset.ox, pin.dataset.oy));
+  }, 2200);
+  hmeLater(() => {
+    hmePins.forEach(pin => pin.querySelector(".hme-num").classList.add("swap"));
+    hmeLater(() => {
+      hmePins.forEach(pin => { const n = pin.querySelector(".hme-num"); n.textContent = pin.dataset.ol; n.classList.remove("swap"); });
+    }, 200);
+  }, 2550);
+  hmeLater(() => { hmeScene.classList.add("drawn"); }, 3200);
+  hmeLater(() => { hmeScene.classList.add("totals"); hmeCountUp(); }, 4300);
+  hmeLater(() => { hmeScene.classList.add("fadeout"); }, 8800);
+  hmeLater(() => { hmeCycle(); }, 9450);
+}
+function hmeStaticScene(){
+  if (!hmeScene) return;
+  hmeScene.classList.add("hme-reset");
+  hmeScene.classList.add("glide", "drawn", "totals");
+  hmeScene.classList.remove("fadeout");
+  hmePins.forEach(pin => {
+    hmeSetPin(pin, pin.dataset.ox, pin.dataset.oy);
+    pin.querySelector(".hme-num").textContent = pin.dataset.ol;
+    pin.classList.remove("pre");
+  });
+  hmeBadges.forEach(b => b.classList.remove("pre"));
+  document.getElementById("hme-time").textContent = fmtDuration(HME_TIME_SEC);
+  document.getElementById("hme-dist").textContent = fmtDistance(HME_DIST_M, getCountry());
+  void hmeScene.offsetWidth;
+  hmeScene.classList.remove("hme-reset");
+}
+function homeSceneStart(){
+  if (!hmeScene || hmeRunning) return;
+  if (HME_REDUCED) { hmeStaticScene(); return; }
+  hmeRunning = true;
+  hmeCycle();
+}
+function homeSceneStop(){
+  hmeRunning = false;
+  hmeTimers.forEach(clearTimeout);
+  hmeTimers = [];
+  if (hmeRaf) cancelAnimationFrame(hmeRaf);
+  hmeRaf = null;
+}
+function syncHomeScene(){
+  if (!hmeScene) return;
+  if (HME_REDUCED) { homeSceneStop(); hmeStaticScene(); return; }
+  if (activeTab === "home" && !document.hidden) homeSceneStart();
+  else homeSceneStop();
+}
+function refreshHomeLang(){
+  if (hmeScene) hmeScene.setAttribute("aria-label", t("homeSceneLabel"));
+}
+document.addEventListener("visibilitychange", syncHomeScene);
+document.getElementById("homecta").addEventListener("click", () => { activateTab("route"); activateSubtab("addresses"); });
 
 renderKeyPanel();
 restoreWorkState();
