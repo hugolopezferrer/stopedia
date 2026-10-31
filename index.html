@@ -190,6 +190,10 @@
   .resulthead { display:flex; justify-content:flex-end; margin-bottom:2px; }
   #discardroute { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:7px 11px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
   #discardroute:hover { color:var(--terra); border-color:var(--terra); }
+  /* ---------- Batches / Lotes (0.26) ---------- */
+  #result li.seghead { list-style:none; font-weight:800; color:var(--amber); font-size:15px; letter-spacing:.03em; margin:16px 0 2px -22px; }
+  #seglinks a.mapslink { margin-top:10px; }
+  #addstop { margin-top:12px; }
   #result li.destitem { display:flex; align-items:center; gap:6px; }
   .legbtn { margin-left:auto; flex:none; }
   #mapbtn { width:100%; margin-top:10px; padding:14px; font-size:16px; }
@@ -283,6 +287,11 @@
       <button type="button" class="navsegbtn" data-navsel="apple" aria-pressed="false">Apple Maps</button>
       <button type="button" class="navsegbtn" data-navsel="waze" aria-pressed="false">Waze</button>
     </div>
+    <label id="modelabel" data-i18n="workModeLabel">Route or batches?</label>
+    <div class="navseg" id="modeseg" role="group" aria-labelledby="modelabel">
+      <button type="button" class="navsegbtn" data-modesel="single" aria-pressed="true"><span data-i18n="modeSingle">Single route</span></button>
+      <button type="button" class="navsegbtn" data-modesel="batch" aria-pressed="false"><span data-i18n="modeBatch">Batches</span></button>
+    </div>
     <label for="country" data-i18n="countryLabel">Country</label>
     <select id="country"></select>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
@@ -291,8 +300,9 @@
     <div class="fieldwrap"><img class="fieldlogo" src="logo-flat.png" alt="" aria-hidden="true"><input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 405 Lexington Ave, New York, NY 10174"></div>
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
+    <button class="secondary hidden" id="addstop" type="button" data-i18n="addStopBtn">+ Add stop</button>
     <p class="hint" id="navnote"></p>
-    <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
+    <p class="hint" id="limithint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
     <p class="hint" data-i18n="dragHint">Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.</p>
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
     <div class="btnrow"><button class="small" id="newroute" type="button" data-i18n="newRoute">New route</button></div>
@@ -367,6 +377,7 @@
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
       <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener">Open route in Google Maps</a>
+      <div id="seglinks"></div>
       <div class="dd" id="sharedd">
         <button class="secondary dd-trigger" id="shareroute" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="shareRoute">🔗 Share route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
         <div id="sharemenu" class="dd-panel" role="menu">
@@ -444,7 +455,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.25 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.26 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -512,7 +523,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.25 — draft, in progress.",
+    footerText: "Version 0.26 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -592,6 +603,19 @@ const STR = {
     navigateBtn: "Navigate",
     nextStopLabel: "Next stop",
     discardRoute: "Discard route",
+    workModeLabel: "Route or batches?",
+    modeSingle: "Single route",
+    modeBatch: "Batches",
+    addStopBtn: "+ Add stop",
+    batchHint: "Batch mode: add as many stops as the job has (up to 60). Stopedia orders the whole batch and splits it into routes of up to 9 stops, sized to your navigator. Filled boxes get a check mark; empty boxes are ignored.",
+    routeWord: "Route",
+    openRouteIn: "Open Route {n} in Google Maps",
+    progressRouteOf: "Route {n} of {m}",
+    batchWord: "Batch",
+    routesWord: "routes",
+    openLote: "Open batch",
+    reviewExtraBatch: "Only 60 stops fit in one batch: the first 60 were applied and the rest stay here so none are lost.",
+    scanBoxesFullBatch: "All the batch's stop boxes are already full (60 max).",
     langCurrent: "English"
   },
   es: {
@@ -656,7 +680,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.25 — borrador, en avance.",
+    footerText: "Versión 0.26 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -736,6 +760,19 @@ const STR = {
     navigateBtn: "Navegar",
     nextStopLabel: "Siguiente parada",
     discardRoute: "Descartar ruta",
+    workModeLabel: "¿Ruta o lotes?",
+    modeSingle: "Ruta única",
+    modeBatch: "Por lotes",
+    addStopBtn: "+ Añadir parada",
+    batchHint: "Modo por lotes: agrega tantas paradas como tenga el trabajo (hasta 60). Stopedia ordena el lote completo y lo divide en rutas de hasta 9 paradas, al tamaño de tu navegador. Las casillas llenas se marcan con un check; las vacías se ignoran.",
+    routeWord: "Ruta",
+    openRouteIn: "Abrir Ruta {n} en Google Maps",
+    progressRouteOf: "Ruta {n} de {m}",
+    batchWord: "Lote",
+    routesWord: "rutas",
+    openLote: "Abrir lote",
+    reviewExtraBatch: "En un lote solo caben 60 paradas: se aplicaron las primeras 60 y las demás quedan aquí para que no se pierda ninguna.",
+    scanBoxesFullBatch: "Las casillas del lote ya están llenas (máximo 60).",
     langCurrent: "Español"
   }
 };
@@ -751,6 +788,7 @@ function applyLang(){
   if (typeof renderCountryOptions === "function") renderCountryOptions();
   if (typeof refreshHomeLang === "function") refreshHomeLang();
   if (typeof renderNavUI === "function") renderNavUI();
+  if (typeof renderModeUI === "function") renderModeUI();
   renderSaved();
   if (window.__stopediaBooted) {
     if (typeof currentRoute !== "undefined" && currentRoute && typeof renderResult === "function") renderResult();
@@ -1046,15 +1084,32 @@ function attachDrag(handle, item, getItems, onReorder){
   });
 }
 
-/* ---------- Stop boxes: 8 individual fields ---------- */
+/* ---------- Stop boxes: dynamic fields (0.26) ---------- */
+/* Single-route mode keeps the classic 8 boxes. Batch mode ("Por
+   lotes") starts with 4 boxes and grows on demand — the "+ Add stop"
+   button, multi-line paste, and the review import all append boxes —
+   up to MAXBATCHSTOPS. The DOM order of #stopboxes IS the box order:
+   boxInputs / boxClearBtns are rebuilt from it by syncBoxArrays()
+   after every structural change (creation, growth, drag reorder). */
 const MAXSTOPS = 8;
+const MAXBATCHSTOPS = 60;
+const BATCH_INITIAL = 4;
+let buildMode = "single"; // "single" | "batch" — the Direcciones form mode (persisted in the working state)
 const boxWrap = document.getElementById("stopboxes");
 const boxInputs = [];
 const boxClearBtns = [];
-for (let i = 0; i < MAXSTOPS; i++) {
+function syncBoxArrays(){
+  boxInputs.length = 0;
+  boxClearBtns.length = 0;
+  Array.from(boxWrap.children).forEach(r => { boxInputs.push(r._input); boxClearBtns.push(r._clear); });
+}
+function renumberBoxes(){
+  Array.from(boxWrap.children).forEach((row, i) => { row._num.textContent = i + 1; });
+}
+function createStopBox(){
   const row = document.createElement("div"); row.className = "stopbox";
   const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
-  const num = document.createElement("span"); num.className = "num"; num.textContent = i + 1;
+  const num = document.createElement("span"); num.className = "num"; num.textContent = boxWrap.children.length + 1;
   const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
   /* Per-box clear button (0.20): empties ONLY its own box (a misread can
      be wiped and retried another way). Shown while the box has content
@@ -1063,33 +1118,46 @@ for (let i = 0; i < MAXSTOPS; i++) {
   const clr = document.createElement("button"); clr.type = "button"; clr.className = "stopclear"; clr.textContent = "✕"; clr.setAttribute("aria-label", t("clearStop"));
   clr.addEventListener("click", () => { inp.value = ""; inp.dispatchEvent(new Event("input")); inp.focus(); });
   const chk = document.createElement("span"); chk.className = "check"; chk.textContent = "✓";
-  row.append(handle, num, inp, clr, chk); boxWrap.appendChild(row);
+  row.append(handle, num, inp, clr, chk);
   row._input = inp;
   row._clear = clr;
-  attachDrag(handle, row, () => Array.from(boxWrap.children), (rows) => {
-    boxInputs.length = 0;
-    boxClearBtns.length = 0;
-    rows.forEach(r => { boxWrap.appendChild(r); boxInputs.push(r._input); boxClearBtns.push(r._clear); });
+  row._num = num;
+  attachDrag(handle, row, () => Array.from(boxWrap.children), () => {
+    syncBoxArrays();
     refreshBoxPlaceholders();
     queueSaveWork();
   });
-  boxInputs.push(inp);
-  boxClearBtns.push(clr);
-  inp.addEventListener("input", () => row.classList.toggle("filled", !!inp.value.trim()));
+  inp.addEventListener("input", () => { row.classList.toggle("filled", !!inp.value.trim()); queueSaveWork(); });
+  inp.addEventListener("focus", () => { lastFocusBox = inp; });
   inp.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") { e.preventDefault(); const nx = boxInputs[i + 1]; if (nx) nx.focus(); }
+    if (e.key === "Enter") { e.preventDefault(); const nx = boxInputs[boxInputs.indexOf(inp) + 1]; if (nx) nx.focus(); }
   });
   inp.addEventListener("paste", (e) => {
     const text = (e.clipboardData || window.clipboardData).getData("text");
     if (text && text.indexOf("\n") >= 0) {
       e.preventDefault();
-      text.split("\n").map(s => s.trim()).filter(Boolean).forEach((line, j) => {
+      const lines = text.split("\n").map(s => s.trim()).filter(Boolean);
+      const i = boxInputs.indexOf(inp);
+      /* Batch mode grows the form so a pasted list is not truncated. */
+      if (buildMode === "batch") ensureBoxCount(Math.min(MAXBATCHSTOPS, i + lines.length));
+      lines.forEach((line, j) => {
         const target = boxInputs[i + j];
         if (target) { target.value = line; target.dispatchEvent(new Event("input")); }
       });
     }
   });
+  return row;
 }
+function ensureBoxCount(n){
+  const cap = buildMode === "batch" ? MAXBATCHSTOPS : MAXSTOPS;
+  n = Math.max(0, Math.min(cap, n));
+  while (boxWrap.children.length < n) boxWrap.appendChild(createStopBox());
+  while (boxWrap.children.length > n) { const kids = boxWrap.children; kids[kids.length - 1].remove(); }
+  syncBoxArrays();
+  renumberBoxes();
+  refreshBoxPlaceholders();
+}
+ensureBoxCount(MAXSTOPS);
 function refreshBoxPlaceholders(){
   boxInputs.forEach((inp, i) => { inp.placeholder = t("stopWord") + " " + (i + 1); });
   boxClearBtns.forEach(btn => { if (btn) btn.setAttribute("aria-label", t("clearStop")); });
@@ -1098,7 +1166,12 @@ function collectStopTexts(){ return boxInputs.map(b => b.value.trim()).filter(Bo
 /* Non-empty boxes WITH their 1-based box number (0.20): the build flow
    needs the number to name an unrecognized stop without echoing its text. */
 function collectStopEntries(){ return boxInputs.map((b, i) => ({ num: i + 1, text: b.value.trim() })).filter(e => e.text); }
-function fillBoxes(labels){ boxInputs.forEach((inp, i) => { inp.value = labels[i] || ""; inp.dispatchEvent(new Event("input")); }); }
+function fillBoxes(labels){
+  const cap = buildMode === "batch" ? MAXBATCHSTOPS : MAXSTOPS;
+  const dflt = buildMode === "batch" ? BATCH_INITIAL : MAXSTOPS;
+  ensureBoxCount(Math.min(cap, Math.max(dflt, labels.length)));
+  boxInputs.forEach((inp, i) => { inp.value = labels[i] || ""; inp.dispatchEvent(new Event("input")); });
+}
 
 /* ---------- TomTom Waypoint Optimization: best order by real road time ---------- */
 /* Points are [origin, ...stops, destination]. TomTom returns optimizedOrder
@@ -1126,6 +1199,40 @@ async function optimizeWithTomTom(points, key){
   return { order, total: rs ? rs.travelTimeInSeconds : null, totalMeters: rs ? rs.lengthInMeters : null };
 }
 
+/* ---------- Chained optimization for a whole lote (0.26) ---------- */
+/* TomTom accepts at most 12 waypoints per optimization call, origin and
+   destination included. A lote longer than that is optimized in chained
+   chunks of 10 stops: chunk 1 = origin + the next 10 stops; each later
+   chunk starts at the previous chunk's last stop (which the previous
+   call held fixed as its endpoint) and takes the next 10; the final
+   chunk ends at the destination. The optimized middle orders are
+   concatenated with the chunk endpoints, so every stop appears exactly
+   once, the origin stays first and the destination last. Totals are
+   the sum of the chunk summaries — chained chunks share only their
+   boundary stop, so no driven leg is counted twice. */
+async function optimizeLote(points, key){
+  if (points.length <= 12) {
+    const r = await optimizeWithTomTom(points, key);
+    return { orderedStops: r.order.map(i => points[i + 1]), totalSec: r.total, totalMeters: r.totalMeters };
+  }
+  const origin = points[0], destination = points[points.length - 1];
+  const stops = points.slice(1, -1);
+  const ordered = [];
+  let totalSec = 0, totalMeters = 0, start = origin, idx = 0;
+  while (idx < stops.length) {
+    const take = stops.slice(idx, idx + 10);
+    const isFinal = idx + take.length === stops.length;
+    const chunk = isFinal ? [start, ...take, destination] : [start, ...take];
+    const r = await optimizeWithTomTom(chunk, key);
+    r.order.forEach(i => ordered.push(chunk[i + 1]));
+    if (!isFinal) { const endStop = take[take.length - 1]; ordered.push(endStop); start = endStop; }
+    if (totalSec !== null) totalSec = (r.total === null || r.total === undefined) ? null : totalSec + r.total;
+    if (totalMeters !== null) totalMeters = (r.totalMeters === null || r.totalMeters === undefined) ? null : totalMeters + r.totalMeters;
+    idx += take.length;
+  }
+  return { orderedStops: ordered, totalSec, totalMeters };
+}
+
 /* ---------- TomTom Calculate Route: totals + line geometry for a fixed order ---------- */
 /* Used for the map line, and for totals whenever the order is manual (hand
    reordered) or the optimizer summary is missing. Throws on HTTP errors
@@ -1144,6 +1251,23 @@ async function fetchRoute(points, key){
     totalMeters: r.summary ? r.summary.lengthInMeters : null,
     geometry: geom.length ? geom : null
   };
+}
+/* Whole-lote totals + map line (0.26): one Calculate Route call per
+   segment, summed. Segments share only their boundary stop, so the sum
+   counts every driven leg exactly once. Used for batch builds whose
+   order came from the straight-line fallback, for hand-reordered
+   lotes, and for the map line whenever a lote's geometry is missing. */
+async function fetchBatchRouteData(route, key){
+  const segs = routeSegments(route);
+  let totalSec = 0, totalMeters = 0;
+  const geometry = [];
+  for (const seg of segs) {
+    const fr = await fetchRoute(segPointList(seg), key);
+    if (totalSec !== null) totalSec = (fr.totalSec === null || fr.totalSec === undefined) ? null : totalSec + fr.totalSec;
+    if (totalMeters !== null) totalMeters = (fr.totalMeters === null || fr.totalMeters === undefined) ? null : totalMeters + fr.totalMeters;
+    if (fr.geometry) fr.geometry.forEach(p => geometry.push(p));
+  }
+  return { totalSec, totalMeters, geometry: geometry.length ? geometry : null };
 }
 function fmtDuration(sec){
   const m = Math.round(sec / 60), h = Math.floor(m / 60), mm = m % 60;
@@ -1187,12 +1311,83 @@ function countDone(route, done){
   route.stops.forEach(p => { if (done.has(stopKey(p))) n++; });
   return n;
 }
+/* ---------- Batches / Lotes (0.26) ---------- */
+/* A lote is one saved job: the whole ordered stop list, however long.
+   For delivery it is split into segments ("Route 1", "Route 2", …) of
+   at most 9 intermediate stops. Every segment's Google link must total
+   ≤10 points: a non-final segment links start + its stops (its last
+   stop rides as the link's destination), while the FINAL segment also
+   carries the route destination, so a final segment of exactly 9 stops
+   is rebalanced to 8 and the leftover stop starts a new segment. */
+function segmentStops(stops){
+  const segs = [];
+  let i = 0;
+  while (i < stops.length) {
+    const remaining = stops.length - i;
+    let take = Math.min(9, remaining);
+    if (take === remaining && take > 8) take = 8;
+    segs.push(stops.slice(i, i + take));
+    i += take;
+  }
+  return segs;
+}
+function routeSegments(route){
+  const groups = segmentStops(route.stops);
+  return groups.map((g, k) => ({
+    start: k === 0 ? route.origin : groups[k - 1][groups[k - 1].length - 1],
+    stops: g,
+    end: k === groups.length - 1 ? route.destination : g[g.length - 1],
+    last: k === groups.length - 1
+  }));
+}
+/* The points actually driven for one segment: start + its stops, plus
+   the route destination on the final segment. Consecutive segments
+   share only the boundary stop, so summing per-segment Calculate Route
+   totals counts every driven leg exactly once. */
+function segPointList(seg){
+  return seg.last ? [seg.start, ...seg.stops, seg.end] : [seg.start, ...seg.stops];
+}
+function googleSegmentUrl(seg){
+  const e = (p) => encodeURIComponent(p.lat + "," + p.lng);
+  let u = "https://www.google.com/maps/dir/?api=1&origin=" + e(seg.start) + "&travelmode=driving";
+  if (seg.last) {
+    if (seg.stops.length) u += "&waypoints=" + seg.stops.map(e).join("%7C");
+    u += "&destination=" + e(seg.end);
+  } else {
+    const wp = seg.stops.slice(0, -1);
+    if (wp.length) u += "&waypoints=" + wp.map(e).join("%7C");
+    u += "&destination=" + e(seg.stops[seg.stops.length - 1]);
+  }
+  return u;
+}
+/* Which segment a leg target (index into legTargets()) belongs to. */
+function segmentIndexOfTarget(route, idx){
+  const groups = segmentStops(route.stops);
+  if (idx >= route.stops.length) return groups.length - 1;
+  let acc = 0;
+  for (let k = 0; k < groups.length; k++) { acc += groups[k].length; if (idx < acc) return k; }
+  return groups.length - 1;
+}
 /* === PURE-V015-END === */
 
 /* ---------- Build route ---------- */
 let currentRoute = null;   // last ordered route
 let editingId = null;      // saved route being edited, if any
 const statusEl = document.getElementById("status");
+/* Straight-line fallback order (nearest neighbour), shared by the
+   single-route build and a whole lote when TomTom optimization fails. */
+function nearestNeighborOrder(origin, pts){
+  const ordered = [];
+  let cursor = origin;
+  const pool = pts.slice();
+  while (pool.length) {
+    let bi = 0, bd = Infinity;
+    pool.forEach((p, i) => { const d = dist(cursor, p); if (d < bd) { bd = d; bi = i; } });
+    cursor = pool.splice(bi, 1)[0];
+    ordered.push(cursor);
+  }
+  return ordered;
+}
 document.getElementById("build").addEventListener("click", async () => {
   const key = (localStorage.getItem("stopedia.key") || "").trim();
   const originTxt = document.getElementById("origin").value.trim();
@@ -1203,6 +1398,10 @@ document.getElementById("build").addEventListener("click", async () => {
   if (!originTxt) { statusEl.textContent = t("needOrigin"); return; }
   if (!destTxt) { statusEl.textContent = t("needDest"); return; }
   if (!stopTxts.length) { statusEl.textContent = t("needStops"); return; }
+  /* Reachable only after a batch→single switch left more than 8 filled
+     boxes in the form: a single route still cannot exceed Maps' limit. */
+  if (buildMode !== "batch" && stopTxts.length > MAXSTOPS) { statusEl.textContent = t("tooMany"); return; }
+  const batch = buildMode === "batch";
   statusEl.textContent = t("working");
   try {
     const origin = await geocode(originTxt, key);
@@ -1224,33 +1423,45 @@ document.getElementById("build").addEventListener("click", async () => {
     // First choice: TomTom Waypoint Optimization with real road times.
     statusEl.textContent = t("optimizing");
     let ordered = null, method = "line", totalSec = null, totalMeters = null, geometry = null;
-    try {
-      const opt = await optimizeWithTomTom([origin, ...pts, destination], key);
-      if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; totalMeters = opt.totalMeters; }
-    } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); /* optimization unavailable: fall back below */ }
-    if (!ordered) {
-      // Fallback: nearest-neighbour by straight-line distance.
-      ordered = [];
-      let cursor = origin;
-      const pool = pts.slice();
-      while (pool.length) {
-        let bi = 0, bd = Infinity;
-        pool.forEach((p, i) => { const d = dist(cursor, p); if (d < bd) { bd = d; bi = i; } });
-        cursor = pool.splice(bi, 1)[0];
-        ordered.push(cursor);
+    if (batch) {
+      /* A lote may exceed TomTom's 12-waypoint limit per call, so it is
+         optimized in chained chunks (optimizeLote). Its totals are the
+         summed chunk summaries — no extra Calculate Route calls. Only
+         if optimization fails entirely does the lote fall back to the
+         straight-line order, with totals + map line from one Calculate
+         Route call per segment. */
+      try {
+        const opt = await optimizeLote([origin, ...pts, destination], key);
+        if (opt) { ordered = opt.orderedStops; method = "road"; totalSec = opt.totalSec; totalMeters = opt.totalMeters; }
+      } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); /* optimization unavailable: fall back below */ }
+      if (!ordered) {
+        ordered = nearestNeighborOrder(origin, pts);
+        try {
+          const bd = await fetchBatchRouteData({ origin, destination, stops: ordered }, key);
+          geometry = bd.geometry; totalSec = bd.totalSec; totalMeters = bd.totalMeters;
+        } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); }
       }
+    } else {
+      try {
+        const opt = await optimizeWithTomTom([origin, ...pts, destination], key);
+        if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; totalMeters = opt.totalMeters; }
+      } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); /* optimization unavailable: fall back below */ }
+      if (!ordered) {
+        // Fallback: nearest-neighbour by straight-line distance.
+        ordered = nearestNeighborOrder(origin, pts);
+      }
+      // One Calculate Route call: the line for the map, plus any totals the
+      // optimizer summary did not provide (the summary stays the source of
+      // truth for optimized routes). If it fails, totals simply show "—".
+      try {
+        const fr = await fetchRoute([origin, ...ordered, destination], key);
+        geometry = fr.geometry;
+        if (totalSec === null || totalSec === undefined) totalSec = fr.totalSec;
+        if (totalMeters === null || totalMeters === undefined) totalMeters = fr.totalMeters;
+      } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); }
     }
-    // One Calculate Route call: the line for the map, plus any totals the
-    // optimizer summary did not provide (the summary stays the source of
-    // truth for optimized routes). If it fails, totals simply show "—".
-    try {
-      const fr = await fetchRoute([origin, ...ordered, destination], key);
-      geometry = fr.geometry;
-      if (totalSec === null || totalSec === undefined) totalSec = fr.totalSec;
-      if (totalMeters === null || totalMeters === undefined) totalMeters = fr.totalMeters;
-    } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); }
     currentRoute = { origin, destination, stops: ordered };
-    buildInfo = { method, totalSec, totalMeters, manual: false, geometry };
+    buildInfo = { method, totalSec, totalMeters, manual: false, geometry, batch };
     doneStops = new Set();
     remindWanted = true;
     renderResult();
@@ -1268,10 +1479,32 @@ function loadRoutes(){ try { return JSON.parse(localStorage.getItem("stopedia.ro
 function storeRoutes(r){ localStorage.setItem("stopedia.routes", JSON.stringify(r)); }
 document.getElementById("saveroute").addEventListener("click", () => {
   if (!currentRoute) return;
-  const name = document.getElementById("routename").value.trim();
-  if (!name) { statusEl.textContent = t("needName"); return; }
+  const userName = document.getElementById("routename").value.trim();
   const routes = loadRoutes();
-  const rec = { id: editingId || Date.now(), name, origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops, createdAt: new Date().toISOString().slice(0,10) };
+  let rec;
+  if (buildInfo && buildInfo.batch) {
+    /* Saving a lote (0.26): the name is "Batch N" / "Lote N" — N the
+       next sequential number among saved batches (an edited lote keeps
+       its own number) — plus the user's name when they gave one. The
+       record carries the full ordered points, the navigator, the mode
+       and the en-route checks, so reopening restores its progress. A
+       user name is NOT required: the auto-name always works. */
+    const existing = editingId ? routes.find(r => r.id === editingId) : null;
+    const batchNo = (existing && existing.mode === "batch" && existing.batchNo)
+      ? existing.batchNo
+      : routes.reduce((m, r) => Math.max(m, r.mode === "batch" ? (r.batchNo || 0) : 0), 0) + 1;
+    rec = {
+      id: editingId || Date.now(),
+      name: t("batchWord") + " " + batchNo + (userName ? " — " + userName : ""),
+      batchNo, mode: "batch", nav: getNav(),
+      origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops,
+      checks: Array.from(doneStops),
+      createdAt: new Date().toISOString().slice(0,10)
+    };
+  } else {
+    if (!userName) { statusEl.textContent = t("needName"); return; }
+    rec = { id: editingId || Date.now(), name: userName, origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops, createdAt: new Date().toISOString().slice(0,10) };
+  }
   const idx = routes.findIndex(r => r.id === rec.id);
   if (idx >= 0) routes[idx] = rec; else routes.push(rec);
   storeRoutes(routes);
@@ -1288,20 +1521,39 @@ function renderSaved(){
   list.innerHTML = "";
   document.getElementById("noroutes").style.display = routes.length ? "none" : "block";
   routes.forEach(r => {
+    const isBatch = r.mode === "batch";
     const card = document.createElement("div"); card.className = "route-card";
     const h = document.createElement("h3"); h.textContent = r.name; card.appendChild(h);
     const meta = document.createElement("div"); meta.className = "meta";
-    meta.textContent = r.stops.length + " " + t("stopsWord") + " · " + t("savedOn") + " " + r.createdAt;
+    if (isBatch) {
+      /* Lote card: total stops, how many routes it splits into, and
+         the lote-wide progress saved with it. */
+      const savedChecks = new Set(Array.isArray(r.checks) ? r.checks : []);
+      const doneN = r.stops.filter(p => savedChecks.has(stopKey(p))).length;
+      meta.textContent = r.stops.length + " " + t("stopsWord") + " · " + segmentStops(r.stops).length + " " + t("routesWord") + " · " + doneN + "/" + r.stops.length + " " + t("doneWord") + " · " + t("savedOn") + " " + r.createdAt;
+    } else {
+      meta.textContent = r.stops.length + " " + t("stopsWord") + " · " + t("savedOn") + " " + r.createdAt;
+    }
     card.appendChild(meta);
     const acts = document.createElement("div"); acts.className = "actions";
-    const open = document.createElement("button"); open.className = "small"; open.textContent = t("open");
-    open.addEventListener("click", () => window.open(mapsUrl(r), "_blank"));
+    if (isBatch) {
+      /* A lote has no single Maps link: opening it restores its
+         segmented result, where each route's delivery lives. */
+      const openB = document.createElement("button"); openB.className = "small"; openB.textContent = t("openLote");
+      openB.addEventListener("click", () => openSavedBatch(r));
+      acts.appendChild(openB);
+    } else {
+      const open = document.createElement("button"); open.className = "small"; open.textContent = t("open");
+      open.addEventListener("click", () => window.open(mapsUrl(r), "_blank"));
+      acts.appendChild(open);
+    }
     const edit = document.createElement("button"); edit.className = "small"; edit.textContent = t("edit");
     edit.addEventListener("click", () => {
       document.getElementById("origin").value = r.origin.label;
       document.getElementById("destination").value = r.destination.label;
+      if (isBatch) setBuildMode("batch"); else setBuildMode("single");
       fillBoxes(r.stops.map(s => s.label));
-      document.getElementById("routename").value = r.name;
+      document.getElementById("routename").value = isBatch ? batchNameSuffix(r.name) : r.name;
       editingId = r.id;
       statusEl.textContent = t("editing");
       activateTab("route");
@@ -1314,10 +1566,34 @@ function renderSaved(){
       storeRoutes(loadRoutes().filter(x => x.id !== r.id));
       renderSaved();
     });
-    acts.append(open, edit, del);
+    acts.append(edit, del);
     card.appendChild(acts);
     list.appendChild(card);
   });
+}
+/* The user's own part of a lote's auto-name ("Lote 2 — Friday run" →
+   "Friday run"), so editing a lote shows just that in the name field. */
+function batchNameSuffix(name){
+  const nm = String(name || "");
+  const cut = nm.indexOf(" — ");
+  return cut >= 0 ? nm.slice(cut + 3) : "";
+}
+/* Open a saved lote (0.26): its full ordered points become the current
+   result — segmented, with the checks it was saved with — in the
+   Result subtab. Totals and the map line are refreshed per segment in
+   the background (refreshManualTotals); with no key they stay "—". */
+function openSavedBatch(r){
+  setBuildMode("batch");
+  currentRoute = { origin: r.origin, destination: r.destination, stops: r.stops.slice() };
+  buildInfo = { method: "line", totalSec: null, totalMeters: null, manual: false, geometry: null, batch: true };
+  doneStops = new Set(Array.isArray(r.checks) ? r.checks : []);
+  editingId = r.id;
+  remindWanted = false;
+  renderResult();
+  saveWorkState();
+  activateTab("route");
+  activateSubtab("result");
+  refreshManualTotals();
 }
 /* ---------- Working state: the app remembers your current work (0.12) ---------- */
 /* Everything you type is autosaved on this phone and restored on load with
@@ -1334,6 +1610,7 @@ function saveWorkState(){
       origin: document.getElementById("origin").value,
       destination: document.getElementById("destination").value,
       stops: boxInputs.map(b => b.value),
+      mode: buildMode,
       country: getCountry(),
       tab: activeTab,
       subtab: activeSubtab,
@@ -1345,7 +1622,8 @@ function saveWorkState(){
         origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops,
         method: buildInfo.method, totalSec: buildInfo.totalSec,
         totalMeters: (buildInfo.totalMeters === undefined ? null : buildInfo.totalMeters),
-        manual: !!buildInfo.manual, geometry: buildInfo.geometry || null
+        manual: !!buildInfo.manual, geometry: buildInfo.geometry || null,
+        batch: !!buildInfo.batch
       } : null
     }));
   } catch (e) { /* storage unavailable: the app keeps working, just without memory */ }
@@ -1363,6 +1641,11 @@ function renderResult(){
   if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); renderDelivery(); return; }
   const nav = getNav();
   const legMode = nav !== "google";
+  /* Batch results (0.26) render in segments: a "Route N" heading before
+     each group of stops. Leg indices stay GLOBAL across segments, so
+     leg chaining and the Next-stop button flow over the boundaries. */
+  const batch = !!(buildInfo && buildInfo.batch);
+  const segs = batch ? routeSegments(currentRoute) : null;
   const ol = document.getElementById("ordered");
   ol.innerHTML = "";
   const mkFixed = (p) => { const li = document.createElement("li"); li.textContent = p.label; return li; };
@@ -1391,7 +1674,16 @@ function renderResult(){
     }
     destLi._point = currentRoute.destination;
   }
-  currentRoute.stops.forEach((p, i) => {
+  let gi = 0;
+  const stopGroups = batch ? segs.map(s => s.stops) : [currentRoute.stops];
+  stopGroups.forEach((group, gk) => {
+    if (batch) {
+      const head = document.createElement("li"); head.className = "seghead";
+      head.textContent = t("routeWord") + " " + (gk + 1);
+      ol.appendChild(head);
+    }
+    group.forEach((p) => {
+    const i = gi++;
     const li = document.createElement("li"); li.className = "stopitem";
     const done = doneStops.has(stopKey(p));
     if (done) li.classList.add("donestop");
@@ -1420,9 +1712,16 @@ function renderResult(){
       refreshManualTotals();
     });
     ol.appendChild(li);
+    });
   });
   ol.appendChild(destLi);
-  document.getElementById("progressline").textContent = currentRoute.stops.length ? (countDone(currentRoute, doneStops) + "/" + currentRoute.stops.length + " " + t("doneWord")) : "";
+  let progressTxt = currentRoute.stops.length ? (countDone(currentRoute, doneStops) + "/" + currentRoute.stops.length + " " + t("doneWord")) : "";
+  if (batch && currentRoute.stops.length) {
+    const nIdx = nextTargetIndex(currentRoute, doneStops);
+    const segIdx = nIdx < 0 ? segs.length - 1 : segmentIndexOfTarget(currentRoute, nIdx);
+    progressTxt += " · " + t("progressRouteOf").replace("{n}", segIdx + 1).replace("{m}", segs.length);
+  }
+  document.getElementById("progressline").textContent = progressTxt;
   document.getElementById("methodnote").textContent = (buildInfo && buildInfo.manual) ? t("manualNote") : ((buildInfo && buildInfo.method === "road") ? t("optRoad") : t("optLine"));
   document.getElementById("esttime").textContent = totalsLineText();
   renderDelivery();
@@ -1465,6 +1764,53 @@ document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("clic
   renderNavUI();
   if (currentRoute) renderResult();
 }));
+/* ---------- Single route ⇄ Batches mode toggle (0.26) ---------- */
+/* The second segmented control in Direcciones, built from the same
+   component as the navigator selector. Single route = the classic
+   8-box form. Batches = a dynamic form (starts at 4 boxes, grows to
+   60) whose saved job — the lote — is split into navigator-sized
+   routes at delivery. The mode is persisted with the working state. */
+function renderModeUI(){
+  document.querySelectorAll("[data-modesel]").forEach(b => {
+    const on = b.dataset.modesel === buildMode;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  const lh = document.getElementById("limithint");
+  if (lh) lh.textContent = t(buildMode === "batch" ? "batchHint" : "limitHint");
+  const ab = document.getElementById("addstop");
+  if (ab) ab.classList.toggle("hidden", buildMode !== "batch");
+}
+function setBuildMode(m){
+  if (m !== "batch" && m !== "single") return;
+  buildMode = m;
+  if (m === "batch") {
+    /* A fresh batch form starts with 4 boxes; a form already holding
+       addresses keeps its boxes untouched. */
+    if (!collectStopTexts().length) ensureBoxCount(BATCH_INITIAL);
+  } else {
+    /* Back to a single route: drop trailing EMPTY boxes beyond the
+       classic 8 (filled boxes are never thrown away silently — the
+       build's tooMany guard speaks up instead). */
+    while (boxWrap.children.length > MAXSTOPS) {
+      const kids = boxWrap.children;
+      const last = kids[kids.length - 1];
+      if (last._input.value.trim()) break;
+      last.remove();
+      syncBoxArrays(); renumberBoxes(); refreshBoxPlaceholders();
+    }
+  }
+  renderModeUI();
+  saveWorkState();
+}
+document.querySelectorAll("[data-modesel]").forEach(b => b.addEventListener("click", () => setBuildMode(b.dataset.modesel)));
+document.getElementById("addstop").addEventListener("click", () => {
+  if (boxWrap.children.length >= MAXBATCHSTOPS) return;
+  ensureBoxCount(boxWrap.children.length + 1);
+  const inp = boxInputs[boxInputs.length - 1];
+  if (inp) inp.focus();
+  saveWorkState();
+});
 /* The result's delivery, following the selector. Google mode: the one
    big open button carries the full-route link, exactly as before. Leg
    mode (Apple/Waze): the big button hides, and a prominent "Next stop"
@@ -1475,16 +1821,36 @@ document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("clic
 function renderDelivery(){
   const a = document.getElementById("mapslink");
   const nx = document.getElementById("nextstop");
+  const sg = document.getElementById("seglinks");
   if (!a || !nx) return;
   const nav = getNav();
-  if (!currentRoute) { a.classList.add("hidden"); nx.classList.add("hidden"); return; }
+  if (!currentRoute) { a.classList.add("hidden"); nx.classList.add("hidden"); if (sg) sg.innerHTML = ""; return; }
   if (nav === "google") {
     nx.classList.add("hidden");
+    if (buildInfo && buildInfo.batch) {
+      /* Batch + Google (0.26): one full-route link PER SEGMENT, each
+         ≤10 points, chained — a segment starts where the previous one
+         ended, and only the final segment carries the destination. */
+      a.classList.add("hidden");
+      if (sg) {
+        sg.innerHTML = "";
+        routeSegments(currentRoute).forEach((seg, k) => {
+          const link = document.createElement("a");
+          link.className = "mapslink"; link.target = "_blank"; link.rel = "noopener";
+          link.textContent = t("openRouteIn").replace("{n}", k + 1);
+          link.href = googleSegmentUrl(seg);
+          sg.appendChild(link);
+        });
+      }
+      return;
+    }
+    if (sg) sg.innerHTML = "";
     a.classList.remove("hidden");
     a.textContent = t("openMaps");
     a.href = mapsUrl(currentRoute);
     return;
   }
+  if (sg) sg.innerHTML = "";
   a.classList.add("hidden");
   const idx = nextTargetIndex(currentRoute, doneStops);
   if (idx < 0) { nx.classList.add("hidden"); return; }
@@ -1504,7 +1870,9 @@ async function refreshManualTotals(){
   const key = (localStorage.getItem("stopedia.key") || "").trim();
   if (!key || !currentRoute || !buildInfo) return;
   try {
-    const fr = await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
+    const fr = (buildInfo && buildInfo.batch)
+      ? await fetchBatchRouteData(currentRoute, key)
+      : await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
     if (seq !== _manualSeq || !currentRoute || !buildInfo) return;
     buildInfo.totalSec = fr.totalSec;
     buildInfo.totalMeters = fr.totalMeters;
@@ -1525,7 +1893,17 @@ async function refreshManualTotals(){
    TomTom call, so sharing works identically after a v0.12 restore. */
 function buildShareText(){
   const lines = [t("shareStart") + ": " + currentRoute.origin.label];
-  currentRoute.stops.forEach((p, i) => lines.push(t("stopWord") + " " + (i + 1) + ": " + p.label));
+  if (buildInfo && buildInfo.batch) {
+    /* Whole lote, with its segment headings; stop numbers run
+       continuously across segments, matching the result list. */
+    let n = 0;
+    routeSegments(currentRoute).forEach((seg, k) => {
+      lines.push(t("routeWord") + " " + (k + 1) + ":");
+      seg.stops.forEach(p => { n++; lines.push(t("stopWord") + " " + n + ": " + p.label); });
+    });
+  } else {
+    currentRoute.stops.forEach((p, i) => lines.push(t("stopWord") + " " + (i + 1) + ": " + p.label));
+  }
   lines.push(t("shareDest") + ": " + currentRoute.destination.label);
   // Same condition that puts the estimate on screen in renderResult.
   if (buildInfo && !buildInfo.manual && buildInfo.method === "road" && buildInfo.totalSec !== null && buildInfo.totalSec !== undefined)
@@ -1533,7 +1911,11 @@ function buildShareText(){
   return lines.join("\n");
 }
 function sharePayload(){
-  return { text: buildShareText(), url: mapsUrl(currentRoute) };
+  /* A single route shares its Google Maps link, as always. A lote does
+     not fit in one Maps link, so it shares the Stopedia app link
+     itself — the lote's own segment links live in its result. */
+  const url = (buildInfo && buildInfo.batch) ? (location.href || "").split("#")[0] : mapsUrl(currentRoute);
+  return { text: buildShareText(), url };
 }
 async function copyShareText(){
   const p = sharePayload();
@@ -1628,7 +2010,9 @@ async function drawRouteMap(){
     await loadTomTomSdk();
     if (!buildInfo) buildInfo = { method: "line", totalSec: null, totalMeters: null, manual: false, geometry: null };
     if (!buildInfo.geometry) {
-      const fr = await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
+      const fr = buildInfo.batch
+        ? await fetchBatchRouteData(currentRoute, key)
+        : await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
       buildInfo.geometry = fr.geometry;
       if (buildInfo.totalSec === null || buildInfo.totalSec === undefined) buildInfo.totalSec = fr.totalSec;
       if (buildInfo.totalMeters === null || buildInfo.totalMeters === undefined) buildInfo.totalMeters = fr.totalMeters;
@@ -1705,7 +2089,7 @@ async function renderQr(){
   try {
     await loadQrLib();
     const qr = window.qrcode(0, "M");
-    qr.addData(mapsUrl(currentRoute));
+    qr.addData(sharePayload().url);
     qr.make();
     document.getElementById("qrcode").innerHTML = qr.createSvgTag ? qr.createSvgTag() : qr.createTableTag();
     block.classList.remove("hidden");
@@ -1720,9 +2104,16 @@ function restoreWorkState(){
   try { st = JSON.parse(localStorage.getItem(WORK_KEY) || "null"); } catch (e) { st = null; }
   if (!st) return;
   if (st.country) localStorage.setItem("stopedia.country", st.country);
+  /* The form mode comes back first: box sizing depends on it (0.26). */
+  if (st.mode === "batch" || st.mode === "single") buildMode = st.mode;
   document.getElementById("origin").value = st.origin || "";
   document.getElementById("destination").value = st.destination || "";
-  if (Array.isArray(st.stops)) boxInputs.forEach((inp, i) => { inp.value = st.stops[i] || ""; inp.dispatchEvent(new Event("input")); });
+  if (Array.isArray(st.stops)) {
+    const cap = buildMode === "batch" ? MAXBATCHSTOPS : MAXSTOPS;
+    const dflt = buildMode === "batch" ? BATCH_INITIAL : MAXSTOPS;
+    ensureBoxCount(Math.min(cap, Math.max(dflt, st.stops.length)));
+    boxInputs.forEach((inp, i) => { inp.value = st.stops[i] || ""; inp.dispatchEvent(new Event("input")); });
+  }
   document.getElementById("routename").value = st.routeName || "";
   editingId = st.editingId || null;
   restoredTab = st.tab || null;
@@ -1730,14 +2121,14 @@ function restoreWorkState(){
   remindWanted = !!st.remind;
   if (st.result && st.result.origin && st.result.destination) {
     currentRoute = { origin: st.result.origin, destination: st.result.destination, stops: Array.isArray(st.result.stops) ? st.result.stops : [] };
-    buildInfo = { method: st.result.method || "line", totalSec: (st.result.totalSec === undefined ? null : st.result.totalSec), totalMeters: (st.result.totalMeters === undefined ? null : st.result.totalMeters), manual: !!st.result.manual, geometry: st.result.geometry || null };
+    buildInfo = { method: st.result.method || "line", totalSec: (st.result.totalSec === undefined ? null : st.result.totalSec), totalMeters: (st.result.totalMeters === undefined ? null : st.result.totalMeters), manual: !!st.result.manual, geometry: st.result.geometry || null, batch: !!st.result.batch };
   }
   doneStops = new Set(Array.isArray(st.checks) ? st.checks : []);
 }
 document.getElementById("origin").addEventListener("input", queueSaveWork);
 document.getElementById("destination").addEventListener("input", queueSaveWork);
 document.getElementById("routename").addEventListener("input", queueSaveWork);
-boxInputs.forEach(inp => inp.addEventListener("input", queueSaveWork));
+/* (Stop boxes wire their own input/focus listeners in createStopBox.) */
 document.getElementById("remindsave").addEventListener("click", () => {
   const rn = document.getElementById("routename");
   rn.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1907,8 +2298,7 @@ function showOcrProgress(p){
 }
 
 /* ---------- Photo scanning: one address (0.6) & full sheet (0.7) ---------- */
-let lastFocusBox = null;
-boxInputs.forEach(inp => inp.addEventListener("focus", () => { lastFocusBox = inp; }));
+let lastFocusBox = null; // boxes register their focus in createStopBox
 let lastSheetFile = null;   // last full-sheet photo, for "share with my AI"
 function pickScanTarget(){
   if (lastFocusBox && !lastFocusBox.value.trim()) return lastFocusBox;
@@ -1930,8 +2320,12 @@ scanInput.addEventListener("change", async () => {
     if (scanMode === "one") {
       const txt = pickSingleAddress(raw);
       if (ocrLooksGarbage(txt)) { addStatus.textContent = t("scanNoRead"); return; }
-      const target = pickScanTarget();
-      if (!target) { addStatus.textContent = t("scanBoxesFull"); return; }
+      let target = pickScanTarget();
+      if (!target && buildMode === "batch" && boxWrap.children.length < MAXBATCHSTOPS) {
+        ensureBoxCount(boxWrap.children.length + 1);
+        target = boxInputs[boxInputs.length - 1];
+      }
+      if (!target) { addStatus.textContent = t(buildMode === "batch" ? "scanBoxesFullBatch" : "scanBoxesFull"); return; }
       target.value = txt;
       target.dispatchEvent(new Event("input"));
       target.focus();
@@ -2001,12 +2395,15 @@ document.getElementById("reviewapply").addEventListener("click", () => {
   const filled = Array.from(reviewList.children).filter(r => r.querySelector("input").value.trim());
   if (!filled.length) { closeReview(); return; }
   const vals = filled.map(r => r.querySelector("input").value.trim());
-  fillBoxes(vals.slice(0, MAXSTOPS));
-  filled.slice(0, MAXSTOPS).forEach(r => r.remove());
+  /* Batch mode grows the dynamic boxes to fit the import (up to 60);
+     single mode keeps the classic 8. Leftovers stay on this screen. */
+  const cap = buildMode === "batch" ? MAXBATCHSTOPS : MAXSTOPS;
+  fillBoxes(vals.slice(0, cap));
+  filled.slice(0, cap).forEach(r => r.remove());
   document.getElementById("addstatus").textContent = t("reviewApplied");
   const leftFilled = Array.from(reviewList.querySelectorAll(".reviewrow input")).some(i => i.value.trim());
   if (leftFilled) {
-    reviewWarn.textContent = t("reviewExtra");
+    reviewWarn.textContent = t(buildMode === "batch" ? "reviewExtraBatch" : "reviewExtra");
     reviewWarn.classList.remove("hidden");
     reviewSection.scrollIntoView({ behavior: "smooth" });
   } else {
