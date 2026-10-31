@@ -22,21 +22,35 @@
     background-color: var(--paper);
     background-image: radial-gradient(rgba(255,248,238,.05) 1px, transparent 1.4px);
     background-size: 24px 24px; }
-  header { max-width:760px; margin:0 auto; padding: 38px 20px 6px; }
+  header { max-width:760px; margin:0 auto; padding: 26px 20px 6px; }
   .eyebrow { margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color: var(--accent); }
   header h1 { margin:0; font-size:44px; font-weight:600; letter-spacing:-.5px; color: var(--ink); }
   header p { margin:8px 0 0; font-size:17px; color: var(--muted); }
-  .headsvg { display:block; width:min(340px, 82%); height:auto; margin-top:20px; opacity:.9; }
-  .route-ghost { fill:none; stroke: var(--line-strong); stroke-width:2.5; stroke-linecap:round; opacity:.35; }
-  .route-path { fill:none; stroke: var(--accent); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:7 7; animation: dashmove 6s linear infinite; }
-  @keyframes dashmove { to { stroke-dashoffset:-140; } }
-  .pin-start { fill: var(--ink); } .pin-mid1 { fill: var(--blue); } .pin-mid2 { fill: var(--accent); } .pin-end { fill: var(--terra); }
-  .pincore { fill: var(--paper); }
+  /* ---------- Satellite header band (0.18) ---------- */
+  .satband { position:relative; border-radius:18px; overflow:hidden; border:1px solid var(--line); box-shadow: var(--shadow); aspect-ratio: 1024 / 470; background: var(--surface-2); }
+  .satband .satimg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; animation: kenburns 26s ease-in-out infinite alternate; }
+  @keyframes kenburns { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.09) translate(-1.2%, -1.6%); } }
+  .satband .satroute { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .satline { fill:none; stroke: var(--accent); stroke-width:5; stroke-linecap:round; stroke-dasharray:16 13; filter: drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+  .satmaskpath { fill:none; stroke:#ffffff; stroke-width:12; stroke-dasharray:100; stroke-dashoffset:100; animation: satdraw 1.6s ease-out .35s forwards; }
+  @keyframes satdraw { to { stroke-dashoffset: 0; } }
+  .satpin { position:absolute; width:54px; transform: translate(-50%,-88%); pointer-events:none; filter: drop-shadow(0 4px 8px rgba(0,0,0,.5)); animation: satpop .45s cubic-bezier(.2,1.4,.4,1) both; }
+  .satpin img { display:block; width:100%; height:auto; }
+  .satpin::after { content:""; position:absolute; left:50%; bottom:-7px; transform: translateX(-50%); border:6px solid transparent; border-top:8px solid var(--accent); border-bottom:0; }
+  .satpin.p2 { animation-delay:.15s; }
+  @keyframes satpop { from { opacity:0; transform: translate(-50%,-88%) scale(.6); } to { opacity:1; transform: translate(-50%,-88%) scale(1); } }
+  .satpin .pulse { position:absolute; inset:-9px; border-radius:50%; border:2px solid rgba(240,120,67,.75); opacity:0; pointer-events:none; animation: satpulse 1.6s ease-out .55s 1 forwards; }
+  @keyframes satpulse { from { opacity:.9; transform: scale(.72); } to { opacity:0; transform: scale(1.25); } }
+  .sattext { position:absolute; left:0; right:0; bottom:0; padding:44px 18px 14px; background: linear-gradient(transparent, rgba(9,27,37,.88)); pointer-events:none; }
+  .sattext .eyebrow { margin-bottom:6px; }
+  .sattext h1 { margin:0; font-size:clamp(30px, 9vw, 44px); font-weight:600; letter-spacing:-.5px; color: var(--ink); }
+  .sattext p { margin:5px 0 0; font-size:clamp(14px, 4vw, 17px); color: var(--muted); }
   /* ---------- Sticky top bar + dropdown menus (0.17) ---------- */
   .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .25s ease, background-color .25s ease; }
   .topbar.scrolled { border-bottom-color: var(--line); background: rgba(9,27,37,.88); }
   .topbar-in { max-width: 760px; margin: 0 auto; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .wordmark { font-size: 17px; font-weight: 650; letter-spacing: .2px; color: var(--ink); }
+  .wordmark { font-size: 17px; font-weight: 650; letter-spacing: .2px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .barlogo { width: 24px; height: 24px; border-radius: 50%; display: block; }
   .langtrigger { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { border-color: var(--line-strong); }
   .dd { position: relative; }
@@ -69,6 +83,9 @@
   input[type="text"]::placeholder, textarea::placeholder { color: var(--muted); opacity:.7; }
   select option { background: var(--surface-2); color: var(--ink); }
   input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,120,67,.32); }
+  .fieldwrap { position: relative; }
+  .fieldwrap .fieldlogo { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); height: 20px; width: auto; pointer-events: none; }
+  .fieldwrap input[type="text"] { padding-left: 40px; }
   textarea { min-height:110px; resize:vertical; }
   .hint { font-size:13px; color: var(--muted); margin-top:6px; }
   button { transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease; }
@@ -158,14 +175,14 @@
   footer { text-align:center; font-size:13px; color: var(--muted); padding: 8px 16px 30px; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
-    .route-path { animation: none !important; }
+    .satband .satimg { animation: none !important; }
   }
 </style>
 </head>
 <body>
 <div class="topbar" id="topbar">
   <div class="topbar-in">
-    <span class="wordmark">Stopedia</span>
+    <span class="wordmark"><img class="barlogo" src="logo-badge.png" alt="">Stopedia</span>
     <div class="dd dd-right" id="langdd">
       <button type="button" class="dd-trigger langtrigger" id="langtrigger" aria-haspopup="true" aria-expanded="false"><span data-i18n="langCurrent">English</span><span class="dd-chev" aria-hidden="true">▾</span></button>
       <div class="dd-panel" id="langmenu" role="menu">
@@ -176,21 +193,24 @@
   </div>
 </div>
 <header>
-  <p class="eyebrow" data-i18n="eyebrow">Route planner</p>
-  <h1>Stopedia</h1>
-  <p data-i18n="tagline">Your stops, in the right order.</p>
-  <svg class="headsvg" viewBox="0 0 340 76" aria-hidden="true" focusable="false">
-    <path class="route-ghost" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
-    <path class="route-path" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
-    <circle class="pin-start" cx="10" cy="60" r="7" />
-    <circle class="pin-mid1" cx="118" cy="42" r="6" />
-    <circle class="pin-mid2" cx="214" cy="34" r="6" />
-    <circle class="pin-end" cx="330" cy="26" r="7" />
-    <circle class="pincore" cx="10" cy="60" r="2.4" />
-    <circle class="pincore" cx="118" cy="42" r="2.2" />
-    <circle class="pincore" cx="214" cy="34" r="2.2" />
-    <circle class="pincore" cx="330" cy="26" r="2.4" />
-  </svg>
+  <div class="satband">
+    <img class="satimg" src="header-ny-satellite.webp" alt="" aria-hidden="true">
+    <svg class="satroute" viewBox="0 0 1024 470" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <defs>
+        <mask id="satmask">
+          <path class="satmaskpath" d="M425,284 C490,225 590,200 662,186" pathLength="100" />
+        </mask>
+      </defs>
+      <path class="satline" d="M425,284 C490,225 590,200 662,186" mask="url(#satmask)" />
+    </svg>
+    <span class="satpin p1" style="left:41.5%; top:60.4%;"><span class="pulse"></span><img src="logo-badge.png" alt=""></span>
+    <span class="satpin p2" style="left:64.6%; top:39.6%;"><img src="logo-badge.png" alt=""></span>
+    <div class="sattext">
+      <p class="eyebrow" data-i18n="eyebrow">Route planner</p>
+      <h1>Stopedia</h1>
+      <p data-i18n="tagline">Your stops, in the right order.</p>
+    </div>
+  </div>
 </header>
 <main>
 
@@ -203,9 +223,9 @@
     <label for="country" data-i18n="countryLabel">Country</label>
     <select id="country"></select>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
-    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 350 5th Ave, New York, NY 10118">
+    <div class="fieldwrap"><img class="fieldlogo" src="logo-flat.png" alt="" aria-hidden="true"><input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 350 5th Ave, New York, NY 10118"></div>
     <label for="destination" data-i18n="destLabel">Final destination</label>
-    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 405 Lexington Ave, New York, NY 10174">
+    <div class="fieldwrap"><img class="fieldlogo" src="logo-flat.png" alt="" aria-hidden="true"><input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 405 Lexington Ave, New York, NY 10174"></div>
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
@@ -364,7 +384,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.17 — draft, in progress.</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.18 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
 
 <script>
 "use strict";
@@ -419,7 +439,8 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.17 — draft, in progress.",
+    footerText: "Version 0.18 — draft, in progress.",
+    satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -541,7 +562,8 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.17 — borrador, en avance.",
+    footerText: "Versión 0.18 — borrador, en avance.",
+    satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
