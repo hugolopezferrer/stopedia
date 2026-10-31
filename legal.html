@@ -6,6 +6,9 @@
 <title>Legal Notice — Stopedia · Aviso legal — Stopedia</title>
 <meta name="description" content="Stopedia legal notice: conditions, limitations and disclaimers. Aviso legal de Stopedia: condiciones, limitaciones y descargos.">
 <meta name="theme-color" content="#091b25">
+<script>/* Theme boot (0.34): same rule as the app — a stored "light" is
+   applied before first paint; absence of stopedia.theme means dark. */
+(function(){try{if(localStorage.getItem("stopedia.theme")==="light"){document.documentElement.setAttribute("data-theme","light");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#f3efe8");}}catch(e){}})();</script>
 <style>
   :root {
     color-scheme: dark;
@@ -15,6 +18,27 @@
     --terra:#ff9a78;
     --shadow:0 16px 44px rgba(0,0,0,.3); --radius:14px;
   }
+  /* Light theme (0.34): the app's Huis light palette, mirrored here so
+     the legal page follows the theme chosen in the app. The accent
+     text colors deepen where flat --amber/--accent cannot reach
+     4.5:1 on the light surfaces. */
+  html[data-theme="light"] {
+    color-scheme: light;
+    --paper:#f3efe8; --surface:#fffdf9; --surface-2:#e9ecec;
+    --ink:#0a2b3c; --muted:#4a5f68; --line:#c9cec9; --line-strong:#8e9ca1;
+    --accent:#cf5f2e; --amber:#f07843; --accent-soft:#f8e2d3;
+    --terra:#a33e2a;
+    --shadow:0 16px 44px rgba(25,47,39,.08);
+  }
+  html[data-theme="light"] body { background-image: radial-gradient(rgba(10,43,60,.055) 1px, transparent 1.4px); }
+  html[data-theme="light"] .topbar { background: rgba(243,239,232,.88); }
+  html[data-theme="light"] a { color: #b44a24; }
+  html[data-theme="light"] a:hover { color: #8f3a16; }
+  html[data-theme="light"] .eyebrow { color: #a8431f; }
+  html[data-theme="light"] h3 { color: #a8431f; }
+  html[data-theme="light"] .langswitch button.active { background: #a8431f; color: #fff8ee; }
+  html[data-theme="light"] a.backlink { background: #a8431f; color: #fff8ee; }
+  html[data-theme="light"] a.backlink:hover { background: #b44a24; color: #fff8ee; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink);
     background-color: var(--paper);

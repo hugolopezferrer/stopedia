@@ -7,6 +7,10 @@
 <meta name="description" content="Stopedia turns a list of addresses into an ordered route that opens in Google Maps, and lets you save routes to reuse and edit later.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#091b25">
+<script>/* Theme boot (0.34): a stored "light" is applied before first paint,
+   so the page never flashes the wrong theme. Dark is the default —
+   absence of the stopedia.theme key means dark. */
+(function(){try{if(localStorage.getItem("stopedia.theme")==="light"){document.documentElement.setAttribute("data-theme","light");var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content","#f3efe8");}}catch(e){}})();</script>
 <style>
   :root {
     color-scheme: dark;
@@ -55,6 +59,73 @@
     --glass-blue-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(170,220,245,.26), rgba(170,220,245,.08));
     --glass-blue-border: rgba(170,220,245,.4);
   }
+  /* ---------- Light theme (0.34) ---------- */
+  /* The same custom properties, re-valued with the documented Huis
+     light palette. Dark stays the default: these rules apply only when
+     the boot script (or the theme button) sets data-theme="light" on
+     <html>. Components keep working from tokens; the few exceptions
+     below exist because #cf5f2e is a mid orange — neither cream nor ink
+     text reaches 4.5:1 on it — and because two overlays sit on imagery
+     that does NOT change with the theme (the Home scene's totals chip
+     and the TomTom map markers), so they keep their dark values. */
+  html[data-theme="light"] {
+    color-scheme: light;
+    --paper:#f3efe8; --surface:#fffdf9; --surface-2:#e9ecec;
+    --ink:#0a2b3c; --muted:#4a5f68; --line:#c9cec9; --line-strong:#8e9ca1;
+    --accent:#cf5f2e; --amber:#f07843; --accent-soft:#f8e2d3; --amber-soft:#fbe7da;
+    --terra:#a33e2a; --terra-soft:#f6ddd3;
+    --blue:#173f55; --blue-soft:#dcebf2;
+    --shadow:0 16px 44px rgba(25,47,39,.08);
+    /* Glass, tuned for light surfaces: the orange tint goes deeper so
+       cream-free ink text keeps its contrast, the light layers turn
+       white, and the blur stays. */
+    --glass-spec: radial-gradient(150% 55% at 18% 0%, rgba(255,255,255,.55), rgba(255,255,255,0) 32%);
+    --glass-sheen: linear-gradient(115deg, rgba(255,255,255,.22), rgba(255,255,255,0) 30%);
+    --glass-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(207,95,46,.34), rgba(207,95,46,.20));
+    --glass-bg-hover: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(207,95,46,.46), rgba(207,95,46,.30));
+    --glass-bg-strong: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(168,63,26,.95), rgba(158,56,22,.90));
+    --glass-border: rgba(176,84,40,.45);
+    --glass-border-strong: rgba(176,84,40,.68);
+    --glass-shadow: inset 0 1px 0 rgba(255,255,255,.65), inset 0 12px 16px -10px rgba(255,255,255,.40), inset 0 -10px 14px -10px rgba(90,40,20,.18), 0 7px 18px rgba(90,45,25,.18);
+    --glass-shadow-pressed: inset 0 1px 0 rgba(255,255,255,.40), inset 0 6px 10px -6px rgba(255,255,255,.25), inset 0 -5px 8px -5px rgba(90,40,20,.16), inset 0 4px 12px rgba(90,40,20,.16), 0 2px 8px rgba(90,45,25,.16);
+    --glass-hilite: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(255,255,255,.38), rgba(255,255,255,0) 45%);
+    --glass-danger-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(163,62,42,.16), rgba(163,62,42,.08));
+    --glass-danger-border: rgba(163,62,42,.5);
+    --glass-blue-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(23,63,85,.16), rgba(23,63,85,.08));
+    --glass-blue-border: rgba(23,63,85,.38);
+  }
+  html[data-theme="light"] body { background-image: radial-gradient(rgba(10,43,60,.055) 1px, transparent 1.4px); }
+  html[data-theme="light"] .topbar { background: rgba(243,239,232,.78); }
+  html[data-theme="light"] .topbar.scrolled { background: rgba(243,239,232,.93); }
+  /* Wordmark: same emboss, deeper gradient stops and a softer shade. */
+  html[data-theme="light"] .wordmark { text-shadow: -1px -1px 0 rgba(255,255,255,.6), 0 2px 3px rgba(90,40,20,.35); }
+  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #f08a52 0%, #cf5f2e 52%, #a8431f 100%); }
+  html[data-theme="light"] .wm-pin { filter: drop-shadow(0 1px 1px rgba(90,40,20,.35)); }
+  /* Big solid action buttons: flat --accent (#cf5f2e) reaches 4.5:1
+     with neither cream nor ink text, so the bright --amber carries
+     them with dark ink text — the same pairing the dark theme uses
+     (there the --paper text is the dark navy). */
+  html[data-theme="light"] button.primary, html[data-theme="light"] a.mapslink { background: var(--glass-hilite), var(--amber); color: var(--ink); }
+  html[data-theme="light"] button.primary:hover, html[data-theme="light"] a.mapslink:hover { background: var(--glass-hilite), #f58a58; color: var(--ink); }
+  /* Amber text accents deepen on light surfaces. */
+  html[data-theme="light"] .recbadge { color: #a8431f; }
+  html[data-theme="light"] button.danger { color: #8f2f1c; }
+  html[data-theme="light"] .navsegbtn.active .recbadge { background: rgba(255,248,238,.28); color: #fff8ee; }
+  html[data-theme="light"] #progressline, html[data-theme="light"] #result li.seghead { color: #a8431f; }
+  html[data-theme="light"] footer a.footerlink { color: #a8431f; }
+  html[data-theme="light"] footer a.footerlink:hover { color: #8f3a16; }
+  html[data-theme="light"] .progress { background: var(--surface-2); }
+  /* Imagery does not change with the theme: the Home scene's totals
+     chip and the map markers keep their dark values. */
+  html[data-theme="light"] .hme-totals { border-color: #294653; }
+  html[data-theme="light"] .hme-totals b { color: #fff8ee; }
+  html[data-theme="light"] .hme-totals small { color: #c7d1d3; }
+  html[data-theme="light"] .hme-dot { color: #54717d; }
+  html[data-theme="light"] .hme-chip { background: #f07843; color: #091b25; }
+  html[data-theme="light"] .hme-demotag { background: #133543; color: #c7d1d3; border-color: #294653; }
+  html[data-theme="light"] .mapmark { background: #f07843; color: #091b25; }
+  html[data-theme="light"] .mapmark.origin { background: #fff8ee; color: #091b25; }
+  html[data-theme="light"] .mapmark.dest { background: #ff9a78; color: #091b25; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink);
     background-color: var(--paper);
@@ -81,6 +152,11 @@
   .wm-pin { height: .55em; margin-top: -.04em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
+  /* Theme toggle (0.34): a glass pill beside the language menu; the
+     top bar's right side groups the two controls. */
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .themebtn { display: flex; align-items: center; gap: 7px; background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; }
+  .themebtn:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
   .dd { position: relative; }
   .dd-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .dd-chev { display: inline-block; margin-left: 8px; font-size: 13px; color: var(--accent); transition: transform .2s ease; }
@@ -182,7 +258,7 @@
   /* Bubble relief, pressed (0.29): while any glass button is held down,
      its relief compresses — the drop shadow shrinks, the inner shade
      deepens, the top light dims — the "press into the bubble" feel. */
-  .langtrigger:active, .dd-item:active, .navsegbtn:active, .tabbtn:active, .subtabbtn:active,
+  .langtrigger:active, .themebtn:active, .dd-item:active, .navsegbtn:active, .tabbtn:active, .subtabbtn:active,
   button.primary:active, button.secondary:active, button.small:active, #discardroute:active,
   a.mapslink:active, a.buttonlink:active { box-shadow: var(--glass-shadow-pressed); }
   /* ---------- Main tabs + route subtabs (0.19) ---------- */
@@ -283,11 +359,14 @@
 <div class="topbar" id="topbar">
   <div class="topbar-in">
     <span class="wordmark" role="img" aria-label="Stopedia"><span class="wm-t" aria-hidden="true">St</span><span class="wm-o" aria-hidden="true"><span class="wm-t">O</span><img class="wm-pin" src="logo-flat.png" alt=""></span><span class="wm-t" aria-hidden="true">pedia</span></span>
-    <div class="dd dd-right" id="langdd">
+    <div class="topbar-actions">
+      <button type="button" class="themebtn" id="themebtn" aria-label="Switch theme"><span id="themeicon" aria-hidden="true">🌙</span><span id="themelabel">Dark</span></button>
+      <div class="dd dd-right" id="langdd">
       <button type="button" class="dd-trigger langtrigger" id="langtrigger" aria-haspopup="true" aria-expanded="false"><span data-i18n="langCurrent">English</span><span class="dd-chev" aria-hidden="true">▾</span></button>
       <div class="dd-panel" id="langmenu" role="menu">
         <button type="button" class="dd-item" id="btn-en" role="menuitem"><span class="dd-check" aria-hidden="true">✓</span><span>English</span></button>
         <button type="button" class="dd-item" id="btn-es" role="menuitem"><span class="dd-check" aria-hidden="true">✓</span><span>Español</span></button>
+      </div>
       </div>
     </div>
   </div>
@@ -454,7 +533,7 @@
           <button class="dd-item" type="button" id="sharecopy" role="menuitem"><span data-i18n="copyLink">Copy link</span></button>
         </div>
       </div>
-      <button class="secondary" id="mapbtn" type="button" data-i18n="viewMap">🗺 View map</button>
+      <button class="secondary" id="mapbtn" type="button" data-i18n="viewMap">🗺 Map viewer</button>
       <div id="mapwrap" class="hidden"><div id="routemap"></div></div>
       <p id="mapnote" class="hint hidden"></p>
       <div id="qrblock" class="hidden">
@@ -583,7 +662,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.33 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.34 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -659,9 +738,12 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.33 — draft, in progress.",
+    footerText: "Version 0.34 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
+    themeDark: "Dark",
+    themeLight: "Light",
+    themeToggle: "Switch theme",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -751,7 +833,7 @@ const STR = {
     totalTimeLabel: "Total time",
     totalDistLabel: "Total distance",
     demoTag: "Example",
-    viewMap: "🗺 View map",
+    viewMap: "🗺 Map viewer",
     mapFail: "The map could not be shown. Check your connection and your TomTom key, then try again.",
     doneWord: "done",
     markDone: "Mark as done",
@@ -849,9 +931,12 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.33 — borrador, en avance.",
+    footerText: "Versión 0.34 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
+    themeDark: "Oscuro",
+    themeLight: "Claro",
+    themeToggle: "Cambiar tema",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -941,7 +1026,7 @@ const STR = {
     totalTimeLabel: "Tiempo total",
     totalDistLabel: "Distancia total",
     demoTag: "Ejemplo",
-    viewMap: "🗺 Ver mapa",
+    viewMap: "🗺 Visor del mapa",
     mapFail: "No se pudo mostrar el mapa. Revisa tu conexión y tu clave de TomTom e inténtalo de nuevo.",
     doneWord: "hechas",
     markDone: "Marcar como hecha",
@@ -983,6 +1068,7 @@ function applyLang(){
   if (typeof refreshHomeLang === "function") refreshHomeLang();
   if (typeof renderNavUI === "function") renderNavUI();
   if (typeof renderModeUI === "function") renderModeUI();
+  if (typeof renderThemeBtn === "function") renderThemeBtn();
   if (typeof refreshSaveConfirm === "function") refreshSaveConfirm();
   renderSaved();
   if (window.__stopediaBooted) {
@@ -992,6 +1078,32 @@ function applyLang(){
 }
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
 document.getElementById("btn-es").addEventListener("click", () => { lang = "es"; localStorage.setItem("stopedia.lang","es"); applyLang(); });
+
+/* ---------- Theme: dark (default) / light (0.34) ---------- */
+/* The choice lives in stopedia.theme; absence means dark. The <head>
+   boot script already set data-theme before first paint when a stored
+   "light" exists — what happens here is the button: it names the
+   CURRENT theme (🌙 Dark / ☀ Light) and one tap flips it, repaints the
+   meta theme-color, and (on a tap) persists the choice. */
+let theme = "dark";
+try { theme = localStorage.getItem("stopedia.theme") === "light" ? "light" : "dark"; } catch (e) {}
+function renderThemeBtn(){
+  const ic = document.getElementById("themeicon"), lb = document.getElementById("themelabel"), btn = document.getElementById("themebtn");
+  if (!ic || !lb || !btn) return;
+  ic.textContent = theme === "light" ? "☀" : "🌙";
+  lb.textContent = t(theme === "light" ? "themeLight" : "themeDark");
+  btn.setAttribute("aria-label", t("themeToggle"));
+}
+function applyTheme(save){
+  if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
+  else document.documentElement.removeAttribute("data-theme");
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute("content", theme === "light" ? "#f3efe8" : "#091b25");
+  if (save) { try { localStorage.setItem("stopedia.theme", theme); } catch (e) {} }
+  renderThemeBtn();
+}
+document.getElementById("themebtn").addEventListener("click", () => { theme = theme === "light" ? "dark" : "light"; applyTheme(true); });
+applyTheme(false);
 
 /* ---------- TomTom key ---------- */
 const keyInput = document.getElementById("apikey");
