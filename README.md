@@ -1,6 +1,16 @@
 # Stopedia
 
-**Version 0.8** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.13** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.13 (October 31, 2026): the “Your TomTom key” panel shows your key as applied. Once a key is saved, the panel shows a calm “API key applied” line with the key masked — only its last 4 characters visible — and an “Edit API key” button, instead of the bare input; editing opens the field empty, with Save and Cancel. Once entered, the key stays saved on the device until you edit or replace it, so you don't type it again on each visit. And if TomTom ever rejects the saved key (a 401 error), the panel flags it — “The saved key did not work” — and opens in edit mode so you can fix it, instead of showing an “applied” badge that doesn't work.
+
+New in 0.12 (October 31, 2026): the app remembers your work. Everything you type — start, stops (in the order you leave them), destination and country — is autosaved on the phone as you go, and if you close Stopedia and come back, it is all right where you left it, including the last built route and its Google Maps link; restoring it makes no TomTom calls at all. After a route is built, a reminder asks “Do you want to save this route?” — routes you don't save stay only as your current work and are never added to Saved routes. A discreet “New route” button clears the current work when you are done with it; saved routes and your TomTom key are not touched.
+
+New in 0.11 (October 31, 2026): a calmer look. A Claude-like single column (up to 720px), content grouped in rounded cards with hairline borders and very soft shadows, big quiet headings and generous whitespace, in the Huis colors: paper background, navy ink text, and Huis orange used sparingly for accents, chevrons and focus rings. Nothing about how the app works changed.
+
+New in 0.10 (October 31, 2026): worldwide support. A country selector (36 countries) at the top of the route panel drives everything else: address lookup now asks TomTom about the selected country, the sheet reader splits addresses at that country's postal codes — or, in countries whose addresses carry no postal code, one address per blank-line block — the review screen flags a missing postal code using the same patterns, and the photo reader reads in the country's language (English, Spanish, Portuguese, French, German, Italian, Dutch or Japanese).
+
+New in 0.9 (October 31, 2026): the page is organized into two collapsible panels — “Build a route” (addresses, photo and list tools, review screen, results and saved routes) and “Your TomTom key” (the key field, its save/test button and the step-by-step guide). If no key is saved, the key panel is the one that opens first. And if you try to build a route without a key, Stopedia does not call TomTom: it opens the key panel and explains what to do — create the free account, create the API key, copy the key itself from the “Key” column (not the ID), and paste it in the panel.
 
 New in 0.8 (October 31, 2026): privacy fix — the example addresses in the start and destination fields are now generic sample addresses; no personal addresses appear anywhere in the app.
 
@@ -51,7 +61,17 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.8** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.13** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.13 (31 de octubre de 2026): el panel «Tu clave de TomTom» muestra la clave como aplicada. Cuando hay una clave guardada, el panel enseña una línea tranquila «Clave API aplicada» con la clave enmascarada — solo se ven sus últimos 4 caracteres — y un botón «Editar clave API», en vez del campo desnudo; al editar, el campo se abre vacío, con Guardar y Cancelar. Una vez ingresada, la clave queda guardada en el aparato hasta que la edites o la reemplaces, así que no hay que escribirla en cada visita. Y si TomTom alguna vez rechaza la clave guardada (error 401), el panel lo marca — «La clave guardada no funcionó» — y se abre en modo de edición para que la corrijas, en vez de mostrar una insignia de «aplicada» que no funciona.
+
+Nuevo en la 0.12 (31 de octubre de 2026): la app recuerda tu trabajo. Todo lo que escribes — salida, paradas (en el orden en que las dejas), destino y país — se guarda solo en el teléfono sobre la marcha, y si cierras Stopedia y vuelves, todo está tal como lo dejaste, incluida la última ruta armada y su enlace de Google Maps; restaurarla no hace ninguna llamada a TomTom. Después de armar una ruta, un recordatorio pregunta «¿Quieres guardar esta ruta?»: las rutas que no guardas quedan solo como tu trabajo actual y nunca se agregan a Rutas guardadas. Un botón discreto «Nueva ruta» limpia el trabajo actual cuando ya terminaste con él; las rutas guardadas y tu clave de TomTom no se tocan.
+
+Nuevo en la 0.11 (31 de octubre de 2026): un aspecto más tranquilo. Una sola columna estilo Claude (hasta 720px), el contenido agrupado en tarjetas redondeadas con bordes finos y sombras muy suaves, títulos grandes y serenos y mucho aire, en los colores de Huis: fondo papel, texto tinta azul marino y el naranja Huis usado con medida en acentos, flechas y anillos de foco. No cambió nada de cómo funciona la app.
+
+Nuevo en la 0.10 (31 de octubre de 2026): soporte mundial. Un selector de país (36 países) arriba del panel de la ruta manda en todo lo demás: la búsqueda de direcciones ahora le pregunta a TomTom por el país elegido, el lector de hojas parte las direcciones en los códigos postales de ese país — o, en países cuyas direcciones no llevan código postal, una dirección por cada bloque separado por líneas en blanco —, la pantalla de revisión marca la falta del código postal con esos mismos patrones, y el lector de fotos lee en el idioma del país (inglés, español, portugués, francés, alemán, italiano, neerlandés o japonés).
+
+Nuevo en la 0.9 (31 de octubre de 2026): la página se organiza en dos pestañas desplegables — «Armar una ruta» (direcciones, herramientas de foto y lista, pantalla de revisión, resultados y rutas guardadas) y «Tu clave de TomTom» (el campo de la clave, su botón de guardar y probar, y la guía paso a paso). Si no hay clave guardada, el panel que se abre primero es el de la clave. Y si intentas armar una ruta sin clave, Stopedia no llama a TomTom: abre el panel de la clave y explica qué hacer — crear la cuenta gratuita, crear la clave API, copiar la clave misma desde la columna «Key» (no el ID) y pegarla en el panel.
 
 Nuevo en la 0.8 (31 de octubre de 2026): corrección de privacidad — las direcciones de ejemplo en los campos de salida y destino ahora son direcciones genéricas de muestra; no aparece ninguna dirección personal en la app.
 

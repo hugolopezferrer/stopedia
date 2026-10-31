@@ -6,63 +6,85 @@
 <title>Stopedia — Route stops, ordered</title>
 <meta name="description" content="Stopedia turns a list of addresses into an ordered route that opens in Google Maps, and lets you save routes to reuse and edit later.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0b5fff">
+<meta name="theme-color" content="#0a2b3c">
 <style>
-  :root { --blue:#0b5fff; --dark:#14213d; --light:#f4f6fb; --line:#d7dce6; --danger:#c0392b; }
+  :root {
+    --paper:#f3efe8; --surface:#fffdf9; --surface-2:#e9ecec;
+    --ink:#0a2b3c; --muted:#4a5f68; --line:#c9cec9; --line-strong:#8e9ca1;
+    --accent:#cf5f2e; --accent-soft:#f8e2d3;
+    --terra:#a33e2a; --terra-soft:#f6ddd3;
+    --blue:#173f55; --blue-soft:#dce9ee;
+    --shadow:0 16px 44px rgba(25,47,39,.08); --radius:14px;
+    --cream:#fff8ee;
+  }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--light); color: var(--dark); }
-  header { background: var(--dark); color:#fff; padding: 18px 16px 14px; }
-  header h1 { margin:0; font-size: 30px; letter-spacing: .5px; }
-  header p { margin:4px 0 0; font-size: 15px; opacity:.85; }
-  .langbar { display:flex; gap:8px; margin-top:10px; }
-  .langbar button { background:transparent; color:#fff; border:1px solid #fff; border-radius:20px; padding:4px 14px; font-size:14px; cursor:pointer; }
-  .langbar button.active { background:#fff; color:var(--dark); font-weight:700; }
-  main { max-width: 640px; margin: 0 auto; padding: 16px; }
-  section { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
-  h2 { margin:0 0 10px; font-size:20px; }
-  label { display:block; font-size:14px; font-weight:600; margin:12px 0 4px; }
-  input[type="text"], textarea { width:100%; padding:10px; font-size:16px; border:1px solid var(--line); border-radius:8px; }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--paper); color: var(--ink); }
+  header { max-width:720px; margin:0 auto; padding: 30px 16px 4px; }
+  header h1 { margin:0; font-size: 34px; font-weight:700; letter-spacing: .2px; color: var(--ink); }
+  header p { margin:6px 0 0; font-size: 16px; color: var(--muted); }
+  .langbar { display:flex; gap:8px; margin-top:14px; }
+  .langbar button { background: var(--surface); color: var(--ink); border:1px solid var(--line-strong); border-radius:20px; padding:5px 15px; font-size:14px; cursor:pointer; }
+  .langbar button.active { background: var(--ink); color: var(--cream); border-color: var(--ink); font-weight:700; }
+  main { max-width: 720px; margin: 0 auto; padding: 18px 16px; }
+  section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:20px; margin-bottom:18px; }
+  h2 { margin:0 0 12px; font-size:21px; font-weight:650; color: var(--ink); }
+  label { display:block; font-size:14px; font-weight:600; margin:14px 0 5px; color: var(--ink); }
+  input[type="text"], textarea, select { width:100%; padding:12px 14px; font-size:16px; color: var(--ink); background: var(--surface); border:1px solid var(--line); border-radius:12px; }
+  input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
   textarea { min-height:110px; resize:vertical; }
-  .hint { font-size:13px; color:#5a6478; margin-top:6px; }
-  button.primary { width:100%; background:var(--blue); color:#fff; border:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; cursor:pointer; margin-top:14px; }
-  button.secondary { background:#fff; color:var(--blue); border:2px solid var(--blue); border-radius:10px; padding:10px 14px; font-size:15px; font-weight:700; cursor:pointer; }
-  button.small { padding:6px 10px; font-size:13px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; }
-  button.danger { color:var(--danger); border-color:var(--danger); }
+  .hint { font-size:13px; color: var(--muted); margin-top:6px; }
+  button.primary { width:100%; background: var(--ink); color: var(--cream); border:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer; margin-top:16px; }
+  button.secondary { background: var(--surface); color: var(--ink); border:1px solid var(--line-strong); border-radius:12px; padding:11px 15px; font-size:15px; font-weight:700; cursor:pointer; }
+  button.small { padding:7px 11px; font-size:13px; border-radius:9px; border:1px solid var(--line); background: var(--surface); color: var(--ink); cursor:pointer; }
+  button.danger { color: var(--terra); border-color: var(--terra); }
   .stoprow { display:flex; gap:6px; align-items:center; margin-top:8px; }
   .stoprow input { flex:1; }
   .stoprow .num { font-weight:700; min-width:22px; text-align:center; }
   #status { font-size:14px; margin-top:10px; min-height:20px; }
   #result ol { padding-left:22px; margin:10px 0; }
   #result li { margin:6px 0; font-size:15px; }
-  .route-card { border:1px solid var(--line); border-radius:10px; padding:12px; margin-top:10px; }
-  .route-card h3 { margin:0 0 4px; font-size:17px; }
-  .route-card .meta { font-size:13px; color:#5a6478; margin-bottom:8px; }
+  .route-card { border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:10px; background: var(--surface); }
+  .route-card h3 { margin:0 0 4px; font-size:17px; color: var(--ink); }
+  .route-card .meta { font-size:13px; color: var(--muted); margin-bottom:8px; }
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
-  a.mapslink { display:block; text-align:center; background:#188038; color:#fff; text-decoration:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; margin-top:12px; }
+  a.mapslink { display:block; text-align:center; background: var(--ink); color: var(--cream); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; }
   .hidden { display:none; }
   .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-  .progress { height:10px; background:#e5e9f2; border-radius:5px; overflow:hidden; margin-top:12px; }
-  .progress > div { height:100%; width:0%; background: var(--blue); transition: width .2s; }
-  .reviewrow { display:flex; gap:6px; align-items:center; margin-top:8px; }
+  .progress { height:10px; background: var(--surface-2); border-radius:5px; overflow:hidden; margin-top:12px; }
+  .progress > div { height:100%; width:0%; background: var(--accent); transition: width .2s; }
+  .reviewrow { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; }
   .reviewrow input { flex:1; }
-  .reviewrow .warn { min-width:22px; text-align:center; font-size:16px; }
+  .reviewrow .warn { min-width:22px; text-align:center; font-size:16px; color: var(--terra); }
+  .flagreason { flex:0 0 100%; margin-left:28px; font-size:12px; color: var(--terra); }
+  .flagreason:empty { display:none; }
   #addstatus { font-size:14px; margin-top:10px; min-height:20px; }
   button[disabled] { opacity:.5; cursor:default; }
   ol.steps { padding-left: 20px; margin: 8px 0 4px; }
   ol.steps li { margin: 7px 0; font-size: 15px; }
   .stopbox { display:flex; gap:8px; align-items:center; margin-top:8px; }
-  .stopbox .num { font-weight:700; min-width:22px; text-align:center; color:#5a6478; }
+  .stopbox .num { font-weight:700; min-width:22px; text-align:center; color: var(--muted); }
   .stopbox input { flex:1; }
-  .stopbox .check { min-width:24px; text-align:center; font-weight:700; color:#188038; visibility:hidden; }
-  .stopbox.filled input { border-color:#188038; border-width:2px; }
+  .stopbox .check { min-width:24px; text-align:center; font-weight:700; color: var(--accent); visibility:hidden; }
+  .stopbox.filled input { border-color: var(--accent); border-width:2px; }
   .stopbox.filled .check { visibility:visible; }
-  .draghandle { touch-action:none; cursor:grab; font-size:20px; line-height:1; padding:8px 6px; color:#5a6478; user-select:none; -webkit-user-select:none; }
+  .draghandle { touch-action:none; cursor:grab; font-size:20px; line-height:1; padding:8px 6px; color: var(--line-strong); user-select:none; -webkit-user-select:none; }
   .draghandle:active { cursor:grabbing; }
-  .dragging { opacity:.6; background:#eef3ff; border-radius:8px; }
+  .dragging { opacity:.6; background: var(--blue-soft); border-radius:8px; }
   #result li.stopitem { display:flex; align-items:center; gap:6px; }
   #result li .draghandle { padding:4px; font-size:17px; }
-  a.buttonlink { display:block; text-align:center; background: var(--dark); color:#fff; text-decoration:none; border-radius:10px; padding:12px; font-size:16px; font-weight:700; margin-top:12px; }
-  footer { text-align:center; font-size:13px; color:#5a6478; padding: 8px 16px 28px; }
+  a.buttonlink { display:block; text-align:center; background: var(--blue); color: var(--cream); text-decoration:none; border-radius:12px; padding:13px; font-size:16px; font-weight:700; margin-top:12px; }
+  .panel { margin-bottom:18px; }
+  .panelhead { width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px; background: var(--surface); color: var(--ink); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:16px 20px; font-size:19px; font-weight:700; cursor:pointer; text-align:left; }
+  .panelhead .chev { font-size:16px; color: var(--accent); }
+  .panelbody { margin-top:14px; }
+  .panelbody section:last-child { margin-bottom:0; }
+  .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
+  .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
+  .keyappliedline { font-weight:650; font-size:16px; margin:14px 0 8px; color: var(--ink); }
+  .keycheck { color: var(--accent); font-weight:800; }
+  .keymask { background: var(--accent-soft); color: var(--muted); border-radius:12px; padding:11px 14px; letter-spacing:2px; font-size:15px; margin:6px 0; word-break: break-all; }
+  .keybad { background: var(--terra-soft); color: var(--terra); border-radius:10px; padding:10px 12px; font-size:14px; margin:12px 0 4px; }
+  footer { text-align:center; font-size:13px; color: var(--muted); padding: 8px 16px 30px; }
 </style>
 </head>
 <body>
@@ -76,24 +98,14 @@
 </header>
 <main>
 
-  <section id="setup">
-    <h2 data-i18n="setupTitle">1. Your TomTom key</h2>
-    <p class="hint" data-i18n="setupText">Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:</p>
-    <ol class="steps">
-      <li data-i18n="step1">Tap the button below to open TomTom and create your free account (your email and a password, on TomTom's own site).</li>
-      <li data-i18n="step2">Inside TomTom, go to “API &amp; SDK Keys” and create a key: name it “Stopedia” and select all the products.</li>
-      <li data-i18n="step3">In the keys list, tap the key text in the “Key” column: it copies the whole key and you will see “Copied!”. Careful — copy the key itself, not the key's ID.</li>
-      <li data-i18n="step4">Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.</li>
-    </ol>
-    <a class="buttonlink" href="https://my.tomtom.com" target="_blank" rel="noopener" data-i18n="openTomTom">Open TomTom and create my free account</a>
-    <label for="apikey" data-i18n="keyLabel">TomTom API key</label>
-    <input type="text" id="apikey" autocomplete="off" spellcheck="false" placeholder="...">
-    <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save and test my key</button>
-    <p id="keystatus" class="hint"></p>
-  </section>
+  <div class="panel" id="panel-route">
+    <button type="button" class="panelhead" id="panelroutehead" aria-expanded="true" aria-controls="panelroutebody"><span data-i18n="panelRouteTitle">Build a route</span><span class="chev" id="chevroute">▾</span></button>
+    <div class="panelbody" id="panelroutebody">
 
   <section id="builder">
-    <h2 data-i18n="buildTitle">2. Build a route</h2>
+    <h2 data-i18n="buildTitle">Build a route</h2>
+    <label for="country" data-i18n="countryLabel">Country</label>
+    <select id="country"></select>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
     <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 123 Main St, Orlando, FL 32801">
     <label for="destination" data-i18n="destLabel">Final destination</label>
@@ -103,8 +115,17 @@
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
     <p class="hint" data-i18n="dragHint">Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.</p>
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
+    <div class="btnrow"><button class="small" id="newroute" type="button" data-i18n="newRoute">New route</button></div>
     <p id="status"></p>
     <div id="result" class="hidden">
+      <div id="savereminder" class="notice hidden">
+        <p style="margin-top:0"><strong data-i18n="remindTitle">Do you want to save this route?</strong></p>
+        <p class="hint" data-i18n="remindText">If you don't save it, it stays only as your current work — it is not added to Saved routes.</p>
+        <div class="btnrow">
+          <button class="secondary" id="remindsave" type="button" data-i18n="remindSave">Save route</button>
+          <button class="secondary" id="remindlater" type="button" data-i18n="remindLater">Not now</button>
+        </div>
+      </div>
       <ol id="ordered"></ol>
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
@@ -164,14 +185,60 @@
   </section>
 
   <section id="saved">
-    <h2 data-i18n="savedTitle">3. Saved routes</h2>
+    <h2 data-i18n="savedTitle">Saved routes</h2>
     <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
     <div id="savedlist"></div>
     <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
   </section>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-key">
+    <button type="button" class="panelhead" id="panelkeyhead" aria-expanded="false" aria-controls="panelkeybody"><span data-i18n="panelKeyTitle">Your TomTom key</span><span class="chev" id="chevkey">▸</span></button>
+    <div class="panelbody hidden" id="panelkeybody">
+      <div class="notice" id="nokeynotice">
+        <p style="margin-top:0"><strong data-i18n="noKeyTitle">You need your free TomTom key first</strong></p>
+        <p data-i18n="noKeyText">Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:</p>
+        <ol class="steps">
+          <li data-i18n="noKeyStep1">Create a free account at developer.tomtom.com (no credit card needed).</li>
+          <li data-i18n="noKeyStep2">Inside TomTom, create an API key and select all the products.</li>
+          <li data-i18n="noKeyStep3">Copy the key itself from the “Key” column of the keys list — not the key's ID.</li>
+          <li data-i18n="noKeyStep4">Paste the key in the field in this panel and tap “Save and test my key”.</li>
+        </ol>
+        <p class="hint" data-i18n="noKeyGuide">The detailed numbered steps and the key field are right below, in this same panel.</p>
+      </div>
+
+  <section id="setup">
+    <h2 data-i18n="setupTitle">Your TomTom key</h2>
+    <p class="hint" data-i18n="setupText">Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:</p>
+    <ol class="steps">
+      <li data-i18n="step1">Tap the button below to open TomTom and create your free account (your email and a password, on TomTom's own site).</li>
+      <li data-i18n="step2">Inside TomTom, go to “API &amp; SDK Keys” and create a key: name it “Stopedia” and select all the products.</li>
+      <li data-i18n="step3">In the keys list, tap the key text in the “Key” column: it copies the whole key and you will see “Copied!”. Careful — copy the key itself, not the key's ID.</li>
+      <li data-i18n="step4">Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.</li>
+    </ol>
+    <a class="buttonlink" href="https://my.tomtom.com" target="_blank" rel="noopener" data-i18n="openTomTom">Open TomTom and create my free account</a>
+    <div id="keyapplied" class="hidden">
+      <p class="keyappliedline"><span class="keycheck">✓</span> <span data-i18n="keyApplied">API key applied</span></p>
+      <p class="keymask" id="keymask"></p>
+      <div class="btnrow"><button class="secondary" id="editkey" type="button" data-i18n="editKey">Edit API key</button></div>
+    </div>
+    <div id="keyedit">
+      <p id="keybadnote" class="keybad hidden" data-i18n="keyBad">The saved key did not work — paste a new key below.</p>
+      <label for="apikey" data-i18n="keyLabel">TomTom API key</label>
+      <input type="text" id="apikey" autocomplete="off" spellcheck="false" data-i18n-ph="keyPh" placeholder="Paste your TomTom key here">
+      <div class="btnrow">
+        <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save and test my key</button>
+        <button class="secondary" id="cancelkey" type="button" data-i18n="cancelKey">Cancel</button>
+      </div>
+      <p id="keystatus" class="hint"></p>
+    </div>
+  </section>
+    </div>
+  </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Draft version — built for testing.</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.13 — draft, in progress.</span></footer>
 
 <script>
 "use strict";
@@ -179,7 +246,30 @@
 const STR = {
   en: {
     tagline: "Your stops, in the right order.",
-    setupTitle: "1. Your TomTom key",
+    setupTitle: "Your TomTom key",
+    panelRouteTitle: "Build a route",
+    panelKeyTitle: "Your TomTom key",
+    noKeyTitle: "You need your free TomTom key first",
+    noKeyText: "Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:",
+    noKeyStep1: "Create a free account at developer.tomtom.com (no credit card needed).",
+    noKeyStep2: "Inside TomTom, create an API key and select all the products.",
+    noKeyStep3: "Copy the key itself from the “Key” column of the keys list — not the key's ID.",
+    noKeyStep4: "Paste the key in the field in this panel and tap “Save and test my key”.",
+    noKeyGuide: "The detailed numbered steps and the key field are right below, in this same panel.",
+    countryLabel: "Country",
+    keyApplied: "API key applied",
+    editKey: "Edit API key",
+    cancelKey: "Cancel",
+    keyBad: "The saved key did not work — paste a new key below.",
+    keyPh: "Paste your TomTom key here",
+    flagNoPostal: "Missing postal code",
+    flagCheck: "Check this address",
+    remindTitle: "Do you want to save this route?",
+    remindText: "If you don't save it, it stays only as your current work — it is not added to Saved routes.",
+    remindSave: "Save route",
+    remindLater: "Not now",
+    newRoute: "New route",
+    confirmNew: "Start a new route? This clears the addresses and the current result. Your saved routes and your TomTom key stay as they are.",
     setupText: "Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:",
     step1: "Tap the button below to open TomTom and create your free account (your email and a password, on TomTom's own site).",
     step2: "Inside TomTom, go to “API & SDK Keys” and create a key: name it “Stopedia” and select all the products.",
@@ -190,7 +280,7 @@ const STR = {
     testing: "Testing your key…",
     keyWorks: "Your key works. You can build routes now.",
     keyFails: "That key did not work. Check that you copied the whole key and try again.",
-    buildTitle: "2. Build a route",
+    buildTitle: "Build a route",
     originLabel: "Start (where you leave from)", originPh: "e.g. 123 Main St, Orlando, FL 32801",
     destLabel: "Final destination", destPh: "e.g. 456 Oak Ave, Orlando, FL 32801",
     stopsLabel: "Stops — one address per box, in any order", stopsPh: "One address per line",
@@ -199,15 +289,15 @@ const STR = {
     buildBtn: "Order my stops", openMaps: "Open route in Google Maps",
     routeNameLabel: "Name for this route", routeNamePh: "e.g. Pharmacies — Friday",
     saveRouteBtn: "Save this route",
-    savedTitle: "3. Saved routes",
+    savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.8 — draft, in progress.",
+    footerText: "Version 0.13 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
     needKeyPaste: "Paste your key in the field first.",
-    needKey: "Paste your TomTom API key first (step 1).",
+    needKey: "Add your TomTom key first — I opened the “Your TomTom key” panel below, with the steps.",
     needOrigin: "Write the start address.", needDest: "Write the final destination.",
     needStops: "Write at least one stop.",
     tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
@@ -250,11 +340,34 @@ const STR = {
     geminiNoCopy: "The copy did not work. In Gemini, ask it to extract the addresses, one per line, with ZIP codes.",
     sharePhoto: "📤 Share the photo with my AI",
     shareNoSupport: "This browser cannot share the photo from here. Open your AI app and attach the photo there.",
-    aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, state, and 5-digit ZIP code). Reply with ONLY the addresses, one per line, with no numbering and no comments."
+    aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments."
   },
   es: {
     tagline: "Tus paradas, en el orden correcto.",
-    setupTitle: "1. Tu clave de TomTom",
+    setupTitle: "Tu clave de TomTom",
+    panelRouteTitle: "Armar una ruta",
+    panelKeyTitle: "Tu clave de TomTom",
+    noKeyTitle: "Primero necesitas tu clave gratuita de TomTom",
+    noKeyText: "Stopedia busca las direcciones con TomTom, así que necesita una clave de tu propia cuenta gratuita de TomTom. Toma un par de minutos y se hace una sola vez:",
+    noKeyStep1: "Crea una cuenta gratuita en developer.tomtom.com (no pide tarjeta).",
+    noKeyStep2: "Dentro de TomTom, crea una clave API y selecciona todos los productos.",
+    noKeyStep3: "Copia la clave misma desde la columna «Key» de la lista de llaves, no el ID de la llave.",
+    noKeyStep4: "Pega la clave en el campo de este panel y toca «Guardar y probar mi clave».",
+    noKeyGuide: "Los pasos numerados en detalle y el campo de la clave están aquí abajo, en este mismo panel.",
+    countryLabel: "País",
+    keyApplied: "Clave API aplicada",
+    editKey: "Editar clave API",
+    cancelKey: "Cancelar",
+    keyBad: "La clave guardada no funcionó: pega una clave nueva abajo.",
+    keyPh: "Pega aquí tu clave de TomTom",
+    flagNoPostal: "Falta el código postal",
+    flagCheck: "Revisa esta dirección",
+    remindTitle: "¿Quieres guardar esta ruta?",
+    remindText: "Si no la guardas, queda solo como tu trabajo actual: no se agrega a Rutas guardadas.",
+    remindSave: "Guardar ruta",
+    remindLater: "Ahora no",
+    newRoute: "Nueva ruta",
+    confirmNew: "¿Empezar una ruta nueva? Esto borra las direcciones y el resultado actual. Tus rutas guardadas y tu clave de TomTom quedan como están.",
     setupText: "Stopedia busca las direcciones con TomTom, un servicio de mapas. Cada persona usa su propia cuenta gratuita de TomTom: la búsqueda de direcciones es gratis hasta 20.000 consultas al mes y no pide tarjeta. Sigue estos pasos una sola vez:",
     step1: "Toca el botón de abajo para abrir TomTom y crear tu cuenta gratuita (tu correo y una contraseña, en el sitio de TomTom).",
     step2: "Dentro de TomTom, entra a «API & SDK Keys» y crea una clave: ponle de nombre «Stopedia» y selecciona todos los productos.",
@@ -265,7 +378,7 @@ const STR = {
     testing: "Probando tu clave…",
     keyWorks: "Tu clave funciona. Ya puedes armar rutas.",
     keyFails: "Esa clave no funcionó. Revisa que la hayas copiado completa e inténtalo de nuevo.",
-    buildTitle: "2. Armar una ruta",
+    buildTitle: "Armar una ruta",
     originLabel: "Salida (desde dónde sales)", originPh: "ej. 123 Main St, Orlando, FL 32801",
     destLabel: "Destino final", destPh: "ej. 456 Oak Ave, Orlando, FL 32801",
     stopsLabel: "Paradas — una dirección por casilla, en cualquier orden", stopsPh: "Una dirección por línea",
@@ -274,15 +387,15 @@ const STR = {
     buildBtn: "Ordenar mis paradas", openMaps: "Abrir la ruta en Google Maps",
     routeNameLabel: "Nombre para esta ruta", routeNamePh: "ej. Farmacias — viernes",
     saveRouteBtn: "Guardar esta ruta",
-    savedTitle: "3. Rutas guardadas",
+    savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.8 — borrador, en avance.",
+    footerText: "Versión 0.13 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
     needKeyPaste: "Primero pega tu clave en el campo.",
-    needKey: "Primero pega tu clave API de TomTom (paso 1).",
+    needKey: "Primero agrega tu clave de TomTom: abrí el panel «Tu clave de TomTom» aquí abajo, con los pasos.",
     needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
     needStops: "Escribe al menos una parada.",
     tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
@@ -325,7 +438,7 @@ const STR = {
     geminiNoCopy: "No se pudo copiar automáticamente. En Gemini, pídele que extraiga las direcciones, una por línea, con el código postal.",
     sharePhoto: "📤 Compartir la foto con mi IA",
     shareNoSupport: "Este navegador no puede compartir la foto desde aquí. Abre tu aplicación de IA y adjunta la foto allá.",
-    aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad, estado y código postal ZIP de 5 dígitos). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios."
+    aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios."
   }
 };
 let lang = localStorage.getItem("stopedia.lang") || "en";
@@ -337,6 +450,7 @@ function applyLang(){
   document.getElementById("btn-en").classList.toggle("active", lang === "en");
   document.getElementById("btn-es").classList.toggle("active", lang === "es");
   if (typeof refreshBoxPlaceholders === "function") refreshBoxPlaceholders();
+  if (typeof renderCountryOptions === "function") renderCountryOptions();
   renderSaved();
 }
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
@@ -344,24 +458,138 @@ document.getElementById("btn-es").addEventListener("click", () => { lang = "es";
 
 /* ---------- TomTom key ---------- */
 const keyInput = document.getElementById("apikey");
-keyInput.value = localStorage.getItem("stopedia.key") || "";
+keyInput.value = "";
 document.getElementById("savekey").addEventListener("click", async () => {
   const ks = document.getElementById("keystatus");
   const key = keyInput.value.trim();
   if (!key) { ks.textContent = t("needKeyPaste"); return; }
   localStorage.setItem("stopedia.key", key);
+  document.getElementById("nokeynotice").classList.add("hidden");
   ks.textContent = t("testing");
   try {
-    const probe = await geocode("Orlando, FL", key);
-    ks.textContent = probe ? t("keyWorks") : t("keyFails");
+    const probe = await geocode("Orlando, FL", key, "US");
+    if (probe) {
+      localStorage.removeItem("stopedia.keybad");
+      ks.textContent = t("keyWorks");
+    } else {
+      localStorage.setItem("stopedia.keybad", "1");
+      ks.textContent = t("keyFails");
+    }
   } catch (e) {
+    localStorage.setItem("stopedia.keybad", "1");
     ks.textContent = t("keyFails");
   }
+  keyInput.value = "";
+  renderKeyPanel();
 });
 
+/* ---------- Key state: applied view vs edit view (0.13) ---------- */
+/* With a saved key, the panel shows the key as APPLIED (masked, last 4
+   characters only) instead of the bare input. A 401 from any TomTom call
+   made with the saved key sets stopedia.keybad: the panel then opens in
+   the edit view with a "saved key did not work" note. */
+function renderKeyPanel(){
+  const key = (localStorage.getItem("stopedia.key") || "").trim();
+  const bad = localStorage.getItem("stopedia.keybad") === "1";
+  const applied = document.getElementById("keyapplied");
+  const edit = document.getElementById("keyedit");
+  document.getElementById("keybadnote").classList.toggle("hidden", !(key && bad));
+  document.getElementById("cancelkey").classList.toggle("hidden", !key);
+  if (key && !bad) {
+    document.getElementById("keymask").textContent = "••••••••••••" + key.slice(-4);
+    applied.classList.remove("hidden");
+    edit.classList.add("hidden");
+  } else {
+    applied.classList.add("hidden");
+    edit.classList.remove("hidden");
+  }
+}
+function markKeyBad(){
+  try { localStorage.setItem("stopedia.keybad", "1"); } catch (e) {}
+  renderKeyPanel();
+}
+document.getElementById("editkey").addEventListener("click", () => {
+  document.getElementById("keyapplied").classList.add("hidden");
+  document.getElementById("keyedit").classList.remove("hidden");
+  document.getElementById("keybadnote").classList.add("hidden");
+  keyInput.value = "";
+  keyInput.focus();
+});
+document.getElementById("cancelkey").addEventListener("click", () => {
+  keyInput.value = "";
+  document.getElementById("keystatus").textContent = "";
+  renderKeyPanel();
+});
+
+/* ---------- Collapsible panels (0.9) ---------- */
+function hasKey(){ return !!(localStorage.getItem("stopedia.key") || "").trim(); }
+function setPanel(name, open){
+  const isKey = name === "key";
+  document.getElementById(isKey ? "panelkeybody" : "panelroutebody").classList.toggle("hidden", !open);
+  document.getElementById(isKey ? "chevkey" : "chevroute").textContent = open ? "▾" : "▸";
+  document.getElementById(isKey ? "panelkeyhead" : "panelroutehead").setAttribute("aria-expanded", open ? "true" : "false");
+}
+function togglePanel(name){
+  const body = document.getElementById(name === "key" ? "panelkeybody" : "panelroutebody");
+  setPanel(name, body.classList.contains("hidden"));
+}
+document.getElementById("panelroutehead").addEventListener("click", () => togglePanel("route"));
+document.getElementById("panelkeyhead").addEventListener("click", () => togglePanel("key"));
+function initPanels(){
+  const keyed = hasKey();
+  setPanel("route", keyed);
+  setPanel("key", !keyed);
+  document.getElementById("nokeynotice").classList.toggle("hidden", keyed);
+}
+/* No-key guard: anything that needs TomTom checks the saved key first.
+   With no key there is NO TomTom call — the explanation in the key panel
+   is shown instead, the key panel opens and the page scrolls to it. */
+function showNoKeyGuard(){
+  document.getElementById("nokeynotice").classList.remove("hidden");
+  setPanel("key", true);
+  statusEl.textContent = t("needKey");
+  document.getElementById("panel-key").scrollIntoView({ behavior: "smooth" });
+}
+
+/* ---------- Country & worldwide support (0.10) ---------- */
+const COUNTRY_CODES = ["US","CA","MX","GT","HN","SV","NI","CR","PA","DO","PR","CU","CO","VE","EC","PE","CL","AR","BO","PY","UY","BR","ES","PT","FR","IT","DE","NL","BE","GB","IE","AU","NZ","JP","IN","ZA"];
+const COUNTRY_NAMES = {
+  en: { US:"United States", CA:"Canada", MX:"Mexico", GT:"Guatemala", HN:"Honduras", SV:"El Salvador", NI:"Nicaragua", CR:"Costa Rica", PA:"Panama", DO:"Dominican Republic", PR:"Puerto Rico", CU:"Cuba", CO:"Colombia", VE:"Venezuela", EC:"Ecuador", PE:"Peru", CL:"Chile", AR:"Argentina", BO:"Bolivia", PY:"Paraguay", UY:"Uruguay", BR:"Brazil", ES:"Spain", PT:"Portugal", FR:"France", IT:"Italy", DE:"Germany", NL:"Netherlands", BE:"Belgium", GB:"United Kingdom", IE:"Ireland", AU:"Australia", NZ:"New Zealand", JP:"Japan", IN:"India", ZA:"South Africa" },
+  es: { US:"Estados Unidos", CA:"Canadá", MX:"México", GT:"Guatemala", HN:"Honduras", SV:"El Salvador", NI:"Nicaragua", CR:"Costa Rica", PA:"Panamá", DO:"República Dominicana", PR:"Puerto Rico", CU:"Cuba", CO:"Colombia", VE:"Venezuela", EC:"Ecuador", PE:"Perú", CL:"Chile", AR:"Argentina", BO:"Bolivia", PY:"Paraguay", UY:"Uruguay", BR:"Brasil", ES:"España", PT:"Portugal", FR:"Francia", IT:"Italia", DE:"Alemania", NL:"Países Bajos", BE:"Bélgica", GB:"Reino Unido", IE:"Irlanda", AU:"Australia", NZ:"Nueva Zelanda", JP:"Japón", IN:"India", ZA:"Sudáfrica" }
+};
+function getCountry(){
+  const c = localStorage.getItem("stopedia.country") || "US";
+  return COUNTRY_CODES.includes(c) ? c : "US";
+}
+function renderCountryOptions(){
+  const sel = document.getElementById("country");
+  if (!sel) return;
+  sel.innerHTML = "";
+  COUNTRY_CODES.forEach(cc => {
+    const o = document.createElement("option");
+    o.value = cc;
+    o.textContent = (COUNTRY_NAMES[lang] && COUNTRY_NAMES[lang][cc]) || cc;
+    sel.appendChild(o);
+  });
+  sel.value = getCountry();
+}
+document.getElementById("country").addEventListener("change", (e) => {
+  localStorage.setItem("stopedia.country", e.target.value);
+  saveWorkState();
+});
+const OCR_LANGS = {
+  US:"eng", GB:"eng", CA:"eng", AU:"eng", NZ:"eng", IE:"eng", IN:"eng", ZA:"eng", PR:"spa+eng",
+  ES:"spa+eng", MX:"spa+eng", AR:"spa+eng", CO:"spa+eng", CL:"spa+eng", PE:"spa+eng", VE:"spa+eng",
+  GT:"spa+eng", HN:"spa+eng", SV:"spa+eng", NI:"spa+eng", CR:"spa+eng", PA:"spa+eng", DO:"spa+eng",
+  CU:"spa+eng", EC:"spa+eng", BO:"spa+eng", PY:"spa+eng", UY:"spa+eng",
+  BR:"por", PT:"por", FR:"fra", BE:"nld", DE:"deu", IT:"ita", NL:"nld", JP:"jpn+eng"
+};
+function ocrLangFor(cc){ return OCR_LANGS[cc] || "eng"; }
+
 /* ---------- Geocoding (TomTom) ---------- */
-async function geocode(address, key){
-  const url = "https://api.tomtom.com/search/2/geocode/" + encodeURIComponent(address) + ".json?key=" + encodeURIComponent(key) + "&limit=1";
+async function geocode(address, key, ccOverride){
+  const cc = ccOverride || getCountry();
+  const url = "https://api.tomtom.com/search/2/geocode/" + encodeURIComponent(address) + ".json?key=" + encodeURIComponent(key) + "&limit=1&countrySet=" + encodeURIComponent(cc);
   const res = await fetch(url);
   if (!res.ok) throw new Error("TomTom " + res.status);
   const data = await res.json();
@@ -449,6 +677,7 @@ for (let i = 0; i < MAXSTOPS; i++) {
     boxInputs.length = 0;
     rows.forEach(r => { boxWrap.appendChild(r); boxInputs.push(r._input); });
     refreshBoxPlaceholders();
+    queueSaveWork();
   });
   boxInputs.push(inp);
   inp.addEventListener("input", () => row.classList.toggle("filled", !!inp.value.trim()));
@@ -510,7 +739,7 @@ document.getElementById("build").addEventListener("click", async () => {
   const destTxt = document.getElementById("destination").value.trim();
   const stopTxts = collectStopTexts();
   statusEl.textContent = "";
-  if (!key) { statusEl.textContent = t("needKey"); return; }
+  if (!key) { showNoKeyGuard(); return; }
   if (!originTxt) { statusEl.textContent = t("needOrigin"); return; }
   if (!destTxt) { statusEl.textContent = t("needDest"); return; }
   if (!stopTxts.length) { statusEl.textContent = t("needStops"); return; }
@@ -532,7 +761,7 @@ document.getElementById("build").addEventListener("click", async () => {
     try {
       const opt = await optimizeWithTomTom([origin, ...pts, destination], key);
       if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; }
-    } catch (e) { /* optimization unavailable: fall back below */ }
+    } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); /* optimization unavailable: fall back below */ }
     if (!ordered) {
       // Fallback: nearest-neighbour by straight-line distance.
       ordered = [];
@@ -546,35 +775,13 @@ document.getElementById("build").addEventListener("click", async () => {
       }
     }
     currentRoute = { origin, destination, stops: ordered };
-    const ol = document.getElementById("ordered");
-    ol.innerHTML = "";
-    const mkFixed = (p) => { const li = document.createElement("li"); li.textContent = p.label; return li; };
-    const originLi = mkFixed(origin), destLi = mkFixed(destination);
-    ol.appendChild(originLi);
-    ordered.forEach(p => {
-      const li = document.createElement("li"); li.className = "stopitem";
-      const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
-      const lab = document.createElement("span"); lab.textContent = p.label;
-      li.append(handle, lab);
-      li._point = p;
-      attachDrag(handle, li, () => Array.from(ol.querySelectorAll(".stopitem")), (lis) => {
-        currentRoute.stops = lis.map(x => x._point);
-        ol.appendChild(originLi);
-        lis.forEach(x => ol.appendChild(x));
-        ol.appendChild(destLi);
-        document.getElementById("mapslink").href = mapsUrl(currentRoute);
-        document.getElementById("methodnote").textContent = t("manualNote");
-        document.getElementById("esttime").textContent = "";
-      });
-      ol.appendChild(li);
-    });
-    ol.appendChild(destLi);
-    document.getElementById("methodnote").textContent = (method === "road") ? t("optRoad") : t("optLine");
-    document.getElementById("esttime").textContent = (method === "road" && totalSec !== null) ? (t("estTime") + fmtDuration(totalSec)) : "";
-    document.getElementById("mapslink").href = mapsUrl(currentRoute);
-    document.getElementById("result").classList.remove("hidden");
+    buildInfo = { method, totalSec, manual: false };
+    remindWanted = true;
+    renderResult();
+    saveWorkState();
     statusEl.textContent = "";
   } catch (e) {
+    if (String(e && e.message).includes("401")) markKeyBad();
     statusEl.textContent = "Error: " + e.message;
   }
 });
@@ -594,6 +801,9 @@ document.getElementById("saveroute").addEventListener("click", () => {
   editingId = null;
   statusEl.textContent = t("routeSaved");
   renderSaved();
+  remindWanted = false;
+  updateReminder();
+  saveWorkState();
 });
 function renderSaved(){
   const routes = loadRoutes();
@@ -630,9 +840,137 @@ function renderSaved(){
     list.appendChild(card);
   });
 }
+/* ---------- Working state: the app remembers your current work (0.12) ---------- */
+/* Everything you type is autosaved on this phone and restored on load with
+   NO TomTom call. A built route becomes permanent ONLY through "Save this
+   route" (Saved routes); until then it is just your current work, kept in
+   localStorage under stopedia_state_v1. */
+const WORK_KEY = "stopedia_state_v1";
+let buildInfo = null;      // { method, totalSec, manual } describing currentRoute
+let remindWanted = false;  // show the "Do you want to save this route?" reminder
+function saveWorkState(){
+  try {
+    localStorage.setItem(WORK_KEY, JSON.stringify({
+      origin: document.getElementById("origin").value,
+      destination: document.getElementById("destination").value,
+      stops: boxInputs.map(b => b.value),
+      country: getCountry(),
+      routeName: document.getElementById("routename").value,
+      editingId: editingId,
+      remind: remindWanted,
+      result: (currentRoute && buildInfo) ? {
+        origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops,
+        method: buildInfo.method, totalSec: buildInfo.totalSec, manual: !!buildInfo.manual
+      } : null
+    }));
+  } catch (e) { /* storage unavailable: the app keeps working, just without memory */ }
+}
+let _workTimer = null;
+function queueSaveWork(){ clearTimeout(_workTimer); _workTimer = setTimeout(saveWorkState, 250); }
+function updateReminder(){
+  const el = document.getElementById("savereminder");
+  if (el) el.classList.toggle("hidden", !(currentRoute && remindWanted));
+}
+function renderResult(){
+  const resEl = document.getElementById("result");
+  if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); return; }
+  const ol = document.getElementById("ordered");
+  ol.innerHTML = "";
+  const mkFixed = (p) => { const li = document.createElement("li"); li.textContent = p.label; return li; };
+  const originLi = mkFixed(currentRoute.origin), destLi = mkFixed(currentRoute.destination);
+  ol.appendChild(originLi);
+  currentRoute.stops.forEach(p => {
+    const li = document.createElement("li"); li.className = "stopitem";
+    const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
+    const lab = document.createElement("span"); lab.textContent = p.label;
+    li.append(handle, lab);
+    li._point = p;
+    attachDrag(handle, li, () => Array.from(ol.querySelectorAll(".stopitem")), (lis) => {
+      currentRoute.stops = lis.map(x => x._point);
+      ol.appendChild(originLi);
+      lis.forEach(x => ol.appendChild(x));
+      ol.appendChild(destLi);
+      document.getElementById("mapslink").href = mapsUrl(currentRoute);
+      document.getElementById("methodnote").textContent = t("manualNote");
+      document.getElementById("esttime").textContent = "";
+      if (buildInfo) buildInfo.manual = true;
+      saveWorkState();
+    });
+    ol.appendChild(li);
+  });
+  ol.appendChild(destLi);
+  document.getElementById("methodnote").textContent = (buildInfo && buildInfo.manual) ? t("manualNote") : ((buildInfo && buildInfo.method === "road") ? t("optRoad") : t("optLine"));
+  document.getElementById("esttime").textContent = (buildInfo && !buildInfo.manual && buildInfo.method === "road" && buildInfo.totalSec !== null && buildInfo.totalSec !== undefined) ? (t("estTime") + fmtDuration(buildInfo.totalSec)) : "";
+  document.getElementById("mapslink").href = mapsUrl(currentRoute);
+  resEl.classList.remove("hidden");
+  updateReminder();
+}
+function restoreWorkState(){
+  let st = null;
+  try { st = JSON.parse(localStorage.getItem(WORK_KEY) || "null"); } catch (e) { st = null; }
+  if (!st) return;
+  if (st.country) localStorage.setItem("stopedia.country", st.country);
+  document.getElementById("origin").value = st.origin || "";
+  document.getElementById("destination").value = st.destination || "";
+  if (Array.isArray(st.stops)) boxInputs.forEach((inp, i) => { inp.value = st.stops[i] || ""; inp.dispatchEvent(new Event("input")); });
+  document.getElementById("routename").value = st.routeName || "";
+  editingId = st.editingId || null;
+  remindWanted = !!st.remind;
+  if (st.result && st.result.origin && st.result.destination) {
+    currentRoute = { origin: st.result.origin, destination: st.result.destination, stops: Array.isArray(st.result.stops) ? st.result.stops : [] };
+    buildInfo = { method: st.result.method || "line", totalSec: (st.result.totalSec === undefined ? null : st.result.totalSec), manual: !!st.result.manual };
+  }
+}
+document.getElementById("origin").addEventListener("input", queueSaveWork);
+document.getElementById("destination").addEventListener("input", queueSaveWork);
+document.getElementById("routename").addEventListener("input", queueSaveWork);
+boxInputs.forEach(inp => inp.addEventListener("input", queueSaveWork));
+document.getElementById("remindsave").addEventListener("click", () => {
+  const rn = document.getElementById("routename");
+  rn.scrollIntoView({ behavior: "smooth", block: "center" });
+  rn.focus();
+});
+document.getElementById("remindlater").addEventListener("click", () => {
+  remindWanted = false;
+  updateReminder();
+  saveWorkState();
+});
+document.getElementById("newroute").addEventListener("click", () => {
+  if (!confirm(t("confirmNew"))) return;
+  document.getElementById("origin").value = "";
+  document.getElementById("destination").value = "";
+  fillBoxes([]);
+  document.getElementById("routename").value = "";
+  currentRoute = null;
+  buildInfo = null;
+  editingId = null;
+  remindWanted = false;
+  clearTimeout(_workTimer);
+  try { localStorage.removeItem(WORK_KEY); } catch (e) {}
+  renderResult();
+  statusEl.textContent = "";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
 /* ---------- Pure text helpers for photo reading & pasting (unit-testable) ---------- */
 /* === PURE-TEXT-HELPERS-BEGIN === */
 const ZIP_RE = /\b\d{5}(?:-\d{4})?\b/;
+const POSTAL_RES = {
+  US: ZIP_RE, PR: ZIP_RE,
+  CA: /\b[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d\b/,
+  GB: /\b[A-Za-z]{1,2}\d[A-Za-z\d]?\s?\d[A-Za-z]{2}\b/,
+  DE: /\b\d{5}\b/, FR: /\b\d{5}\b/, ES: /\b\d{5}\b/, IT: /\b\d{5}\b/,
+  MX: /\b\d{5}\b/, CO: /\b\d{5}\b/, PE: /\b\d{5}\b/, VE: /\b\d{5}\b/,
+  CL: /\b\d{7}\b/,
+  AR: /\b(?:\d{4}|[A-Za-z]\d{4}[A-Za-z]{3})\b/,
+  NL: /\b\d{4}\s?[A-Za-z]{2}\b/,
+  PT: /\b\d{4}-\d{3}\b/,
+  BR: /\b\d{5}-\d{3}\b/,
+  AU: /\b\d{4}\b/, NZ: /\b\d{4}\b/, ZA: /\b\d{4}\b/,
+  JP: /\b\d{3}-\d{4}\b/,
+  IN: /\b\d{6}\b/
+};
+function postalReFor(cc){ return POSTAL_RES[cc] || null; }
 function ocrCleanLines(raw){
   return String(raw || "").replace(/\r/g, "").split("\n")
     .map(s => s.replace(/\s+/g, " ").trim()).filter(Boolean);
@@ -652,23 +990,35 @@ function ocrLooksGarbage(text){
   if (s.length < 5) return true;
   return ocrSymbolRatio(s) > 0.4;
 }
-function isDubiousAddress(text){
+function dubiousReason(text, cc){
+  // "" = fine · "postal" = the country's postal code is missing · "check" = other doubt.
+  // Countries with no pattern in POSTAL_RES skip the postal check entirely.
   const s = String(text || "").trim();
-  if (s.length < 8) return true;                 // too short to be a full address
-  if (!ZIP_RE.test(s)) return true;              // no ZIP code
-  if (/[|~^{}]/.test(s)) return true;            // typical OCR garbage characters
-  if (ocrSymbolRatio(s) > 0.2) return true;      // too many symbols vs letters/digits
-  return false;
+  if (s.length < 8) return "check";              // too short to be a full address
+  const re = postalReFor(cc || "US");
+  if (re && !re.test(s)) return "postal";        // no postal code for the selected country
+  if (/[|~^{}]/.test(s)) return "check";         // typical OCR garbage characters
+  if (ocrSymbolRatio(s) > 0.2) return "check";   // too many symbols vs letters/digits
+  return "";
 }
-function splitSheetText(raw){
-  // Full-sheet heuristic: an address ends at the line that carries its ZIP
-  // code. Lines left over after the last ZIP (no ZIP of their own) become one
-  // final entry, which the review screen will flag as dubious.
+function isDubiousAddress(text, cc){ return dubiousReason(text, cc) !== ""; }
+function splitSheetText(raw, cc){
+  // Full-sheet heuristic, country-aware. With a postal pattern: an address
+  // ends at the line that carries its postal code; lines left over after the
+  // last code (none of their own) become one final entry, which the review
+  // screen will flag. Without a pattern (addresses carry no postal code):
+  // one address per blank-line block.
+  const re = postalReFor(cc || "US");
+  if (!re) {
+    return String(raw || "").replace(/\r/g, "").split(/\n\s*\n/)
+      .map(b => b.split("\n").map(s => s.replace(/\s+/g, " ").trim()).filter(Boolean).join(", "))
+      .filter(Boolean);
+  }
   const out = [];
   let cur = [];
   for (const line of ocrCleanLines(raw)) {
     cur.push(line);
-    if (ZIP_RE.test(line)) { out.push(cur.join(", ")); cur = []; }
+    if (re.test(line)) { out.push(cur.join(", ")); cur = []; }
   }
   if (cur.length) out.push(cur.join(", "));
   return out;
@@ -699,7 +1049,7 @@ function loadOcrEngine(){
 }
 async function ocrRecognize(imageFile, onProgress){
   await loadOcrEngine();
-  const result = await window.Tesseract.recognize(imageFile, "eng", {
+  const result = await window.Tesseract.recognize(imageFile, ocrLangFor(getCountry()), {
     logger: (m) => { if (m.status === "recognizing text" && onProgress) onProgress(m.progress); }
   });
   return (result && result.data && result.data.text) || "";
@@ -744,7 +1094,7 @@ scanInput.addEventListener("change", async () => {
       addStatus.textContent = t("scanAdded");
     } else {
       lastSheetFile = file;
-      const parts = splitSheetText(raw);
+      const parts = splitSheetText(raw, getCountry());
       if (!parts.length) { addStatus.textContent = t("scanNoRead"); return; }
       openReview(parts, true);
     }
@@ -763,10 +1113,15 @@ function makeReviewRow(value){
   const warn = document.createElement("span"); warn.className = "warn"; warn.textContent = "⚠";
   const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false; inp.value = value || "";
   const del = document.createElement("button"); del.type = "button"; del.className = "small danger"; del.textContent = "✕";
-  const flag = () => { warn.style.visibility = isDubiousAddress(inp.value) ? "visible" : "hidden"; };
+  const reason = document.createElement("span"); reason.className = "flagreason";
+  const flag = () => {
+    const r = dubiousReason(inp.value, getCountry());
+    warn.style.visibility = r ? "visible" : "hidden";
+    reason.textContent = r === "postal" ? t("flagNoPostal") : (r ? t("flagCheck") : "");
+  };
   inp.addEventListener("input", flag);
   del.addEventListener("click", () => row.remove());
-  row.append(warn, inp, del);
+  row.append(warn, inp, del, reason);
   flag();
   return row;
 }
@@ -854,7 +1209,11 @@ document.querySelectorAll("[data-ai]").forEach(btn => btn.addEventListener("clic
   window.open(AI_URLS[btn.dataset.ai] + encodeURIComponent(prompt), "_blank");
 }));
 
+initPanels();
+renderKeyPanel();
+restoreWorkState();
 applyLang();
+if (currentRoute) renderResult(); else updateReminder();
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(() => {}); }
 </script>
 </body>
