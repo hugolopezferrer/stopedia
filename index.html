@@ -73,9 +73,6 @@
   #navtrigger { width: 100%; margin-top: 12px; padding: 13px 15px; font-size: 16px; text-align: left; }
   main { max-width: 760px; margin: 0 auto; padding: 22px 20px; }
   section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:22px; margin-bottom:18px; animation: rise .5s ease both; }
-  .panelclip > section:nth-child(2) { animation-delay:.06s; }
-  .panelclip > section:nth-child(3) { animation-delay:.12s; }
-  .panelclip > section:nth-child(4) { animation-delay:.18s; }
   @keyframes rise { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
   h2 { margin:0 0 12px; font-size:22px; font-weight:600; letter-spacing:-.2px; color: var(--ink); }
   label { display:block; font-size:14px; font-weight:600; margin:14px 0 5px; color: var(--muted); }
@@ -141,15 +138,21 @@
   #result li.stopitem { display:flex; align-items:center; gap:6px; }
   #result li .draghandle { padding:4px; font-size:17px; }
   a.buttonlink { display:block; text-align:center; background: var(--blue-soft); color: var(--blue); border:1px solid var(--line); text-decoration:none; border-radius:12px; padding:13px; font-size:16px; font-weight:700; margin-top:12px; }
-  .panel { margin-bottom:18px; }
-  .panelhead { width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px; background: var(--surface); color: var(--ink); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:18px 22px; font-size:20px; font-weight:650; cursor:pointer; text-align:left; }
-  .panelhead:hover { border-color: var(--line-strong); }
-  .panelhead .chev { font-size:16px; color: var(--accent); display:inline-block; transition: transform .35s ease; }
-  .panelhead .chev.closed { transform: rotate(-90deg); }
-  .panelbody { display:grid; grid-template-rows:1fr; opacity:1; margin-top:14px; transition: grid-template-rows .35s ease, opacity .35s ease, margin-top .35s ease; }
-  .panelbody.closed { grid-template-rows:0fr; opacity:0; margin-top:0; pointer-events:none; }
-  .panelclip { overflow:hidden; min-height:0; }
-  .panelclip > section:last-child { margin-bottom:0; }
+  /* ---------- Main tabs + route subtabs (0.19) ---------- */
+  .tabbar { display:flex; gap:4px; background: var(--surface-2); border:1px solid var(--line); border-radius:14px; padding:4px; margin-bottom:18px; overflow-x:auto; scrollbar-width:none; }
+  .tabbar::-webkit-scrollbar { display:none; }
+  .tabbtn { flex:1 1 0; white-space:nowrap; background:transparent; border:none; color:var(--muted); font-family:inherit; font-size:15px; font-weight:650; padding:11px 10px; border-radius:10px; cursor:pointer; }
+  .tabbtn:hover { color:var(--ink); }
+  .tabbtn.active { background:var(--accent); color:var(--paper); }
+  .tabbtn:focus-visible, .subtabbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .tabpage.active, .subpage.active { animation: tabin .2s ease-out both; }
+  @keyframes tabin { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+  .subtabbar { display:flex; gap:4px; background: var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:4px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; }
+  .subtabbar::-webkit-scrollbar { display:none; }
+  .subtabbtn { flex:1 1 0; white-space:nowrap; background:transparent; border:none; color:var(--muted); font-family:inherit; font-size:14px; font-weight:650; padding:8px 10px; border-radius:8px; cursor:pointer; }
+  .subtabbtn:hover { color:var(--ink); }
+  .subtabbtn.active { background:var(--accent); color:var(--paper); }
+  .subpage > section:last-child, .tabpage > section:last-child { margin-bottom:0; }
   .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
   .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
   .keyappliedline { font-weight:650; font-size:16px; margin:14px 0 8px; color: var(--ink); }
@@ -214,10 +217,19 @@
 </header>
 <main>
 
-  <div class="panel" id="panel-route">
-    <button type="button" class="panelhead" id="panelroutehead" aria-expanded="true" aria-controls="panelroutebody"><span data-i18n="panelRouteTitle">Build a route</span><span class="chev" id="chevroute">▾</span></button>
-    <div class="panelbody" id="panelroutebody"><div class="panelclip">
+  <div class="tabbar" role="tablist" id="maintabbar">
+    <button type="button" class="tabbtn active" role="tab" id="tab-route" aria-selected="true" aria-controls="page-route"><span data-i18n="panelRouteTitle">Build a route</span></button>
+    <button type="button" class="tabbtn" role="tab" id="tab-key" aria-selected="false" aria-controls="page-key"><span data-i18n="panelKeyTitle">Your TomTom key</span></button>
+    <button type="button" class="tabbtn" role="tab" id="tab-saved" aria-selected="false" aria-controls="page-saved"><span data-i18n="savedTitle">Saved routes</span></button>
+  </div>
 
+  <div class="tabpage active" id="page-route" role="tabpanel" aria-labelledby="tab-route">
+    <div class="subtabbar" role="tablist" id="subtabbar">
+      <button type="button" class="subtabbtn active" role="tab" id="subtab-addresses" aria-selected="true" aria-controls="subpage-addresses"><span data-i18n="subAddresses">Addresses</span></button>
+      <button type="button" class="subtabbtn" role="tab" id="subtab-photo" aria-selected="false" aria-controls="subpage-photo"><span data-i18n="subPhoto">Photo or list</span></button>
+      <button type="button" class="subtabbtn hidden" role="tab" id="subtab-result" aria-selected="false" aria-controls="subpage-result"><span data-i18n="subResult">Result</span></button>
+    </div>
+    <div class="subpage active" id="subpage-addresses" role="tabpanel" aria-labelledby="subtab-addresses">
   <section id="builder">
     <h2 data-i18n="buildTitle">Build a route</h2>
     <label for="country" data-i18n="countryLabel">Country</label>
@@ -233,6 +245,58 @@
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
     <div class="btnrow"><button class="small" id="newroute" type="button" data-i18n="newRoute">New route</button></div>
     <p id="status"></p>
+  </section>
+    </div>
+    <div class="subpage hidden" id="subpage-photo" role="tabpanel" aria-labelledby="subtab-photo">
+  <section id="addstops">
+    <h2 data-i18n="addTitle">Add stops from a photo or a list</h2>
+    <p class="hint" data-i18n="addText">Scan one address, scan a whole sheet, paste a list, or ask your AI to clean the addresses up. Everything goes through a review screen first: nothing is used until you check it.</p>
+    <div class="btnrow">
+      <button class="secondary" id="scanone" type="button" data-i18n="scanOne">📷 Scan one address</button>
+      <button class="secondary" id="scansheet" type="button" data-i18n="scanSheet">📄 Scan a full sheet</button>
+      <button class="secondary" id="pastebtn" type="button" data-i18n="pasteBtn">📋 Paste a list</button>
+      <div class="dd" id="aidd">
+        <button class="secondary dd-trigger" id="aibtn" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="aiBtn">🤖 Ask my AI to help with the route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
+        <div id="aimenu" class="dd-panel" role="menu">
+          <p class="dd-note" data-i18n="aiNote">Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.</p>
+          <button class="dd-item" type="button" data-ai="chatgpt" role="menuitem"><span>ChatGPT</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="claude" role="menuitem"><span>Claude</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="perplexity" role="menuitem"><span>Perplexity</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="grok" role="menuitem"><span>Grok</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="gemini" role="menuitem"><span>Gemini</span></button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="scanfile" accept="image/*" capture="environment" class="hidden">
+    <div id="ocrprogress" class="hidden">
+      <div class="progress"><div id="ocrbarfill"></div></div>
+      <p id="ocrpct" class="hint"></p>
+    </div>
+    <div id="pastearea" class="hidden">
+      <label for="pastetext" data-i18n="pasteLabel">Paste the addresses here (one per line)</label>
+      <textarea id="pastetext" data-i18n-ph="pastePh" placeholder="One address per line"></textarea>
+      <button class="secondary" id="pastego" type="button" data-i18n="pasteGo">Review these addresses</button>
+    </div>
+    <p id="addstatus"></p>
+  </section>
+  <section id="review" class="hidden">
+    <h2 data-i18n="reviewTitle">Review the addresses</h2>
+    <p class="hint" data-i18n="reviewText">Check each address and fix any mistakes. Rows marked ⚠ look incomplete or badly read. Nothing is used until you tap Apply.</p>
+    <div id="sharerow" class="hidden">
+      <button class="secondary" id="sharephoto" type="button" data-i18n="sharePhoto">📤 Share the photo with my AI</button>
+      <p id="sharenote" class="hint"></p>
+    </div>
+    <div id="reviewlist"></div>
+    <p id="reviewextra" class="hint hidden"></p>
+    <div class="btnrow">
+      <button class="secondary" id="reviewadd" type="button" data-i18n="reviewAdd">＋ Add a row</button>
+      <button class="secondary" id="reviewapply" type="button" data-i18n="reviewApply">Apply to the stop boxes</button>
+      <button class="secondary" id="reviewcancel" type="button" data-i18n="reviewCancel">Cancel</button>
+    </div>
+  </section>
+    </div>
+    <div class="subpage hidden" id="subpage-result" role="tabpanel" aria-labelledby="subtab-result">
+  <section id="resultcard">
     <div id="result" class="hidden">
       <div id="savereminder" class="notice hidden">
         <p style="margin-top:0"><strong data-i18n="remindTitle">Do you want to save this route?</strong></p>
@@ -279,68 +343,10 @@
       <button class="primary" id="saveroute" type="button" data-i18n="saveRouteBtn">Save this route</button>
     </div>
   </section>
-
-  <section id="addstops">
-    <h2 data-i18n="addTitle">Add stops from a photo or a list</h2>
-    <p class="hint" data-i18n="addText">Scan one address, scan a whole sheet, paste a list, or ask your AI to clean the addresses up. Everything goes through a review screen first: nothing is used until you check it.</p>
-    <div class="btnrow">
-      <button class="secondary" id="scanone" type="button" data-i18n="scanOne">📷 Scan one address</button>
-      <button class="secondary" id="scansheet" type="button" data-i18n="scanSheet">📄 Scan a full sheet</button>
-      <button class="secondary" id="pastebtn" type="button" data-i18n="pasteBtn">📋 Paste a list</button>
-      <div class="dd" id="aidd">
-        <button class="secondary dd-trigger" id="aibtn" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="aiBtn">🤖 Ask my AI to help with the route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
-        <div id="aimenu" class="dd-panel" role="menu">
-          <p class="dd-note" data-i18n="aiNote">Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.</p>
-          <button class="dd-item" type="button" data-ai="chatgpt" role="menuitem"><span>ChatGPT</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item" type="button" data-ai="claude" role="menuitem"><span>Claude</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item" type="button" data-ai="perplexity" role="menuitem"><span>Perplexity</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item" type="button" data-ai="grok" role="menuitem"><span>Grok</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item" type="button" data-ai="gemini" role="menuitem"><span>Gemini</span></button>
-        </div>
-      </div>
-    </div>
-    <input type="file" id="scanfile" accept="image/*" capture="environment" class="hidden">
-    <div id="ocrprogress" class="hidden">
-      <div class="progress"><div id="ocrbarfill"></div></div>
-      <p id="ocrpct" class="hint"></p>
-    </div>
-    <div id="pastearea" class="hidden">
-      <label for="pastetext" data-i18n="pasteLabel">Paste the addresses here (one per line)</label>
-      <textarea id="pastetext" data-i18n-ph="pastePh" placeholder="One address per line"></textarea>
-      <button class="secondary" id="pastego" type="button" data-i18n="pasteGo">Review these addresses</button>
-    </div>
-    <p id="addstatus"></p>
-  </section>
-
-  <section id="review" class="hidden">
-    <h2 data-i18n="reviewTitle">Review the addresses</h2>
-    <p class="hint" data-i18n="reviewText">Check each address and fix any mistakes. Rows marked ⚠ look incomplete or badly read. Nothing is used until you tap Apply.</p>
-    <div id="sharerow" class="hidden">
-      <button class="secondary" id="sharephoto" type="button" data-i18n="sharePhoto">📤 Share the photo with my AI</button>
-      <p id="sharenote" class="hint"></p>
-    </div>
-    <div id="reviewlist"></div>
-    <p id="reviewextra" class="hint hidden"></p>
-    <div class="btnrow">
-      <button class="secondary" id="reviewadd" type="button" data-i18n="reviewAdd">＋ Add a row</button>
-      <button class="secondary" id="reviewapply" type="button" data-i18n="reviewApply">Apply to the stop boxes</button>
-      <button class="secondary" id="reviewcancel" type="button" data-i18n="reviewCancel">Cancel</button>
-    </div>
-  </section>
-
-  <section id="saved">
-    <h2 data-i18n="savedTitle">Saved routes</h2>
-    <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
-    <div id="savedlist"></div>
-    <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
-  </section>
-      </div>
     </div>
   </div>
 
-  <div class="panel" id="panel-key">
-    <button type="button" class="panelhead" id="panelkeyhead" aria-expanded="false" aria-controls="panelkeybody"><span data-i18n="panelKeyTitle">Your TomTom key</span><span class="chev" id="chevkey">▸</span></button>
-    <div class="panelbody closed" id="panelkeybody"><div class="panelclip">
+  <div class="tabpage hidden" id="page-key" role="tabpanel" aria-labelledby="tab-key">
       <div class="notice" id="nokeynotice">
         <p style="margin-top:0"><strong data-i18n="noKeyTitle">You need your free TomTom key first</strong></p>
         <p data-i18n="noKeyText">Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:</p>
@@ -348,11 +354,10 @@
           <li data-i18n="noKeyStep1">Create a free account at developer.tomtom.com (no credit card needed).</li>
           <li data-i18n="noKeyStep2">Inside TomTom, create an API key and select all the products.</li>
           <li data-i18n="noKeyStep3">Copy the key itself from the “Key” column of the keys list — not the key's ID.</li>
-          <li data-i18n="noKeyStep4">Paste the key in the field in this panel and tap “Save and test my key”.</li>
+          <li data-i18n="noKeyStep4">Paste the key in the field in this tab and tap “Save and test my key”.</li>
         </ol>
-        <p class="hint" data-i18n="noKeyGuide">The detailed numbered steps and the key field are right below, in this same panel.</p>
+        <p class="hint" data-i18n="noKeyGuide">The detailed numbered steps and the key field are right below, in this same tab.</p>
       </div>
-
   <section id="setup">
     <h2 data-i18n="setupTitle">Your TomTom key</h2>
     <p class="hint" data-i18n="setupText">Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:</p>
@@ -379,12 +384,19 @@
       <p id="keystatus" class="hint"></p>
     </div>
   </section>
-      </div>
-    </div>
+  </div>
+
+  <div class="tabpage hidden" id="page-saved" role="tabpanel" aria-labelledby="tab-saved">
+  <section id="saved">
+    <h2 data-i18n="savedTitle">Saved routes</h2>
+    <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
+    <div id="savedlist"></div>
+    <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
+  </section>
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.18 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.19 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
 
 <script>
 "use strict";
@@ -396,13 +408,16 @@ const STR = {
     setupTitle: "Your TomTom key",
     panelRouteTitle: "Build a route",
     panelKeyTitle: "Your TomTom key",
+    subAddresses: "Addresses",
+    subPhoto: "Photo or list",
+    subResult: "Result",
     noKeyTitle: "You need your free TomTom key first",
     noKeyText: "Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:",
     noKeyStep1: "Create a free account at developer.tomtom.com (no credit card needed).",
     noKeyStep2: "Inside TomTom, create an API key and select all the products.",
     noKeyStep3: "Copy the key itself from the “Key” column of the keys list — not the key's ID.",
-    noKeyStep4: "Paste the key in the field in this panel and tap “Save and test my key”.",
-    noKeyGuide: "The detailed numbered steps and the key field are right below, in this same panel.",
+    noKeyStep4: "Paste the key in the field in this tab and tap “Save and test my key”.",
+    noKeyGuide: "The detailed numbered steps and the key field are right below, in this same tab.",
     countryLabel: "Country",
     keyApplied: "API key applied",
     editKey: "Edit API key",
@@ -439,13 +454,13 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.18 — draft, in progress.",
+    footerText: "Version 0.19 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
     needKeyPaste: "Paste your key in the field first.",
-    needKey: "Add your TomTom key first — I opened the “Your TomTom key” panel below, with the steps.",
+    needKey: "Add your TomTom key first — I opened the “Your TomTom key” tab, with the steps.",
     needOrigin: "Write the start address.", needDest: "Write the final destination.",
     needStops: "Write at least one stop.",
     tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
@@ -519,13 +534,16 @@ const STR = {
     setupTitle: "Tu clave de TomTom",
     panelRouteTitle: "Armar una ruta",
     panelKeyTitle: "Tu clave de TomTom",
+    subAddresses: "Direcciones",
+    subPhoto: "Foto o lista",
+    subResult: "Resultado",
     noKeyTitle: "Primero necesitas tu clave gratuita de TomTom",
     noKeyText: "Stopedia busca las direcciones con TomTom, así que necesita una clave de tu propia cuenta gratuita de TomTom. Toma un par de minutos y se hace una sola vez:",
     noKeyStep1: "Crea una cuenta gratuita en developer.tomtom.com (no pide tarjeta).",
     noKeyStep2: "Dentro de TomTom, crea una clave API y selecciona todos los productos.",
     noKeyStep3: "Copia la clave misma desde la columna «Key» de la lista de llaves, no el ID de la llave.",
-    noKeyStep4: "Pega la clave en el campo de este panel y toca «Guardar y probar mi clave».",
-    noKeyGuide: "Los pasos numerados en detalle y el campo de la clave están aquí abajo, en este mismo panel.",
+    noKeyStep4: "Pega la clave en el campo de esta pestaña y toca «Guardar y probar mi clave».",
+    noKeyGuide: "Los pasos numerados en detalle y el campo de la clave están aquí abajo, en esta misma pestaña.",
     countryLabel: "País",
     keyApplied: "Clave API aplicada",
     editKey: "Editar clave API",
@@ -562,13 +580,13 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.18 — borrador, en avance.",
+    footerText: "Versión 0.19 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
     needKeyPaste: "Primero pega tu clave en el campo.",
-    needKey: "Primero agrega tu clave de TomTom: abrí el panel «Tu clave de TomTom» aquí abajo, con los pasos.",
+    needKey: "Primero agrega tu clave de TomTom: abrí la pestaña «Tu clave de TomTom», con los pasos.",
     needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
     needStops: "Escribe al menos una parada.",
     tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
@@ -721,36 +739,105 @@ document.getElementById("cancelkey").addEventListener("click", () => {
   renderKeyPanel();
 });
 
-/* ---------- Collapsible panels (0.9) ---------- */
+/* ---------- Main tabs + route subtabs (0.19) ---------- */
+/* The 0.9 accordion panels are gone: the app is a tab interface now.
+   Three main tabs (Route / Key / Saved) sit under the satellite header;
+   the Route tab carries three subtabs (Addresses / Photo or list /
+   Result). Switching animates the incoming page with the family motion
+   (fade + 6px rise, 200ms ease-out — .tabpage/.subpage in the CSS).
+   The Result subtab exists only while a route result exists. */
 function hasKey(){ return !!(localStorage.getItem("stopedia.key") || "").trim(); }
-function setPanel(name, open){
-  const isKey = name === "key";
-  document.getElementById(isKey ? "panelkeybody" : "panelroutebody").classList.toggle("closed", !open);
-  const chev = document.getElementById(isKey ? "chevkey" : "chevroute");
-  chev.textContent = "▾";
-  chev.classList.toggle("closed", !open);
-  document.getElementById(isKey ? "panelkeyhead" : "panelroutehead").setAttribute("aria-expanded", open ? "true" : "false");
+let activeTab = "route";        // "route" | "key" | "saved"
+let activeSubtab = "addresses"; // "addresses" | "photo" | "result"
+let restoredTab = null, restoredSubtab = null; // filled in by restoreWorkState()
+const TAB_PAGES = { route: "page-route", key: "page-key", saved: "page-saved" };
+const TAB_BTNS = { route: "tab-route", key: "tab-key", saved: "tab-saved" };
+const SUB_PAGES = { addresses: "subpage-addresses", photo: "subpage-photo", result: "subpage-result" };
+const SUB_BTNS = { addresses: "subtab-addresses", photo: "subtab-photo", result: "subtab-result" };
+function applyTabState(){
+  Object.keys(TAB_PAGES).forEach(name => {
+    const on = name === activeTab;
+    const page = document.getElementById(TAB_PAGES[name]);
+    page.classList.toggle("hidden", !on);
+    page.classList.toggle("active", on);
+    const btn = document.getElementById(TAB_BTNS[name]);
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  Object.keys(SUB_PAGES).forEach(name => {
+    const on = name === activeSubtab;
+    const page = document.getElementById(SUB_PAGES[name]);
+    page.classList.toggle("hidden", !on);
+    page.classList.toggle("active", on);
+    const btn = document.getElementById(SUB_BTNS[name]);
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+  });
 }
-function togglePanel(name){
-  const body = document.getElementById(name === "key" ? "panelkeybody" : "panelroutebody");
-  setPanel(name, body.classList.contains("closed"));
+function activateTab(name){
+  if (!TAB_PAGES[name]) return;
+  activeTab = name;
+  applyTabState();
+  saveWorkState();
 }
-document.getElementById("panelroutehead").addEventListener("click", () => togglePanel("route"));
-document.getElementById("panelkeyhead").addEventListener("click", () => togglePanel("key"));
-function initPanels(){
-  const keyed = hasKey();
-  setPanel("route", keyed);
-  setPanel("key", !keyed);
-  document.getElementById("nokeynotice").classList.toggle("hidden", keyed);
+function activateSubtab(name){
+  if (!SUB_PAGES[name]) return;
+  if (name === "result" && !currentRoute) name = "addresses";
+  activeSubtab = name;
+  applyTabState();
+  saveWorkState();
+}
+/* The Result subtab is visible exactly while a route result exists;
+   losing the result while it is the active subtab falls back to
+   Addresses. Called from renderResult() and initTabs(). */
+function syncResultSubtab(){
+  const btn = document.getElementById("subtab-result");
+  if (!btn) return;
+  btn.classList.toggle("hidden", !currentRoute);
+  if (!currentRoute && activeSubtab === "result") { activeSubtab = "addresses"; applyTabState(); }
+}
+Object.keys(TAB_BTNS).forEach(name => {
+  document.getElementById(TAB_BTNS[name]).addEventListener("click", () => activateTab(name));
+});
+Object.keys(SUB_BTNS).forEach(name => {
+  document.getElementById(SUB_BTNS[name]).addEventListener("click", () => activateSubtab(name));
+});
+/* Basic arrow-key navigation inside each tab bar (roving activation). */
+function wireTabArrows(barId, names, btns, getActive, activate){
+  document.getElementById(barId).addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const visible = names.filter(n => !document.getElementById(btns[n]).classList.contains("hidden"));
+    if (!visible.length) return;
+    let i = visible.indexOf(getActive());
+    if (i < 0) i = 0;
+    i = (i + (e.key === "ArrowRight" ? 1 : -1) + visible.length) % visible.length;
+    activate(visible[i]);
+    document.getElementById(btns[visible[i]]).focus();
+    e.preventDefault();
+  });
+}
+wireTabArrows("maintabbar", ["route", "key", "saved"], TAB_BTNS, () => activeTab, activateTab);
+wireTabArrows("subtabbar", ["addresses", "photo", "result"], SUB_BTNS, () => activeSubtab, activateSubtab);
+/* First paint: with no usable key the Key tab opens (the 0.9 panel did
+   the same); otherwise the persisted tab is restored. A restored route
+   result activates the Result subtab; otherwise the persisted subtab
+   (Addresses by default). */
+function initTabs(){
+  const keyed = hasKey() && localStorage.getItem("stopedia.keybad") !== "1";
+  document.getElementById("nokeynotice").classList.toggle("hidden", hasKey());
+  activeTab = keyed ? (restoredTab && TAB_PAGES[restoredTab] ? restoredTab : "route") : "key";
+  activeSubtab = currentRoute ? "result" : (restoredSubtab === "photo" ? "photo" : "addresses");
+  syncResultSubtab();
+  applyTabState();
 }
 /* No-key guard: anything that needs TomTom checks the saved key first.
-   With no key there is NO TomTom call — the explanation in the key panel
-   is shown instead, the key panel opens and the page scrolls to it. */
+   With no key there is NO TomTom call — the explanation in the key tab
+   is shown instead, the Key tab activates and the page scrolls to it. */
 function showNoKeyGuard(){
   document.getElementById("nokeynotice").classList.remove("hidden");
-  setPanel("key", true);
+  activateTab("key");
   statusEl.textContent = t("needKey");
-  document.getElementById("panel-key").scrollIntoView({ behavior: "smooth" });
+  document.getElementById("page-key").scrollIntoView({ behavior: "smooth" });
 }
 
 /* ---------- Country & worldwide support (0.10) ---------- */
@@ -1045,6 +1132,7 @@ document.getElementById("build").addEventListener("click", async () => {
     remindWanted = true;
     renderResult();
     saveWorkState();
+    activateSubtab("result");
     statusEl.textContent = "";
   } catch (e) {
     if (String(e && e.message).includes("401")) markKeyBad();
@@ -1093,6 +1181,8 @@ function renderSaved(){
       document.getElementById("routename").value = r.name;
       editingId = r.id;
       statusEl.textContent = t("editing");
+      activateTab("route");
+      activateSubtab("addresses");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
     const del = document.createElement("button"); del.className = "small danger"; del.textContent = t("del");
@@ -1122,6 +1212,8 @@ function saveWorkState(){
       destination: document.getElementById("destination").value,
       stops: boxInputs.map(b => b.value),
       country: getCountry(),
+      tab: activeTab,
+      subtab: activeSubtab,
       routeName: document.getElementById("routename").value,
       editingId: editingId,
       remind: remindWanted,
@@ -1144,6 +1236,7 @@ function updateReminder(){
 function renderResult(){
   const resEl = document.getElementById("result");
   closeShareMenu();
+  syncResultSubtab();
   if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); return; }
   const ol = document.getElementById("ordered");
   ol.innerHTML = "";
@@ -1448,6 +1541,8 @@ function restoreWorkState(){
   if (Array.isArray(st.stops)) boxInputs.forEach((inp, i) => { inp.value = st.stops[i] || ""; inp.dispatchEvent(new Event("input")); });
   document.getElementById("routename").value = st.routeName || "";
   editingId = st.editingId || null;
+  restoredTab = st.tab || null;
+  restoredSubtab = st.subtab || null;
   remindWanted = !!st.remind;
   if (st.result && st.result.origin && st.result.destination) {
     currentRoute = { origin: st.result.origin, destination: st.result.destination, stops: Array.isArray(st.result.stops) ? st.result.stops : [] };
@@ -1486,6 +1581,7 @@ document.getElementById("newroute").addEventListener("click", () => {
   clearTimeout(_workTimer);
   try { localStorage.removeItem(WORK_KEY); } catch (e) {}
   renderResult();
+  activateSubtab("addresses");
   statusEl.textContent = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
@@ -1705,6 +1801,7 @@ document.getElementById("reviewapply").addEventListener("click", () => {
     reviewSection.scrollIntoView({ behavior: "smooth" });
   } else {
     closeReview();
+    activateSubtab("addresses");
     document.getElementById("builder").scrollIntoView({ behavior: "smooth" });
   }
 });
@@ -1815,9 +1912,9 @@ function syncTopbar(){ if (_topbar) _topbar.classList.toggle("scrolled", window.
 window.addEventListener("scroll", syncTopbar, { passive: true });
 syncTopbar();
 
-initPanels();
 renderKeyPanel();
 restoreWorkState();
+initTabs();
 applyLang();
 window.__stopediaBooted = true;
 if (currentRoute) renderResult(); else updateReminder();
