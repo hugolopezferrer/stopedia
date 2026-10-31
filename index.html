@@ -97,9 +97,10 @@
   html[data-theme="light"] body { background-image: radial-gradient(rgba(10,43,60,.055) 1px, transparent 1.4px); }
   html[data-theme="light"] .topbar { background: rgba(243,239,232,.78); }
   html[data-theme="light"] .topbar.scrolled { background: rgba(243,239,232,.93); }
-  /* Wordmark: same emboss, deeper gradient stops and a softer shade. */
+  /* Wordmark: same emboss, deeper gradient stops and a softer shade.
+     0.35 deepens the stops again (see the .wordmark note below). */
   html[data-theme="light"] .wordmark { text-shadow: -1px -1px 0 rgba(255,255,255,.6), 0 2px 3px rgba(90,40,20,.35); }
-  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #f08a52 0%, #cf5f2e 52%, #a8431f 100%); }
+  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #dd6418 0%, #cf5f2e 52%, #9c3c1a 100%); }
   html[data-theme="light"] .wm-pin { filter: drop-shadow(0 1px 1px rgba(90,40,20,.35)); }
   /* Big solid action buttons: flat --accent (#cf5f2e) reaches 4.5:1
      with neither cream nor ink text, so the bright --amber carries
@@ -141,8 +142,13 @@
      gradient fill is clipped text where supported; solid --accent is
      the base color and the fallback everywhere else. The O's short
      line-height lets the glyph overflow the bar slightly (painted,
-     overflow visible) instead of pushing the bar taller. */
-  .wordmark { font-size: 25px; font-weight: 800; letter-spacing: .2px; line-height: 1; color: var(--accent); display: flex; align-items: center;
+     overflow visible) instead of pushing the bar taller. 0.35 grows
+     the word to 28px with .02em letter spacing (the O keeps its 1.64×
+     ratio and the pin scales with it), and deepens the LIGHT theme's
+     gradient — the pale #f08a52 top stop washed out on the light
+     paper; every stop of the new light gradient clears 3:1 against
+     --paper, the large-text floor. The dark gradient is unchanged. */
+  .wordmark { font-size: 28px; font-weight: 800; letter-spacing: .02em; line-height: 1; color: var(--accent); display: flex; align-items: center;
     text-shadow: -1px -1px 0 rgba(255,230,200,.45), 0 2px 3px rgba(0,0,0,.5); }
   @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .wm-t { background-image: linear-gradient(180deg, #ffb98c 0%, var(--accent) 52%, #d2542a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
@@ -152,11 +158,27 @@
   .wm-pin { height: .55em; margin-top: -.04em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
-  /* Theme toggle (0.34): a glass pill beside the language menu; the
-     top bar's right side groups the two controls. */
+  /* Theme toggle (0.34; destination semantics 0.35): a pill beside
+     the language menu; the top bar's right side groups the two
+     controls. The button offers where a tap TAKES you, and it is
+     painted as a sample of that destination: on the dark bar it wears
+     the LIGHT theme (near-solid paper, navy ink text) and offers
+     "☀ Light"; on the light bar it wears the DARK theme (deep navy,
+     cream text) and offers "🌙 Dark". Solid samples, no glass — the
+     button is a preview chip, not a glass control. */
   .topbar-actions { display: flex; align-items: center; gap: 8px; }
-  .themebtn { display: flex; align-items: center; gap: 7px; background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; }
-  .themebtn:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
+  .themebtn { display: flex; align-items: center; gap: 7px; background: linear-gradient(rgba(255,253,249,.96), rgba(243,239,232,.93)); color: #0a2b3c; border: 1px solid rgba(255,248,238,.55); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 14px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; white-space: nowrap; }
+  .themebtn:hover { background: #fffdf9; border-color: rgba(255,248,238,.85); }
+  html[data-theme="light"] .themebtn { background: #0d2734; color: #fff8ee; border-color: rgba(9,27,37,.5); }
+  html[data-theme="light"] .themebtn:hover { background: #133543; border-color: rgba(9,27,37,.65); }
+  /* Narrow phones (0.35): the 28px wordmark plus the two bar controls
+     no longer fit one row under ~460px, so the bar wraps gracefully —
+     wordmark on its own row, the controls right-aligned below it,
+     every control still full-size and tappable. */
+  @media (max-width: 460px) {
+    .topbar-in { flex-wrap: wrap; row-gap: 6px; }
+    .topbar-actions { margin-left: auto; }
+  }
   .dd { position: relative; }
   .dd-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .dd-chev { display: inline-block; margin-left: 8px; font-size: 13px; color: var(--accent); transition: transform .2s ease; }
@@ -180,7 +202,7 @@
   .navsegbtn:hover { background:var(--glass-bg-hover); color:var(--ink); }
   .navsegbtn.active { background:var(--glass-bg-strong); border-color:var(--glass-border-strong); color:var(--paper); font-weight:800; box-shadow:var(--glass-shadow); }
   .navsegbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  .recbadge { font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; background:var(--accent-soft); color:var(--amber); border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .recbadge { font-size:8px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; background:var(--accent-soft); color:var(--amber); border-radius:999px; padding:1px 5px; white-space:nowrap; }
   .navsegbtn.active .recbadge { background: rgba(9,27,37,.28); color:var(--paper); }
   main { max-width: 760px; margin: 0 auto; padding: 22px 20px; }
   section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:22px; margin-bottom:18px; animation: rise .5s ease both; }
@@ -313,6 +335,12 @@
   .homebenefits svg { flex:0 0 auto; }
   .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
   .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
+  /* Navigator agreement panel (0.35): when Build is pressed while the
+     chosen Apple Maps / Waze is still un-acknowledged, the panel is
+     scrolled into view and pulses twice so the eye lands on it. The
+     global reduced-motion block flattens this animation too. */
+  @keyframes ackpulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,120,67,0); } 30% { box-shadow: 0 0 0 5px rgba(240,120,67,.55); } }
+  #navack.ackpulse { animation: ackpulse .55s ease-in-out 2; }
   /* Delete-key confirmation (0.30): the consequences list inside the
      in-panel confirmation notice. */
   .delkeylist { margin:8px 0; padding-left:20px; }
@@ -360,7 +388,7 @@
   <div class="topbar-in">
     <span class="wordmark" role="img" aria-label="Stopedia"><span class="wm-t" aria-hidden="true">St</span><span class="wm-o" aria-hidden="true"><span class="wm-t">O</span><img class="wm-pin" src="logo-flat.png" alt=""></span><span class="wm-t" aria-hidden="true">pedia</span></span>
     <div class="topbar-actions">
-      <button type="button" class="themebtn" id="themebtn" aria-label="Switch theme"><span id="themeicon" aria-hidden="true">🌙</span><span id="themelabel">Dark</span></button>
+      <button type="button" class="themebtn" id="themebtn" aria-label="Switch to light theme"><span id="themeicon" aria-hidden="true">☀</span><span id="themelabel">Light</span></button>
       <div class="dd dd-right" id="langdd">
       <button type="button" class="dd-trigger langtrigger" id="langtrigger" aria-haspopup="true" aria-expanded="false"><span data-i18n="langCurrent">English</span><span class="dd-chev" aria-hidden="true">▾</span></button>
       <div class="dd-panel" id="langmenu" role="menu">
@@ -429,6 +457,14 @@
       <button type="button" class="navsegbtn" data-navsel="google" aria-pressed="true">Google Maps <span class="recbadge" data-i18n="recBadge">Recommended</span></button>
       <button type="button" class="navsegbtn" data-navsel="apple" aria-pressed="false">Apple Maps</button>
       <button type="button" class="navsegbtn" data-navsel="waze" aria-pressed="false">Waze</button>
+    </div>
+    <div class="notice hidden" id="navack" style="margin:12px 0 4px">
+      <p style="margin-top:0" id="navacktext"></p>
+      <p><strong id="navackq" data-i18n="navAckQ">Do you agree?</strong></p>
+      <div class="btnrow">
+        <button class="secondary" id="navackyes" type="button" data-i18n="navAckYes">Yes, I agree</button>
+        <button class="secondary" id="navackno" type="button" data-i18n="navAckNo">No, use Google Maps</button>
+      </div>
     </div>
     <label id="modelabel" data-i18n="workModeLabel">Route or batches?</label>
     <div class="navseg" id="modeseg" role="group" aria-labelledby="modelabel">
@@ -662,7 +698,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.34 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.35 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -736,14 +772,21 @@ const STR = {
     routeNameLabel: "Name for this route", routeNamePh: "e.g. Pharmacies — Friday",
     saveRouteBtn: "Save this route",
     savedTitle: "Saved routes",
-    savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
+    savedText: "Routes you save stay on this phone. Open one in your navigator, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.34 — draft, in progress.",
+    footerText: "Version 0.35 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     themeDark: "Dark",
     themeLight: "Light",
     themeToggle: "Switch theme",
+    themeToLight: "Switch to light theme",
+    themeToDark: "Switch to dark theme",
+    navAckApple: "Apple Maps accepts only one destination per link, so Stopedia will hand you this route leg by leg, with a Next stop button for each part. For the whole route in a single link, Google Maps is the recommended choice.",
+    navAckWaze: "Waze accepts only one destination per link, so Stopedia will hand you this route leg by leg, with a Next stop button for each part. For the whole route in a single link, Google Maps is the recommended choice.",
+    navAckQ: "Do you agree?",
+    navAckYes: "Yes, I agree",
+    navAckNo: "No, use Google Maps",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -751,7 +794,7 @@ const STR = {
     needKey: "Add your TomTom key first — I opened the “Your TomTom key” tab, with the steps.",
     needOrigin: "Write the start address.", needDest: "Write the final destination.",
     needStops: "Write at least one stop.",
-    tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
+    tooMany: "Too many points: Google Maps allows 10 in total. Remove some stops.",
     working: "Finding each address on the map…",
     optimizing: "Asking TomTom for the best order with real road times…",
     optRoad: "Order optimized by TomTom with real road times: this is the fastest order for these stops.",
@@ -787,7 +830,7 @@ const STR = {
     keyReplaceQ: "This device already has a TomTom key. Replace it with the one from the file?",
     replaceBtn: "Replace",
     keepMineBtn: "Keep mine",
-    open: "Open in Maps", edit: "Edit", del: "Delete",
+    open: "Open in Google Maps", edit: "Edit", del: "Delete",
     confirmDel: "Delete this saved route?",
     stopsWord: "stops", savedOn: "Saved",
     editing: "Loaded for editing. Change the addresses above and order again; saving will replace the old version.",
@@ -929,14 +972,21 @@ const STR = {
     routeNameLabel: "Nombre para esta ruta", routeNamePh: "ej. Farmacias — viernes",
     saveRouteBtn: "Guardar esta ruta",
     savedTitle: "Rutas guardadas",
-    savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
+    savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en tu navegador, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.34 — borrador, en avance.",
+    footerText: "Versión 0.35 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     themeDark: "Oscuro",
     themeLight: "Claro",
     themeToggle: "Cambiar tema",
+    themeToLight: "Cambiar al tema claro",
+    themeToDark: "Cambiar al tema oscuro",
+    navAckApple: "Apple Maps acepta un solo destino por enlace, así que Stopedia te entregará esta ruta tramo a tramo, con un botón de Siguiente parada para cada parte. Para recibir la ruta completa en un solo enlace, la opción recomendada es Google Maps.",
+    navAckWaze: "Waze acepta un solo destino por enlace, así que Stopedia te entregará esta ruta tramo a tramo, con un botón de Siguiente parada para cada parte. Para recibir la ruta completa en un solo enlace, la opción recomendada es Google Maps.",
+    navAckQ: "¿Estás de acuerdo?",
+    navAckYes: "Sí, de acuerdo",
+    navAckNo: "No, usar Google Maps",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -944,7 +994,7 @@ const STR = {
     needKey: "Primero agrega tu clave de TomTom: abrí la pestaña «Tu clave de TomTom», con los pasos.",
     needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
     needStops: "Escribe al menos una parada.",
-    tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
+    tooMany: "Demasiados puntos: Google Maps permite 10 en total. Quita algunas paradas.",
     working: "Buscando cada dirección en el mapa…",
     optimizing: "Pidiendo a TomTom el mejor orden con los tiempos reales por calle…",
     optRoad: "Orden optimizado por TomTom con los tiempos reales por calle: es el orden más rápido para estas paradas.",
@@ -980,7 +1030,7 @@ const STR = {
     keyReplaceQ: "Este aparato ya tiene una clave de TomTom. ¿Reemplazarla por la del archivo?",
     replaceBtn: "Reemplazar",
     keepMineBtn: "Dejar la mía",
-    open: "Abrir en Maps", edit: "Editar", del: "Borrar",
+    open: "Abrir en Google Maps", edit: "Editar", del: "Borrar",
     confirmDel: "¿Borrar esta ruta guardada?",
     stopsWord: "paradas", savedOn: "Guardada el",
     editing: "Cargada para editar. Cambia las direcciones arriba y ordena de nuevo; al guardar se reemplaza la versión anterior.",
@@ -1082,17 +1132,22 @@ document.getElementById("btn-es").addEventListener("click", () => { lang = "es";
 /* ---------- Theme: dark (default) / light (0.34) ---------- */
 /* The choice lives in stopedia.theme; absence means dark. The <head>
    boot script already set data-theme before first paint when a stored
-   "light" exists — what happens here is the button: it names the
-   CURRENT theme (🌙 Dark / ☀ Light) and one tap flips it, repaints the
-   meta theme-color, and (on a tap) persists the choice. */
+   "light" exists — what happens here is the button. Since 0.35 it has
+   DESTINATION semantics, like a light switch: it names and previews
+   the theme a tap takes you TO — from dark it offers ☀ Light dressed
+   in the light theme's colors, from light it offers 🌙 Dark dressed
+   in the dark theme's (the CSS keys the sample off the CURRENT page
+   theme). One tap flips it, repaints the meta theme-color, and (on a
+   tap) persists the choice. */
 let theme = "dark";
 try { theme = localStorage.getItem("stopedia.theme") === "light" ? "light" : "dark"; } catch (e) {}
 function renderThemeBtn(){
   const ic = document.getElementById("themeicon"), lb = document.getElementById("themelabel"), btn = document.getElementById("themebtn");
   if (!ic || !lb || !btn) return;
-  ic.textContent = theme === "light" ? "☀" : "🌙";
-  lb.textContent = t(theme === "light" ? "themeLight" : "themeDark");
-  btn.setAttribute("aria-label", t("themeToggle"));
+  const toLight = theme !== "light";
+  ic.textContent = toLight ? "☀" : "🌙";
+  lb.textContent = t(toLight ? "themeLight" : "themeDark");
+  btn.setAttribute("aria-label", t(toLight ? "themeToLight" : "themeToDark"));
 }
 function applyTheme(save){
   if (theme === "light") document.documentElement.setAttribute("data-theme", "light");
@@ -1724,6 +1779,11 @@ function nearestNeighborOrder(origin, pts){
   return ordered;
 }
 document.getElementById("build").addEventListener("click", async () => {
+  /* Agreement gate (0.35): an un-acknowledged Apple Maps / Waze
+     choice blocks the build — single and batch share this handler —
+     and points at the advisory panel instead. */
+  const navGate = getNav();
+  if ((navGate === "apple" || navGate === "waze") && !navAcked(navGate)) { flagNavAck(); return; }
   const key = (localStorage.getItem("stopedia.key") || "").trim();
   const originTxt = document.getElementById("origin").value.trim();
   const destTxt = document.getElementById("destination").value.trim();
@@ -2415,12 +2475,59 @@ function renderNavUI(){
   if (note) note.textContent = t(nav === "apple" ? "navNoteApple" : (nav === "waze" ? "navNoteWaze" : "navNoteGoogle"));
   const db = document.getElementById("discardroute");
   if (db) db.setAttribute("aria-label", t("discardRoute"));
+  renderNavAck();
 }
 document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("click", () => {
   try { localStorage.setItem("stopedia.nav", b.dataset.navsel); } catch (e) {}
   renderNavUI();
   if (currentRoute) renderResult();
 }));
+/* ---------- Apple Maps / Waze agreement gate (0.35) ---------- */
+/* Hugo's rule: before Stopedia delivers a route leg by leg, the user
+   is told plainly what that means and asked "¿Estás de acuerdo?" —
+   once per navigator. The agreement lives in stopedia.navack as JSON
+   ({apple:1, waze:1}); absence means not yet agreed. While the chosen
+   navigator is un-acked, the advisory panel sits directly under the
+   selector and the Build button (single AND batch — one shared
+   handler) refuses to build: it scrolls the panel into view and
+   pulses it. "Sí, de acuerdo" records the ack and the panel never
+   returns for that navigator; "No, usar Google Maps" switches the
+   navigator back to Google. Opening or viewing a saved route is
+   never gated — only building is. Google never prompts. */
+function getNavAck(){
+  try { const o = JSON.parse(localStorage.getItem("stopedia.navack") || "{}"); return (o && typeof o === "object") ? o : {}; }
+  catch (e) { return {}; }
+}
+function navAcked(nav){ return !!getNavAck()[nav]; }
+function renderNavAck(){
+  const panel = document.getElementById("navack");
+  if (!panel) return;
+  const nav = getNav();
+  const need = (nav === "apple" || nav === "waze") && !navAcked(nav);
+  panel.classList.toggle("hidden", !need);
+  if (need) document.getElementById("navacktext").textContent = t(nav === "apple" ? "navAckApple" : "navAckWaze");
+}
+function flagNavAck(){
+  renderNavAck();
+  const panel = document.getElementById("navack");
+  if (!panel || panel.classList.contains("hidden")) return;
+  panel.scrollIntoView({ behavior: "smooth", block: "center" });
+  panel.classList.remove("ackpulse");
+  void panel.offsetWidth;
+  panel.classList.add("ackpulse");
+}
+document.getElementById("navackyes").addEventListener("click", () => {
+  const nav = getNav();
+  if (nav !== "apple" && nav !== "waze") return;
+  const o = getNavAck(); o[nav] = 1;
+  try { localStorage.setItem("stopedia.navack", JSON.stringify(o)); } catch (e) {}
+  renderNavAck();
+});
+document.getElementById("navackno").addEventListener("click", () => {
+  try { localStorage.setItem("stopedia.nav", "google"); } catch (e) {}
+  renderNavUI();
+  if (currentRoute) renderResult();
+});
 /* ---------- Single route ⇄ Batches mode toggle (0.26) ---------- */
 /* The second segmented control in Direcciones, built from the same
    component as the navigator selector. Single route = the classic
