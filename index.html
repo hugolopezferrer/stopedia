@@ -6,36 +6,57 @@
 <title>Stopedia — Route stops, ordered</title>
 <meta name="description" content="Stopedia turns a list of addresses into an ordered route that opens in Google Maps, and lets you save routes to reuse and edit later.">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#0a2b3c">
+<meta name="theme-color" content="#091b25">
 <style>
   :root {
-    --paper:#f3efe8; --surface:#fffdf9; --surface-2:#e9ecec;
-    --ink:#0a2b3c; --muted:#4a5f68; --line:#c9cec9; --line-strong:#8e9ca1;
-    --accent:#cf5f2e; --accent-soft:#f8e2d3;
-    --terra:#a33e2a; --terra-soft:#f6ddd3;
-    --blue:#173f55; --blue-soft:#dce9ee;
-    --shadow:0 16px 44px rgba(25,47,39,.08); --radius:14px;
-    --cream:#fff8ee;
+    color-scheme: dark;
+    --paper:#091b25; --surface:#0d2734; --surface-2:#133543;
+    --ink:#fff8ee; --muted:#c7d1d3; --line:#294653; --line-strong:#54717d;
+    --accent:#f07843; --amber:#f28a58; --accent-soft:#173e49; --amber-soft:#4d2c22;
+    --terra:#ff9a78; --terra-soft:#4b2924;
+    --blue:#8dc7dc; --blue-soft:#163d4e;
+    --shadow:0 16px 44px rgba(0,0,0,.3); --radius:14px;
   }
   * { box-sizing: border-box; }
-  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--paper); color: var(--ink); }
-  header { max-width:720px; margin:0 auto; padding: 30px 16px 4px; }
-  header h1 { margin:0; font-size: 34px; font-weight:700; letter-spacing: .2px; color: var(--ink); }
-  header p { margin:6px 0 0; font-size: 16px; color: var(--muted); }
-  .langbar { display:flex; gap:8px; margin-top:14px; }
-  .langbar button { background: var(--surface); color: var(--ink); border:1px solid var(--line-strong); border-radius:20px; padding:5px 15px; font-size:14px; cursor:pointer; }
-  .langbar button.active { background: var(--ink); color: var(--cream); border-color: var(--ink); font-weight:700; }
-  main { max-width: 720px; margin: 0 auto; padding: 18px 16px; }
-  section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:20px; margin-bottom:18px; }
-  h2 { margin:0 0 12px; font-size:21px; font-weight:650; color: var(--ink); }
-  label { display:block; font-size:14px; font-weight:600; margin:14px 0 5px; color: var(--ink); }
-  input[type="text"], textarea, select { width:100%; padding:12px 14px; font-size:16px; color: var(--ink); background: var(--surface); border:1px solid var(--line); border-radius:12px; }
-  input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink);
+    background-color: var(--paper);
+    background-image: radial-gradient(rgba(255,248,238,.05) 1px, transparent 1.4px);
+    background-size: 24px 24px; }
+  header { max-width:760px; margin:0 auto; padding: 38px 20px 6px; }
+  .eyebrow { margin:0 0 10px; font-size:12px; font-weight:700; letter-spacing:.32em; text-transform:uppercase; color: var(--accent); }
+  header h1 { margin:0; font-size:44px; font-weight:600; letter-spacing:-.5px; color: var(--ink); }
+  header p { margin:8px 0 0; font-size:17px; color: var(--muted); }
+  .headsvg { display:block; width:min(340px, 82%); height:auto; margin-top:20px; opacity:.9; }
+  .route-ghost { fill:none; stroke: var(--line-strong); stroke-width:2.5; stroke-linecap:round; opacity:.35; }
+  .route-path { fill:none; stroke: var(--accent); stroke-width:2.5; stroke-linecap:round; stroke-dasharray:7 7; animation: dashmove 6s linear infinite; }
+  @keyframes dashmove { to { stroke-dashoffset:-140; } }
+  .pin-start { fill: var(--ink); } .pin-mid1 { fill: var(--blue); } .pin-mid2 { fill: var(--accent); } .pin-end { fill: var(--terra); }
+  .pincore { fill: var(--paper); }
+  .langbar { display:flex; gap:8px; margin-top:18px; }
+  .langbar button { background: var(--surface); color: var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 15px; font-size:14px; cursor:pointer; transition: all .2s ease; }
+  .langbar button.active { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight:700; }
+  main { max-width: 760px; margin: 0 auto; padding: 22px 20px; }
+  section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:22px; margin-bottom:18px; animation: rise .5s ease both; }
+  .panelclip > section:nth-child(2) { animation-delay:.06s; }
+  .panelclip > section:nth-child(3) { animation-delay:.12s; }
+  .panelclip > section:nth-child(4) { animation-delay:.18s; }
+  @keyframes rise { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+  h2 { margin:0 0 12px; font-size:22px; font-weight:600; letter-spacing:-.2px; color: var(--ink); }
+  label { display:block; font-size:14px; font-weight:600; margin:14px 0 5px; color: var(--muted); }
+  input[type="text"], textarea, select { width:100%; padding:13px 15px; font-size:16px; color: var(--ink); background: var(--surface-2); border:1px solid var(--line); border-radius:12px; transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
+  input[type="text"]::placeholder, textarea::placeholder { color: var(--muted); opacity:.7; }
+  select option { background: var(--surface-2); color: var(--ink); }
+  input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,120,67,.32); }
   textarea { min-height:110px; resize:vertical; }
   .hint { font-size:13px; color: var(--muted); margin-top:6px; }
-  button.primary { width:100%; background: var(--ink); color: var(--cream); border:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer; margin-top:16px; }
-  button.secondary { background: var(--surface); color: var(--ink); border:1px solid var(--line-strong); border-radius:12px; padding:11px 15px; font-size:15px; font-weight:700; cursor:pointer; }
-  button.small { padding:7px 11px; font-size:13px; border-radius:9px; border:1px solid var(--line); background: var(--surface); color: var(--ink); cursor:pointer; }
+  button { transition: background-color .2s ease, border-color .2s ease, color .2s ease, transform .15s ease, box-shadow .2s ease; }
+  button.primary { width:100%; background: var(--accent); color: var(--paper); border:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; cursor:pointer; margin-top:16px; }
+  button.primary:hover { background: var(--amber); }
+  button.primary:active { transform: translateY(1px); }
+  button.secondary { background: var(--surface-2); color: var(--ink); border:1px solid var(--line-strong); border-radius:12px; padding:11px 15px; font-size:15px; font-weight:700; cursor:pointer; }
+  button.secondary:hover { border-color: var(--accent); color: var(--amber); }
+  button.small { padding:7px 11px; font-size:13px; border-radius:9px; border:1px solid var(--line); background: var(--surface-2); color: var(--ink); cursor:pointer; }
+  button.small:hover { border-color: var(--accent); }
   button.danger { color: var(--terra); border-color: var(--terra); }
   .stoprow { display:flex; gap:6px; align-items:center; margin-top:8px; }
   .stoprow input { flex:1; }
@@ -43,17 +64,24 @@
   #status { font-size:14px; margin-top:10px; min-height:20px; }
   #result ol { padding-left:22px; margin:10px 0; }
   #result li { margin:6px 0; font-size:15px; }
-  .route-card { border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:10px; background: var(--surface); }
+  #ordered li { animation: rise .45s ease both; }
+  #ordered li:nth-child(2) { animation-delay:.05s; } #ordered li:nth-child(3) { animation-delay:.1s; }
+  #ordered li:nth-child(4) { animation-delay:.15s; } #ordered li:nth-child(5) { animation-delay:.2s; }
+  #ordered li:nth-child(6) { animation-delay:.25s; } #ordered li:nth-child(7) { animation-delay:.3s; }
+  #ordered li:nth-child(8) { animation-delay:.35s; } #ordered li:nth-child(9) { animation-delay:.4s; }
+  #ordered li:nth-child(10) { animation-delay:.45s; } #ordered li:nth-child(11) { animation-delay:.5s; }
+  .route-card { border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:10px; background: var(--surface-2); animation: rise .45s ease both; }
   .route-card h3 { margin:0 0 4px; font-size:17px; color: var(--ink); }
   .route-card .meta { font-size:13px; color: var(--muted); margin-bottom:8px; }
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
-  a.mapslink { display:block; text-align:center; background: var(--ink); color: var(--cream); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; }
+  a.mapslink { display:block; text-align:center; background: var(--accent); color: var(--paper); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; transition: background-color .2s ease; }
+  a.mapslink:hover { background: var(--amber); }
   #shareroute { width:100%; margin-top:10px; padding:14px; font-size:16px; }
-  #sharemenu { border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:8px; background: var(--surface); }
+  #sharemenu { border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:8px; background: var(--surface-2); }
   #sharemenu .btnrow { margin-top:0; }
   .hidden { display:none; }
   .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
-  .progress { height:10px; background: var(--surface-2); border-radius:5px; overflow:hidden; margin-top:12px; }
+  .progress { height:10px; background: var(--paper); border-radius:5px; overflow:hidden; margin-top:12px; }
   .progress > div { height:100%; width:0%; background: var(--accent); transition: width .2s; }
   .reviewrow { display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; }
   .reviewrow input { flex:1; }
@@ -75,35 +103,72 @@
   .dragging { opacity:.6; background: var(--blue-soft); border-radius:8px; }
   #result li.stopitem { display:flex; align-items:center; gap:6px; }
   #result li .draghandle { padding:4px; font-size:17px; }
-  a.buttonlink { display:block; text-align:center; background: var(--blue); color: var(--cream); text-decoration:none; border-radius:12px; padding:13px; font-size:16px; font-weight:700; margin-top:12px; }
+  a.buttonlink { display:block; text-align:center; background: var(--blue-soft); color: var(--blue); border:1px solid var(--line); text-decoration:none; border-radius:12px; padding:13px; font-size:16px; font-weight:700; margin-top:12px; }
   .panel { margin-bottom:18px; }
-  .panelhead { width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px; background: var(--surface); color: var(--ink); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:16px 20px; font-size:19px; font-weight:700; cursor:pointer; text-align:left; }
-  .panelhead .chev { font-size:16px; color: var(--accent); }
-  .panelbody { margin-top:14px; }
-  .panelbody section:last-child { margin-bottom:0; }
+  .panelhead { width:100%; display:flex; justify-content:space-between; align-items:center; gap:8px; background: var(--surface); color: var(--ink); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:18px 22px; font-size:20px; font-weight:650; cursor:pointer; text-align:left; }
+  .panelhead:hover { border-color: var(--line-strong); }
+  .panelhead .chev { font-size:16px; color: var(--accent); display:inline-block; transition: transform .35s ease; }
+  .panelhead .chev.closed { transform: rotate(-90deg); }
+  .panelbody { display:grid; grid-template-rows:1fr; opacity:1; margin-top:14px; transition: grid-template-rows .35s ease, opacity .35s ease, margin-top .35s ease; }
+  .panelbody.closed { grid-template-rows:0fr; opacity:0; margin-top:0; pointer-events:none; }
+  .panelclip { overflow:hidden; min-height:0; }
+  .panelclip > section:last-child { margin-bottom:0; }
   .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
   .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
   .keyappliedline { font-weight:650; font-size:16px; margin:14px 0 8px; color: var(--ink); }
   .keycheck { color: var(--accent); font-weight:800; }
-  .keymask { background: var(--accent-soft); color: var(--muted); border-radius:12px; padding:11px 14px; letter-spacing:2px; font-size:15px; margin:6px 0; word-break: break-all; }
+  .keymask { background: var(--surface-2); color: var(--muted); border-radius:12px; padding:11px 14px; letter-spacing:2px; font-size:15px; margin:6px 0; word-break: break-all; }
   .keybad { background: var(--terra-soft); color: var(--terra); border-radius:10px; padding:10px 12px; font-size:14px; margin:12px 0 4px; }
+  .stopcheck { flex:0 0 auto; width:30px; height:30px; border-radius:50%; border:2px solid var(--line-strong); background: transparent; color:transparent; font-size:16px; font-weight:800; line-height:1; cursor:pointer; padding:0; }
+  .stopcheck.done { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  #result li.donestop .stoplabel { opacity:.55; text-decoration: line-through; }
+  #progressline { font-weight:650; color: var(--amber); }
+  #esttime { font-size:21px; font-weight:650; color: var(--ink); letter-spacing:.2px; }
+  .navbtn.active { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight:700; }
+  #mapbtn { width:100%; margin-top:10px; padding:14px; font-size:16px; }
+  #routemap { height:320px; border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; margin-top:12px; background: var(--surface-2); }
+  .mapmark { width:26px; height:26px; border-radius:50%; background: var(--accent); color: var(--paper); font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,248,238,.92); box-shadow:0 1px 4px rgba(0,0,0,.35); }
+  .mapmark.origin { background: var(--ink); color: var(--paper); }
+  .mapmark.dest { background: var(--terra); color: var(--paper); }
+  #qrblock { display:none; text-align:center; margin-top:16px; }
+  @media (min-width: 900px) { #qrblock.qrshow { display:block; } }
+  #qrcode { display:inline-block; background:#ffffff; border:1px solid var(--line); border-radius:12px; padding:10px; line-height:0; }
+  #qrcode svg, #qrcode img { width:180px; height:180px; }
+  #qrcode table { border-collapse: collapse; }
   footer { text-align:center; font-size:13px; color: var(--muted); padding: 8px 16px 30px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+    .route-path { animation: none !important; }
+  }
 </style>
 </head>
 <body>
 <header>
+  <p class="eyebrow" data-i18n="eyebrow">Route planner</p>
   <h1>Stopedia</h1>
   <p data-i18n="tagline">Your stops, in the right order.</p>
   <div class="langbar">
     <button id="btn-en" type="button">EN</button>
     <button id="btn-es" type="button">ES</button>
   </div>
+  <svg class="headsvg" viewBox="0 0 340 76" aria-hidden="true" focusable="false">
+    <path class="route-ghost" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
+    <path class="route-path" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
+    <circle class="pin-start" cx="10" cy="60" r="7" />
+    <circle class="pin-mid1" cx="118" cy="42" r="6" />
+    <circle class="pin-mid2" cx="214" cy="34" r="6" />
+    <circle class="pin-end" cx="330" cy="26" r="7" />
+    <circle class="pincore" cx="10" cy="60" r="2.4" />
+    <circle class="pincore" cx="118" cy="42" r="2.2" />
+    <circle class="pincore" cx="214" cy="34" r="2.2" />
+    <circle class="pincore" cx="330" cy="26" r="2.4" />
+  </svg>
 </header>
 <main>
 
   <div class="panel" id="panel-route">
     <button type="button" class="panelhead" id="panelroutehead" aria-expanded="true" aria-controls="panelroutebody"><span data-i18n="panelRouteTitle">Build a route</span><span class="chev" id="chevroute">▾</span></button>
-    <div class="panelbody" id="panelroutebody">
+    <div class="panelbody" id="panelroutebody"><div class="panelclip">
 
   <section id="builder">
     <h2 data-i18n="buildTitle">Build a route</h2>
@@ -130,9 +195,15 @@
         </div>
       </div>
       <ol id="ordered"></ol>
+      <p id="progressline" class="hint"></p>
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
-      <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener" data-i18n="openMaps">Open route in Google Maps</a>
+      <div class="btnrow" id="navchooser">
+        <button class="small navbtn" type="button" id="navgoogle" data-nav="google">Google Maps</button>
+        <button class="small navbtn" type="button" id="navapple" data-nav="apple">Apple Maps</button>
+        <button class="small navbtn" type="button" id="navwaze" data-nav="waze" data-i18n="wazeNext">Waze (next stop)</button>
+      </div>
+      <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener">Open route in Google Maps</a>
       <button class="secondary" id="shareroute" type="button" data-i18n="shareRoute">🔗 Share route</button>
       <div id="sharemenu" class="hidden">
         <div class="btnrow">
@@ -141,6 +212,13 @@
           <button class="small" type="button" id="sharemail" data-i18n="shareEmail">Email</button>
           <button class="small" type="button" id="sharecopy" data-i18n="shareCopy">Copy</button>
         </div>
+      </div>
+      <button class="secondary" id="mapbtn" type="button" data-i18n="viewMap">🗺 View map</button>
+      <div id="mapwrap" class="hidden"><div id="routemap"></div></div>
+      <p id="mapnote" class="hint hidden"></p>
+      <div id="qrblock" class="hidden">
+        <div id="qrcode"></div>
+        <p class="hint" data-i18n="qrCaption">Scan to open it on your phone</p>
       </div>
       <label for="routename" data-i18n="routeNameLabel">Name for this route</label>
       <input type="text" id="routename" data-i18n-ph="routeNamePh" placeholder="e.g. Pharmacies — Friday">
@@ -202,12 +280,13 @@
     <div id="savedlist"></div>
     <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
   </section>
+      </div>
     </div>
   </div>
 
   <div class="panel" id="panel-key">
     <button type="button" class="panelhead" id="panelkeyhead" aria-expanded="false" aria-controls="panelkeybody"><span data-i18n="panelKeyTitle">Your TomTom key</span><span class="chev" id="chevkey">▸</span></button>
-    <div class="panelbody hidden" id="panelkeybody">
+    <div class="panelbody closed" id="panelkeybody"><div class="panelclip">
       <div class="notice" id="nokeynotice">
         <p style="margin-top:0"><strong data-i18n="noKeyTitle">You need your free TomTom key first</strong></p>
         <p data-i18n="noKeyText">Stopedia looks up addresses with TomTom, so it needs a key from your own free TomTom account. It takes a couple of minutes, and you only do it once:</p>
@@ -246,17 +325,19 @@
       <p id="keystatus" class="hint"></p>
     </div>
   </section>
+      </div>
     </div>
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.14 — draft, in progress.</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.16 — draft, in progress.</span></footer>
 
 <script>
 "use strict";
 /* ---------- i18n ---------- */
 const STR = {
   en: {
+    eyebrow: "Route planner",
     tagline: "Your stops, in the right order.",
     setupTitle: "Your TomTom key",
     panelRouteTitle: "Build a route",
@@ -304,7 +385,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.14 — draft, in progress.",
+    footerText: "Version 0.16 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -360,9 +441,20 @@ const STR = {
     shareTelegram: "Telegram",
     shareEmail: "Email",
     shareCopy: "Copy",
-    aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments."
+    aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments.",
+    totalTimeLabel: "Total time",
+    totalDistLabel: "Total distance",
+    viewMap: "🗺 View map",
+    mapFail: "The map could not be shown. Check your connection and your TomTom key, then try again.",
+    openApple: "Open route in Apple Maps",
+    openWaze: "Open next stop in Waze",
+    wazeNext: "Waze (next stop)",
+    doneWord: "done",
+    markDone: "Mark as done",
+    qrCaption: "Scan to open it on your phone"
   },
   es: {
+    eyebrow: "Planificador de rutas",
     tagline: "Tus paradas, en el orden correcto.",
     setupTitle: "Tu clave de TomTom",
     panelRouteTitle: "Armar una ruta",
@@ -410,7 +502,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.14 — borrador, en avance.",
+    footerText: "Versión 0.16 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -466,7 +558,17 @@ const STR = {
     shareTelegram: "Telegram",
     shareEmail: "Correo electrónico",
     shareCopy: "Copiar",
-    aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios."
+    aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios.",
+    totalTimeLabel: "Tiempo total",
+    totalDistLabel: "Distancia total",
+    viewMap: "🗺 Ver mapa",
+    mapFail: "No se pudo mostrar el mapa. Revisa tu conexión y tu clave de TomTom e inténtalo de nuevo.",
+    openApple: "Abrir la ruta en Apple Maps",
+    openWaze: "Abrir la siguiente parada en Waze",
+    wazeNext: "Waze (siguiente parada)",
+    doneWord: "hechas",
+    markDone: "Marcar como hecha",
+    qrCaption: "Escanéala para abrirla en tu teléfono"
   }
 };
 let lang = localStorage.getItem("stopedia.lang") || "en";
@@ -480,6 +582,10 @@ function applyLang(){
   if (typeof refreshBoxPlaceholders === "function") refreshBoxPlaceholders();
   if (typeof renderCountryOptions === "function") renderCountryOptions();
   renderSaved();
+  if (window.__stopediaBooted) {
+    if (typeof currentRoute !== "undefined" && currentRoute && typeof renderResult === "function") renderResult();
+    else if (typeof updateNavLink === "function") updateNavLink();
+  }
 }
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
 document.getElementById("btn-es").addEventListener("click", () => { lang = "es"; localStorage.setItem("stopedia.lang","es"); applyLang(); });
@@ -553,13 +659,15 @@ document.getElementById("cancelkey").addEventListener("click", () => {
 function hasKey(){ return !!(localStorage.getItem("stopedia.key") || "").trim(); }
 function setPanel(name, open){
   const isKey = name === "key";
-  document.getElementById(isKey ? "panelkeybody" : "panelroutebody").classList.toggle("hidden", !open);
-  document.getElementById(isKey ? "chevkey" : "chevroute").textContent = open ? "▾" : "▸";
+  document.getElementById(isKey ? "panelkeybody" : "panelroutebody").classList.toggle("closed", !open);
+  const chev = document.getElementById(isKey ? "chevkey" : "chevroute");
+  chev.textContent = "▾";
+  chev.classList.toggle("closed", !open);
   document.getElementById(isKey ? "panelkeyhead" : "panelroutehead").setAttribute("aria-expanded", open ? "true" : "false");
 }
 function togglePanel(name){
   const body = document.getElementById(name === "key" ? "panelkeybody" : "panelroutebody");
-  setPanel(name, body.classList.contains("hidden"));
+  setPanel(name, body.classList.contains("closed"));
 }
 document.getElementById("panelroutehead").addEventListener("click", () => togglePanel("route"));
 document.getElementById("panelkeyhead").addEventListener("click", () => togglePanel("key"));
@@ -750,12 +858,66 @@ async function optimizeWithTomTom(points, key){
   if (!data.optimizedOrder || data.optimizedOrder.length !== points.length) throw new Error("optimize empty");
   const order = data.optimizedOrder.slice(1, -1).map(i => i - 1);
   const rs = data.summary && data.summary.routeSummary;
-  return { order, total: rs ? rs.travelTimeInSeconds : null };
+  return { order, total: rs ? rs.travelTimeInSeconds : null, totalMeters: rs ? rs.lengthInMeters : null };
+}
+
+/* ---------- TomTom Calculate Route: totals + line geometry for a fixed order ---------- */
+/* Used for the map line, and for totals whenever the order is manual (hand
+   reordered) or the optimizer summary is missing. Throws on HTTP errors
+   ("route 401" included) so callers can flag a bad key. */
+async function fetchRoute(points, key){
+  const coords = points.map(p => p.lat + "," + p.lng).join(":");
+  const res = await fetch("https://api.tomtom.com/routing/1/calculateRoute/" + coords + "/json?key=" + encodeURIComponent(key) + "&travelMode=car");
+  if (!res.ok) throw new Error("route " + res.status);
+  const data = await res.json();
+  const r = data.routes && data.routes[0];
+  if (!r) throw new Error("route empty");
+  const geom = [];
+  (r.legs || []).forEach(leg => (leg.points || []).forEach(pt => geom.push({ lat: pt.latitude, lng: pt.longitude })));
+  return {
+    totalSec: r.summary ? r.summary.travelTimeInSeconds : null,
+    totalMeters: r.summary ? r.summary.lengthInMeters : null,
+    geometry: geom.length ? geom : null
+  };
 }
 function fmtDuration(sec){
   const m = Math.round(sec / 60), h = Math.floor(m / 60), mm = m % 60;
   return h > 0 ? (h + " h " + String(mm).padStart(2, "0") + " min") : (m + " min");
 }
+
+/* === PURE-V015-BEGIN === */
+/* Pure helpers for the 0.15 result improvements: unit conversion, Apple
+   Maps / Waze link building, en-route check counting. No DOM, no storage —
+   unit-testable in node. Check state is a Set of stopKey() strings, keyed
+   by coordinates + address so drag-reordering keeps each stop's state. */
+function usesMiles(cc){ return cc === "US" || cc === "GB"; }
+function fmtDistance(meters, cc){
+  if (meters === null || meters === undefined || isNaN(meters)) return "—";
+  if (usesMiles(cc)) return (meters / 1609.34).toFixed(1) + " mi";
+  return (meters / 1000).toFixed(1) + " km";
+}
+function stopKey(p){ return p.lat.toFixed(6) + "," + p.lng.toFixed(6) + "|" + p.label; }
+function appleMapsUrl(route){
+  const e = (p) => encodeURIComponent(p.lat + "," + p.lng);
+  let u = "https://maps.apple.com/?saddr=" + e(route.origin);
+  route.stops.forEach(p => { u += "&daddr=" + e(p); });
+  u += "&daddr=" + e(route.destination) + "&dirflg=d";
+  return u;
+}
+function wazeNextPoint(route, done){
+  for (const p of route.stops) { if (!done.has(stopKey(p))) return p; }
+  return route.destination;
+}
+function wazeUrl(route, done){
+  const p = wazeNextPoint(route, done);
+  return "https://waze.com/ul?ll=" + p.lat + "," + p.lng + "&navigate=yes";
+}
+function countDone(route, done){
+  let n = 0;
+  route.stops.forEach(p => { if (done.has(stopKey(p))) n++; });
+  return n;
+}
+/* === PURE-V015-END === */
 
 /* ---------- Build route ---------- */
 let currentRoute = null;   // last ordered route
@@ -785,10 +947,10 @@ document.getElementById("build").addEventListener("click", async () => {
     }
     // First choice: TomTom Waypoint Optimization with real road times.
     statusEl.textContent = t("optimizing");
-    let ordered = null, method = "line", totalSec = null;
+    let ordered = null, method = "line", totalSec = null, totalMeters = null, geometry = null;
     try {
       const opt = await optimizeWithTomTom([origin, ...pts, destination], key);
-      if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; }
+      if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; totalMeters = opt.totalMeters; }
     } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); /* optimization unavailable: fall back below */ }
     if (!ordered) {
       // Fallback: nearest-neighbour by straight-line distance.
@@ -802,8 +964,18 @@ document.getElementById("build").addEventListener("click", async () => {
         ordered.push(cursor);
       }
     }
+    // One Calculate Route call: the line for the map, plus any totals the
+    // optimizer summary did not provide (the summary stays the source of
+    // truth for optimized routes). If it fails, totals simply show "—".
+    try {
+      const fr = await fetchRoute([origin, ...ordered, destination], key);
+      geometry = fr.geometry;
+      if (totalSec === null || totalSec === undefined) totalSec = fr.totalSec;
+      if (totalMeters === null || totalMeters === undefined) totalMeters = fr.totalMeters;
+    } catch (e) { if (String(e && e.message).includes("401")) markKeyBad(); }
     currentRoute = { origin, destination, stops: ordered };
-    buildInfo = { method, totalSec, manual: false };
+    buildInfo = { method, totalSec, totalMeters, manual: false, geometry };
+    doneStops = new Set();
     remindWanted = true;
     renderResult();
     saveWorkState();
@@ -874,7 +1046,8 @@ function renderSaved(){
    route" (Saved routes); until then it is just your current work, kept in
    localStorage under stopedia_state_v1. */
 const WORK_KEY = "stopedia_state_v1";
-let buildInfo = null;      // { method, totalSec, manual } describing currentRoute
+let buildInfo = null;      // { method, totalSec, totalMeters, manual, geometry } describing currentRoute
+let doneStops = new Set(); // en-route checks (0.15), keyed by stopKey() — survive drag-reordering
 let remindWanted = false;  // show the "Do you want to save this route?" reminder
 function saveWorkState(){
   try {
@@ -886,9 +1059,12 @@ function saveWorkState(){
       routeName: document.getElementById("routename").value,
       editingId: editingId,
       remind: remindWanted,
+      checks: Array.from(doneStops),
       result: (currentRoute && buildInfo) ? {
         origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops,
-        method: buildInfo.method, totalSec: buildInfo.totalSec, manual: !!buildInfo.manual
+        method: buildInfo.method, totalSec: buildInfo.totalSec,
+        totalMeters: (buildInfo.totalMeters === undefined ? null : buildInfo.totalMeters),
+        manual: !!buildInfo.manual, geometry: buildInfo.geometry || null
       } : null
     }));
   } catch (e) { /* storage unavailable: the app keeps working, just without memory */ }
@@ -911,29 +1087,91 @@ function renderResult(){
   ol.appendChild(originLi);
   currentRoute.stops.forEach(p => {
     const li = document.createElement("li"); li.className = "stopitem";
+    const done = doneStops.has(stopKey(p));
+    if (done) li.classList.add("donestop");
     const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
-    const lab = document.createElement("span"); lab.textContent = p.label;
-    li.append(handle, lab);
+    const chk = document.createElement("button"); chk.type = "button"; chk.className = "stopcheck" + (done ? " done" : "");
+    chk.textContent = "✓"; chk.title = t("markDone"); chk.setAttribute("aria-label", t("markDone"));
+    chk.addEventListener("click", () => toggleDone(p));
+    const lab = document.createElement("span"); lab.className = "stoplabel"; lab.textContent = p.label;
+    li.append(handle, chk, lab);
     li._point = p;
     attachDrag(handle, li, () => Array.from(ol.querySelectorAll(".stopitem")), (lis) => {
       currentRoute.stops = lis.map(x => x._point);
       ol.appendChild(originLi);
       lis.forEach(x => ol.appendChild(x));
       ol.appendChild(destLi);
-      document.getElementById("mapslink").href = mapsUrl(currentRoute);
+      // Manual order: totals and the map line are refreshed with ONE
+      // Calculate Route call; until it answers, totals show "—".
+      if (buildInfo) { buildInfo.manual = true; buildInfo.totalSec = null; buildInfo.totalMeters = null; buildInfo.geometry = null; }
       document.getElementById("methodnote").textContent = t("manualNote");
-      document.getElementById("esttime").textContent = "";
-      if (buildInfo) buildInfo.manual = true;
+      document.getElementById("esttime").textContent = totalsLineText();
+      updateNavLink();
       saveWorkState();
+      refreshManualTotals();
     });
     ol.appendChild(li);
   });
   ol.appendChild(destLi);
+  document.getElementById("progressline").textContent = currentRoute.stops.length ? (countDone(currentRoute, doneStops) + "/" + currentRoute.stops.length + " " + t("doneWord")) : "";
   document.getElementById("methodnote").textContent = (buildInfo && buildInfo.manual) ? t("manualNote") : ((buildInfo && buildInfo.method === "road") ? t("optRoad") : t("optLine"));
-  document.getElementById("esttime").textContent = (buildInfo && !buildInfo.manual && buildInfo.method === "road" && buildInfo.totalSec !== null && buildInfo.totalSec !== undefined) ? (t("estTime") + fmtDuration(buildInfo.totalSec)) : "";
-  document.getElementById("mapslink").href = mapsUrl(currentRoute);
+  document.getElementById("esttime").textContent = totalsLineText();
+  updateNavLink();
   resEl.classList.remove("hidden");
   updateReminder();
+  renderQr();
+}
+/* ---------- Result header totals, navigator choice, en-route checks (0.15) ---------- */
+function totalsLineText(){
+  if (!currentRoute || !buildInfo) return "";
+  const time = (buildInfo.totalSec === null || buildInfo.totalSec === undefined) ? "—" : fmtDuration(buildInfo.totalSec);
+  const distTxt = (buildInfo.totalMeters === null || buildInfo.totalMeters === undefined) ? "—" : fmtDistance(buildInfo.totalMeters, getCountry());
+  return currentRoute.stops.length + " " + t("stopsWord") + " · " + t("totalTimeLabel") + ": " + time + " · " + t("totalDistLabel") + ": " + distTxt;
+}
+function getNav(){
+  const n = localStorage.getItem("stopedia.nav");
+  return (n === "apple" || n === "waze") ? n : "google";
+}
+/* The big route button follows the chosen navigator. TRUTH IN LABELING:
+   Waze links accept ONE destination only, so the Waze option is labeled
+   "next stop" and points at the first not-completed stop (or the final
+   destination once every stop is checked). */
+function updateNavLink(){
+  const a = document.getElementById("mapslink");
+  if (!a) return;
+  const nav = getNav();
+  a.textContent = nav === "apple" ? t("openApple") : (nav === "waze" ? t("openWaze") : t("openMaps"));
+  a.href = currentRoute ? (nav === "apple" ? appleMapsUrl(currentRoute) : (nav === "waze" ? wazeUrl(currentRoute, doneStops) : mapsUrl(currentRoute))) : "#";
+  document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.nav === nav));
+}
+document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => {
+  try { localStorage.setItem("stopedia.nav", b.dataset.nav); } catch (e) {}
+  updateNavLink();
+}));
+function toggleDone(p){
+  const k = stopKey(p);
+  if (doneStops.has(k)) doneStops.delete(k); else doneStops.add(k);
+  renderResult();
+  saveWorkState();
+}
+let _manualSeq = 0;
+async function refreshManualTotals(){
+  const seq = ++_manualSeq;
+  const key = (localStorage.getItem("stopedia.key") || "").trim();
+  if (!key || !currentRoute || !buildInfo) return;
+  try {
+    const fr = await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
+    if (seq !== _manualSeq || !currentRoute || !buildInfo) return;
+    buildInfo.totalSec = fr.totalSec;
+    buildInfo.totalMeters = fr.totalMeters;
+    buildInfo.geometry = fr.geometry;
+    document.getElementById("esttime").textContent = totalsLineText();
+    saveWorkState();
+    if (mapOpen) drawRouteMap();
+  } catch (e) {
+    if (String(e && e.message).includes("401")) markKeyBad();
+    /* totals stay "—"; the route itself still works */
+  }
 }
 /* ---------- Share the built route (0.14) ---------- */
 /* The button lives inside #result, so renderResult shows it exactly when a
@@ -1014,6 +1252,131 @@ document.addEventListener("click", (e) => {
   const menu = document.getElementById("sharemenu");
   if (menu && !menu.classList.contains("hidden") && !menu.contains(e.target)) closeShareMenu();
 });
+/* ---------- Map in the result & route QR (0.15) ---------- */
+/* The TomTom Maps SDK loads ONLY when the map is first opened, with the
+   user's own key. Any failure (offline, bad key, SDK blocked) hides the
+   map block with a short note — the result itself is never broken. The
+   route geometry is cached in the working state, so a restored route
+   redraws with no optimization call; a fresh Calculate Route call happens
+   only when a restored route has no cached line and the user opens the map. */
+const TT_SDK_BASE = "https://api.tomtom.com/maps-sdk-for-web/cdn/6.x/6.25.0/maps/";
+let _ttSdkPromise = null, _ttMap = null, _ttMarkers = [], mapOpen = false;
+function loadTomTomSdk(){
+  if (window.tt && window.tt.map) return Promise.resolve();
+  if (_ttSdkPromise) return _ttSdkPromise;
+  _ttSdkPromise = new Promise((resolve, reject) => {
+    const css = document.createElement("link");
+    css.rel = "stylesheet"; css.href = TT_SDK_BASE + "maps-web.min.css";
+    document.head.appendChild(css);
+    const s = document.createElement("script");
+    s.src = TT_SDK_BASE + "maps-web.min.js";
+    s.onload = () => resolve();
+    s.onerror = () => { _ttSdkPromise = null; reject(new Error("TomTom SDK failed to load")); };
+    document.head.appendChild(s);
+  });
+  return _ttSdkPromise;
+}
+function mapMarkerEl(text, cls){
+  const el = document.createElement("div");
+  el.className = "mapmark " + cls;
+  el.textContent = text;
+  return el;
+}
+async function drawRouteMap(){
+  const note = document.getElementById("mapnote");
+  const key = (localStorage.getItem("stopedia.key") || "").trim();
+  try {
+    if (!currentRoute || !key) throw new Error("map unavailable");
+    await loadTomTomSdk();
+    if (!buildInfo) buildInfo = { method: "line", totalSec: null, totalMeters: null, manual: false, geometry: null };
+    if (!buildInfo.geometry) {
+      const fr = await fetchRoute([currentRoute.origin, ...currentRoute.stops, currentRoute.destination], key);
+      buildInfo.geometry = fr.geometry;
+      if (buildInfo.totalSec === null || buildInfo.totalSec === undefined) buildInfo.totalSec = fr.totalSec;
+      if (buildInfo.totalMeters === null || buildInfo.totalMeters === undefined) buildInfo.totalMeters = fr.totalMeters;
+      document.getElementById("esttime").textContent = totalsLineText();
+      saveWorkState();
+    }
+    if (!buildInfo.geometry || !buildInfo.geometry.length) throw new Error("map unavailable");
+    if (!_ttMap) {
+      _ttMap = window.tt.map({ key: key, container: document.getElementById("routemap"), center: [currentRoute.origin.lng, currentRoute.origin.lat], zoom: 11 });
+      _ttMap.addControl(new window.tt.NavigationControl());
+    } else if (_ttMap.resize) { _ttMap.resize(); }
+    _ttMarkers.forEach(m => { try { m.remove(); } catch (e) {} });
+    _ttMarkers = [];
+    const addMark = (p, text, cls) => {
+      const m = new window.tt.Marker({ element: mapMarkerEl(text, cls) }).setLngLat([p.lng, p.lat]).addTo(_ttMap);
+      _ttMarkers.push(m);
+    };
+    addMark(currentRoute.origin, "★", "origin");
+    currentRoute.stops.forEach((p, i) => addMark(p, String(i + 1), "stop"));
+    addMark(currentRoute.destination, "⚑", "dest");
+    const line = { type: "Feature", geometry: { type: "LineString", coordinates: buildInfo.geometry.map(p => [p.lng, p.lat]) } };
+    const drawLine = () => {
+      if (_ttMap.getSource("stopedia-route")) { _ttMap.getSource("stopedia-route").setData(line); }
+      else {
+        _ttMap.addSource("stopedia-route", { type: "geojson", data: line });
+        _ttMap.addLayer({ id: "stopedia-route", type: "line", source: "stopedia-route", paint: { "line-color": "#cf5f2e", "line-width": 4 } });
+      }
+    };
+    if (_ttMap.loaded()) drawLine(); else _ttMap.once("load", drawLine);
+    const b = new window.tt.LngLatBounds();
+    [currentRoute.origin, ...currentRoute.stops, currentRoute.destination].forEach(p => b.extend([p.lng, p.lat]));
+    buildInfo.geometry.forEach(p => b.extend([p.lng, p.lat]));
+    _ttMap.fitBounds(b, { padding: 48, maxZoom: 15 });
+    note.classList.add("hidden");
+  } catch (e) {
+    if (String(e && e.message).includes("401")) markKeyBad();
+    document.getElementById("mapwrap").classList.add("hidden");
+    mapOpen = false;
+    note.textContent = t("mapFail");
+    note.classList.remove("hidden");
+  }
+}
+document.getElementById("mapbtn").addEventListener("click", async () => {
+  const wrap = document.getElementById("mapwrap");
+  if (!currentRoute) return;
+  if (!wrap.classList.contains("hidden")) { wrap.classList.add("hidden"); mapOpen = false; return; }
+  document.getElementById("mapnote").classList.add("hidden");
+  wrap.classList.remove("hidden");
+  mapOpen = true;
+  await drawRouteMap();
+});
+/* QR of the Google Maps link, for the plan-on-computer → drive-on-phone
+   flow. Generated entirely on this device with a lazy-loaded library —
+   the link is NEVER sent to an external QR API. Shown only on wide
+   viewports (CSS); if the library fails to load, the block stays hidden. */
+const QR_CDN = "https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js";
+let _qrPromise = null;
+function loadQrLib(){
+  if (window.qrcode) return Promise.resolve();
+  if (_qrPromise) return _qrPromise;
+  _qrPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = QR_CDN;
+    s.onload = () => resolve();
+    s.onerror = () => { _qrPromise = null; reject(new Error("QR library failed to load")); };
+    document.head.appendChild(s);
+  });
+  return _qrPromise;
+}
+async function renderQr(){
+  const block = document.getElementById("qrblock");
+  if (!block) return;
+  if (!currentRoute) { block.classList.add("hidden"); block.classList.remove("qrshow"); return; }
+  try {
+    await loadQrLib();
+    const qr = window.qrcode(0, "M");
+    qr.addData(mapsUrl(currentRoute));
+    qr.make();
+    document.getElementById("qrcode").innerHTML = qr.createSvgTag ? qr.createSvgTag() : qr.createTableTag();
+    block.classList.remove("hidden");
+    block.classList.add("qrshow");
+  } catch (e) {
+    block.classList.add("hidden");
+    block.classList.remove("qrshow");
+  }
+}
 function restoreWorkState(){
   let st = null;
   try { st = JSON.parse(localStorage.getItem(WORK_KEY) || "null"); } catch (e) { st = null; }
@@ -1027,8 +1390,9 @@ function restoreWorkState(){
   remindWanted = !!st.remind;
   if (st.result && st.result.origin && st.result.destination) {
     currentRoute = { origin: st.result.origin, destination: st.result.destination, stops: Array.isArray(st.result.stops) ? st.result.stops : [] };
-    buildInfo = { method: st.result.method || "line", totalSec: (st.result.totalSec === undefined ? null : st.result.totalSec), manual: !!st.result.manual };
+    buildInfo = { method: st.result.method || "line", totalSec: (st.result.totalSec === undefined ? null : st.result.totalSec), totalMeters: (st.result.totalMeters === undefined ? null : st.result.totalMeters), manual: !!st.result.manual, geometry: st.result.geometry || null };
   }
+  doneStops = new Set(Array.isArray(st.checks) ? st.checks : []);
 }
 document.getElementById("origin").addEventListener("input", queueSaveWork);
 document.getElementById("destination").addEventListener("input", queueSaveWork);
@@ -1054,6 +1418,10 @@ document.getElementById("newroute").addEventListener("click", () => {
   buildInfo = null;
   editingId = null;
   remindWanted = false;
+  doneStops = new Set();
+  mapOpen = false;
+  document.getElementById("mapwrap").classList.add("hidden");
+  document.getElementById("mapnote").classList.add("hidden");
   clearTimeout(_workTimer);
   try { localStorage.removeItem(WORK_KEY); } catch (e) {}
   renderResult();
@@ -1322,6 +1690,7 @@ initPanels();
 renderKeyPanel();
 restoreWorkState();
 applyLang();
+window.__stopediaBooted = true;
 if (currentRoute) renderResult(); else updateReminder();
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(() => {}); }
 </script>
