@@ -32,9 +32,31 @@
   @keyframes dashmove { to { stroke-dashoffset:-140; } }
   .pin-start { fill: var(--ink); } .pin-mid1 { fill: var(--blue); } .pin-mid2 { fill: var(--accent); } .pin-end { fill: var(--terra); }
   .pincore { fill: var(--paper); }
-  .langbar { display:flex; gap:8px; margin-top:18px; }
-  .langbar button { background: var(--surface); color: var(--muted); border:1px solid var(--line); border-radius:20px; padding:5px 15px; font-size:14px; cursor:pointer; transition: all .2s ease; }
-  .langbar button.active { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight:700; }
+  /* ---------- Sticky top bar + dropdown menus (0.17) ---------- */
+  .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .25s ease, background-color .25s ease; }
+  .topbar.scrolled { border-bottom-color: var(--line); background: rgba(9,27,37,.88); }
+  .topbar-in { max-width: 760px; margin: 0 auto; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .wordmark { font-size: 17px; font-weight: 650; letter-spacing: .2px; color: var(--ink); }
+  .langtrigger { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
+  .langtrigger:hover { border-color: var(--line-strong); }
+  .dd { position: relative; }
+  .dd-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .dd-chev { display: inline-block; margin-left: 8px; font-size: 13px; color: var(--accent); transition: transform .2s ease; }
+  .dd.open .dd-chev { transform: rotate(180deg); }
+  .dd-panel { position: absolute; left: 0; top: calc(100% + 8px); min-width: 230px; max-width: min(320px, 88vw); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 8px; z-index: 50; opacity: 0; transform: translateY(6px); visibility: hidden; pointer-events: none; transition: opacity .2s ease-out, transform .2s ease-out, visibility 0s linear .2s; }
+  .dd.open .dd-panel { opacity: 1; transform: translateY(0); visibility: visible; pointer-events: auto; transition: opacity .2s ease-out, transform .2s ease-out; }
+  .dd-right .dd-panel { left: auto; right: 0; }
+  #sharedd .dd-panel, #navchooser .dd-panel { left: 0; right: 0; max-width: none; }
+  .dd-head { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 8px 10px 4px; }
+  .dd-note { font-size: 13px; color: var(--muted); padding: 6px 10px 8px; margin: 0; line-height: 1.45; }
+  .dd-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: none; color: var(--ink); font-family: inherit; font-size: 15px; font-weight: 600; padding: 10px; border-radius: 9px; cursor: pointer; transition: background-color .15s ease; }
+  .dd-item:hover { background: var(--surface-2); }
+  .dd-ext { margin-left: auto; color: var(--muted); font-size: 13px; }
+  .dd-div { height: 1px; background: var(--line); margin: 6px 4px; }
+  .dd-check { color: var(--accent); font-weight: 800; width: 16px; flex: 0 0 auto; visibility: hidden; }
+  .dd-item.active .dd-check { visibility: visible; }
+  section.dd-host-open { position: relative; z-index: 30; }
+  #navtrigger { width: 100%; margin-top: 12px; padding: 13px 15px; font-size: 16px; text-align: left; }
   main { max-width: 760px; margin: 0 auto; padding: 22px 20px; }
   section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:22px; margin-bottom:18px; animation: rise .5s ease both; }
   .panelclip > section:nth-child(2) { animation-delay:.06s; }
@@ -77,8 +99,6 @@
   a.mapslink { display:block; text-align:center; background: var(--accent); color: var(--paper); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; transition: background-color .2s ease; }
   a.mapslink:hover { background: var(--amber); }
   #shareroute { width:100%; margin-top:10px; padding:14px; font-size:16px; }
-  #sharemenu { border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:8px; background: var(--surface-2); }
-  #sharemenu .btnrow { margin-top:0; }
   .hidden { display:none; }
   .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
   .progress { height:10px; background: var(--paper); border-radius:5px; overflow:hidden; margin-top:12px; }
@@ -143,14 +163,22 @@
 </style>
 </head>
 <body>
+<div class="topbar" id="topbar">
+  <div class="topbar-in">
+    <span class="wordmark">Stopedia</span>
+    <div class="dd dd-right" id="langdd">
+      <button type="button" class="dd-trigger langtrigger" id="langtrigger" aria-haspopup="true" aria-expanded="false"><span data-i18n="langCurrent">English</span><span class="dd-chev" aria-hidden="true">▾</span></button>
+      <div class="dd-panel" id="langmenu" role="menu">
+        <button type="button" class="dd-item" id="btn-en" role="menuitem"><span class="dd-check" aria-hidden="true">✓</span><span>English</span></button>
+        <button type="button" class="dd-item" id="btn-es" role="menuitem"><span class="dd-check" aria-hidden="true">✓</span><span>Español</span></button>
+      </div>
+    </div>
+  </div>
+</div>
 <header>
   <p class="eyebrow" data-i18n="eyebrow">Route planner</p>
   <h1>Stopedia</h1>
   <p data-i18n="tagline">Your stops, in the right order.</p>
-  <div class="langbar">
-    <button id="btn-en" type="button">EN</button>
-    <button id="btn-es" type="button">ES</button>
-  </div>
   <svg class="headsvg" viewBox="0 0 340 76" aria-hidden="true" focusable="false">
     <path class="route-ghost" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
     <path class="route-path" d="M10,60 C90,16 150,66 214,34 C260,12 300,20 330,26" />
@@ -175,9 +203,9 @@
     <label for="country" data-i18n="countryLabel">Country</label>
     <select id="country"></select>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
-    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 123 Main St, Orlando, FL 32801">
+    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 350 5th Ave, New York, NY 10118">
     <label for="destination" data-i18n="destLabel">Final destination</label>
-    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 456 Oak Ave, Orlando, FL 32801">
+    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 405 Lexington Ave, New York, NY 10174">
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
@@ -198,19 +226,25 @@
       <p id="progressline" class="hint"></p>
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
-      <div class="btnrow" id="navchooser">
-        <button class="small navbtn" type="button" id="navgoogle" data-nav="google">Google Maps</button>
-        <button class="small navbtn" type="button" id="navapple" data-nav="apple">Apple Maps</button>
-        <button class="small navbtn" type="button" id="navwaze" data-nav="waze" data-i18n="wazeNext">Waze (next stop)</button>
+      <div class="dd" id="navchooser">
+        <button class="secondary dd-trigger" type="button" id="navtrigger" aria-haspopup="true" aria-expanded="false"><span id="navtriggerlabel">Open in Google Maps</span><span class="dd-chev" aria-hidden="true">▾</span></button>
+        <div class="dd-panel" role="menu">
+          <button class="dd-item navbtn" type="button" id="navgoogle" data-nav="google" role="menuitem"><span>Google Maps</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item navbtn" type="button" id="navapple" data-nav="apple" role="menuitem"><span>Apple Maps</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item navbtn" type="button" id="navwaze" data-nav="waze" role="menuitem"><span data-i18n="wazeNext">Waze (next stop)</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+        </div>
       </div>
       <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener">Open route in Google Maps</a>
-      <button class="secondary" id="shareroute" type="button" data-i18n="shareRoute">🔗 Share route</button>
-      <div id="sharemenu" class="hidden">
-        <div class="btnrow">
-          <button class="small" type="button" id="sharewa" data-i18n="shareWhatsApp">WhatsApp</button>
-          <button class="small" type="button" id="sharetg" data-i18n="shareTelegram">Telegram</button>
-          <button class="small" type="button" id="sharemail" data-i18n="shareEmail">Email</button>
-          <button class="small" type="button" id="sharecopy" data-i18n="shareCopy">Copy</button>
+      <div class="dd" id="sharedd">
+        <button class="secondary dd-trigger" id="shareroute" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="shareRoute">🔗 Share route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
+        <div id="sharemenu" class="dd-panel" role="menu">
+          <div class="dd-head" data-i18n="shareGroup">Share</div>
+          <button class="dd-item" type="button" id="sharesys" role="menuitem"><span data-i18n="shareSystem">System</span></button>
+          <button class="dd-item" type="button" id="sharewa" role="menuitem"><span data-i18n="shareWhatsApp">WhatsApp</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" id="sharetg" role="menuitem"><span data-i18n="shareTelegram">Telegram</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" id="sharemail" role="menuitem"><span data-i18n="shareEmail">Email</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <div class="dd-div"></div>
+          <button class="dd-item" type="button" id="sharecopy" role="menuitem"><span data-i18n="copyLink">Copy link</span></button>
         </div>
       </div>
       <button class="secondary" id="mapbtn" type="button" data-i18n="viewMap">🗺 View map</button>
@@ -233,7 +267,17 @@
       <button class="secondary" id="scanone" type="button" data-i18n="scanOne">📷 Scan one address</button>
       <button class="secondary" id="scansheet" type="button" data-i18n="scanSheet">📄 Scan a full sheet</button>
       <button class="secondary" id="pastebtn" type="button" data-i18n="pasteBtn">📋 Paste a list</button>
-      <button class="secondary" id="aibtn" type="button" data-i18n="aiBtn">🤖 Ask my AI to help with the route</button>
+      <div class="dd" id="aidd">
+        <button class="secondary dd-trigger" id="aibtn" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="aiBtn">🤖 Ask my AI to help with the route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
+        <div id="aimenu" class="dd-panel" role="menu">
+          <p class="dd-note" data-i18n="aiNote">Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.</p>
+          <button class="dd-item" type="button" data-ai="chatgpt" role="menuitem"><span>ChatGPT</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="claude" role="menuitem"><span>Claude</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="perplexity" role="menuitem"><span>Perplexity</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="grok" role="menuitem"><span>Grok</span><span class="dd-ext" aria-hidden="true">↗</span></button>
+          <button class="dd-item" type="button" data-ai="gemini" role="menuitem"><span>Gemini</span></button>
+        </div>
+      </div>
     </div>
     <input type="file" id="scanfile" accept="image/*" capture="environment" class="hidden">
     <div id="ocrprogress" class="hidden">
@@ -244,16 +288,6 @@
       <label for="pastetext" data-i18n="pasteLabel">Paste the addresses here (one per line)</label>
       <textarea id="pastetext" data-i18n-ph="pastePh" placeholder="One address per line"></textarea>
       <button class="secondary" id="pastego" type="button" data-i18n="pasteGo">Review these addresses</button>
-    </div>
-    <div id="aimenu" class="hidden">
-      <p class="hint" data-i18n="aiNote">Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.</p>
-      <div class="btnrow">
-        <button class="small" type="button" data-ai="chatgpt">ChatGPT</button>
-        <button class="small" type="button" data-ai="claude">Claude</button>
-        <button class="small" type="button" data-ai="perplexity">Perplexity</button>
-        <button class="small" type="button" data-ai="grok">Grok</button>
-        <button class="small" type="button" data-ai="gemini">Gemini</button>
-      </div>
     </div>
     <p id="addstatus"></p>
   </section>
@@ -330,7 +364,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.16 — draft, in progress.</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.17 — draft, in progress.</span></footer>
 
 <script>
 "use strict";
@@ -374,8 +408,8 @@ const STR = {
     keyWorks: "Your key works. You can build routes now.",
     keyFails: "That key did not work. Check that you copied the whole key and try again.",
     buildTitle: "Build a route",
-    originLabel: "Start (where you leave from)", originPh: "e.g. 123 Main St, Orlando, FL 32801",
-    destLabel: "Final destination", destPh: "e.g. 456 Oak Ave, Orlando, FL 32801",
+    originLabel: "Start (where you leave from)", originPh: "e.g. 350 5th Ave, New York, NY 10118",
+    destLabel: "Final destination", destPh: "e.g. 405 Lexington Ave, New York, NY 10174",
     stopsLabel: "Stops — one address per box, in any order", stopsPh: "One address per line",
     stopWord: "Stop",
     limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.",
@@ -385,7 +419,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.16 — draft, in progress.",
+    footerText: "Version 0.17 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -441,6 +475,9 @@ const STR = {
     shareTelegram: "Telegram",
     shareEmail: "Email",
     shareCopy: "Copy",
+    shareGroup: "Share",
+    shareSystem: "System",
+    copyLink: "Copy link",
     aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments.",
     totalTimeLabel: "Total time",
     totalDistLabel: "Total distance",
@@ -451,7 +488,9 @@ const STR = {
     wazeNext: "Waze (next stop)",
     doneWord: "done",
     markDone: "Mark as done",
-    qrCaption: "Scan to open it on your phone"
+    qrCaption: "Scan to open it on your phone",
+    openIn: "Open in",
+    langCurrent: "English"
   },
   es: {
     eyebrow: "Planificador de rutas",
@@ -491,8 +530,8 @@ const STR = {
     keyWorks: "Tu clave funciona. Ya puedes armar rutas.",
     keyFails: "Esa clave no funcionó. Revisa que la hayas copiado completa e inténtalo de nuevo.",
     buildTitle: "Armar una ruta",
-    originLabel: "Salida (desde dónde sales)", originPh: "ej. 123 Main St, Orlando, FL 32801",
-    destLabel: "Destino final", destPh: "ej. 456 Oak Ave, Orlando, FL 32801",
+    originLabel: "Salida (desde dónde sales)", originPh: "ej. 350 5th Ave, New York, NY 10118",
+    destLabel: "Destino final", destPh: "ej. 405 Lexington Ave, New York, NY 10174",
     stopsLabel: "Paradas — una dirección por casilla, en cualquier orden", stopsPh: "Una dirección por línea",
     stopWord: "Parada",
     limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta. Las casillas llenas se marcan con un check; las vacías se ignoran.",
@@ -502,7 +541,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.16 — borrador, en avance.",
+    footerText: "Versión 0.17 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -558,6 +597,9 @@ const STR = {
     shareTelegram: "Telegram",
     shareEmail: "Correo electrónico",
     shareCopy: "Copiar",
+    shareGroup: "Compartir",
+    shareSystem: "Sistema",
+    copyLink: "Copiar enlace",
     aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios.",
     totalTimeLabel: "Tiempo total",
     totalDistLabel: "Distancia total",
@@ -568,7 +610,9 @@ const STR = {
     wazeNext: "Waze (siguiente parada)",
     doneWord: "hechas",
     markDone: "Marcar como hecha",
-    qrCaption: "Escanéala para abrirla en tu teléfono"
+    qrCaption: "Escanéala para abrirla en tu teléfono",
+    openIn: "Abrir en",
+    langCurrent: "Español"
   }
 };
 let lang = localStorage.getItem("stopedia.lang") || "en";
@@ -1077,8 +1121,7 @@ function updateReminder(){
 }
 function renderResult(){
   const resEl = document.getElementById("result");
-  const shareMenuEl = document.getElementById("sharemenu");
-  if (shareMenuEl) shareMenuEl.classList.add("hidden");
+  closeShareMenu();
   if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); return; }
   const ol = document.getElementById("ordered");
   ol.innerHTML = "";
@@ -1141,6 +1184,8 @@ function updateNavLink(){
   if (!a) return;
   const nav = getNav();
   a.textContent = nav === "apple" ? t("openApple") : (nav === "waze" ? t("openWaze") : t("openMaps"));
+  const ntl = document.getElementById("navtriggerlabel");
+  if (ntl) ntl.textContent = t("openIn") + " " + (nav === "apple" ? "Apple Maps" : (nav === "waze" ? t("wazeNext") : "Google Maps"));
   a.href = currentRoute ? (nav === "apple" ? appleMapsUrl(currentRoute) : (nav === "waze" ? wazeUrl(currentRoute, doneStops) : mapsUrl(currentRoute))) : "#";
   document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.nav === nav));
 }
@@ -1206,22 +1251,17 @@ async function copyShareText(){
   }
   if (ok) statusEl.textContent = t("routeCopied");
 }
-function closeShareMenu(){ document.getElementById("sharemenu").classList.add("hidden"); }
-document.getElementById("shareroute").addEventListener("click", async (ev) => {
-  ev.stopPropagation();
-  if (!currentRoute) return;
-  const menu = document.getElementById("sharemenu");
-  if (navigator.share) {
-    const p = sharePayload();
-    let can = true;
-    if (navigator.canShare) { try { can = navigator.canShare({ title: "Stopedia", text: p.text, url: p.url }); } catch (e) { can = false; } }
-    if (can) {
-      try { await navigator.share({ title: "Stopedia", text: p.text, url: p.url }); closeShareMenu(); return; }
-      catch (e) { if (e && e.name === "AbortError") return; /* user cancelled: stay silent; any other failure falls through to the menu */ }
-    }
-  }
-  // No Web Share — common on desktop browsers: open the inline share menu.
-  menu.classList.toggle("hidden");
+/* The share menu is a dropdown of the shared 0.17 component now;
+   closeShareMenu routes through it (ddShare is set up with the component
+   further below). The "System" item runs the Web Share flow the trigger
+   itself used to run before 0.17; cancelling the sheet stays silent. */
+function closeShareMenu(){ if (typeof ddShare !== "undefined" && ddShare) ddClose(ddShare); }
+document.getElementById("sharesys").addEventListener("click", async () => {
+  if (!currentRoute || !navigator.share) return;
+  const p = sharePayload();
+  if (navigator.canShare) { try { if (!navigator.canShare({ title: "Stopedia", text: p.text, url: p.url })) return; } catch (e) { return; } }
+  try { await navigator.share({ title: "Stopedia", text: p.text, url: p.url }); }
+  catch (e) { /* user cancelled the share sheet: stay silent */ }
 });
 /* Inline share menu (desktop fallback): direct links built from the same
    payload. Each opens in a new tab except Copy; choosing anything — or
@@ -1248,10 +1288,9 @@ document.getElementById("sharecopy").addEventListener("click", async () => {
   closeShareMenu();
   if (currentRoute) await copyShareText();
 });
-document.addEventListener("click", (e) => {
-  const menu = document.getElementById("sharemenu");
-  if (menu && !menu.classList.contains("hidden") && !menu.contains(e.target)) closeShareMenu();
-});
+/* (Outside-tap closing for this menu lives in the shared 0.17 dropdown
+   component further below: one document pointerdown handler closes
+   whichever dropdown is open when the tap lands outside it.) */
 /* ---------- Map in the result & route QR (0.15) ---------- */
 /* The TomTom Maps SDK loads ONLY when the map is first opened, with the
    user's own key. Any failure (offline, bad key, SDK blocked) hides the
@@ -1670,9 +1709,8 @@ const AI_URLS = {
   perplexity: "https://www.perplexity.ai/search?q=",
   grok: "https://grok.com/?q="
 };
-document.getElementById("aibtn").addEventListener("click", () => {
-  document.getElementById("aimenu").classList.toggle("hidden");
-});
+/* (The AI button's open/close is owned by the shared 0.17 dropdown
+   component further below; the five AI actions keep their handlers here.) */
 document.querySelectorAll("[data-ai]").forEach(btn => btn.addEventListener("click", async () => {
   const prompt = t("aiPromptText");
   if (btn.dataset.ai === "gemini") {
@@ -1685,6 +1723,75 @@ document.querySelectorAll("[data-ai]").forEach(btn => btn.addEventListener("clic
   }
   window.open(AI_URLS[btn.dataset.ai] + encodeURIComponent(prompt), "_blank");
 }));
+
+/* ---------- Dropdown menus (0.17) ---------- */
+/* ONE reusable component, modeled on x.ai's menus: the panel fades in
+   with a tiny downward glide (~200ms ease-out), the trigger chevron
+   flips, and the menu closes on outside tap, Escape, item selection, or
+   another menu opening. On devices with a real hover, menus also open
+   on hover intent; everywhere else the trigger toggles on tap/click.
+   While a menu is open its host section is raised (z-index) so the
+   panel paints over the sections that follow it inside the panel clip. */
+const DD_HOVER = !!(window.matchMedia && window.matchMedia("(hover: hover)").matches);
+let ddOpenHandle = null;
+function ddClose(h){
+  if (!h) return;
+  clearTimeout(h._ddTimer);
+  h.root.classList.remove("open");
+  h.trigger.setAttribute("aria-expanded", "false");
+  const host = h.root.closest("section");
+  if (host) host.classList.remove("dd-host-open");
+  if (ddOpenHandle === h) ddOpenHandle = null;
+}
+function ddOpen(h){
+  if (ddOpenHandle && ddOpenHandle !== h) ddClose(ddOpenHandle);
+  clearTimeout(h._ddTimer);
+  h.root.classList.add("open");
+  h.trigger.setAttribute("aria-expanded", "true");
+  const host = h.root.closest("section");
+  if (host) host.classList.add("dd-host-open");
+  ddOpenHandle = h;
+}
+function setupDropdown(rootId, triggerId){
+  const root = document.getElementById(rootId);
+  const trigger = document.getElementById(triggerId);
+  if (!root || !trigger) return null;
+  const h = { root, trigger, _ddTimer: null };
+  trigger.addEventListener("click", () => { if (root.classList.contains("open")) ddClose(h); else ddOpen(h); });
+  root.addEventListener("click", (e) => { if (e.target.closest(".dd-item")) ddClose(h); });
+  if (DD_HOVER) {
+    root.addEventListener("pointerenter", () => { clearTimeout(h._ddTimer); h._ddTimer = setTimeout(() => ddOpen(h), 60); });
+    root.addEventListener("pointerleave", () => { clearTimeout(h._ddTimer); h._ddTimer = setTimeout(() => ddClose(h), 180); });
+  }
+  return h;
+}
+document.addEventListener("pointerdown", (e) => {
+  if (ddOpenHandle && !ddOpenHandle.root.contains(e.target)) ddClose(ddOpenHandle);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && ddOpenHandle) { const trg = ddOpenHandle.trigger; ddClose(ddOpenHandle); try { trg.focus(); } catch (err) {} }
+});
+const ddShare = setupDropdown("sharedd", "shareroute");
+const ddAi = setupDropdown("aidd", "aibtn");
+const ddNav = setupDropdown("navchooser", "navtrigger");
+const ddLang = setupDropdown("langdd", "langtrigger");
+/* The "System" share item exists only where Web Share does. */
+if (!navigator.share) { const sys = document.getElementById("sharesys"); if (sys) sys.style.display = "none"; }
+/* Choosing a navigator sets + remembers it (the handler registered in
+   the 0.15 section above runs first) and then opens the route in it,
+   through the same href the big route button carries. */
+document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => {
+  if (!currentRoute) return;
+  updateNavLink();
+  const href = document.getElementById("mapslink").href;
+  if (href && href !== "#") window.open(href, "_blank");
+}));
+updateNavLink();
+/* Sticky top bar: it gains its hairline once the page is scrolled. */
+const _topbar = document.getElementById("topbar");
+function syncTopbar(){ if (_topbar) _topbar.classList.toggle("scrolled", window.scrollY > 4); }
+window.addEventListener("scroll", syncTopbar, { passive: true });
+syncTopbar();
 
 initPanels();
 renderKeyPanel();
