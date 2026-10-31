@@ -1,6 +1,6 @@
 // Stopedia service worker — caches the app shell so Stopedia opens offline.
-// Saved routes and the HERE key live in localStorage, not in this cache.
-const CACHE = "stopedia-v0.3";
+// Saved routes and the TomTom key live in localStorage, not in this cache.
+const CACHE = "stopedia-v0.4";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
@@ -12,8 +12,8 @@ self.addEventListener("activate", (e) => {
   );
 });
 self.addEventListener("fetch", (e) => {
-  // HERE API calls: always network (never cache).
-  if (e.request.url.includes("hereapi.com")) return;
+  // TomTom API calls: always network (never cache).
+  if (e.request.url.includes("api.tomtom.com")) return;
   const isPage = e.request.mode === "navigate" || e.request.url.endsWith(".html") || e.request.url.endsWith("/");
   if (isPage) {
     // Pages: network first, so a new published version shows up right away; cache is the offline fallback.

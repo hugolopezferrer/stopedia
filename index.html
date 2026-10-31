@@ -64,16 +64,16 @@
 <main>
 
   <section id="setup">
-    <h2 data-i18n="setupTitle">1. Your HERE key</h2>
-    <p class="hint" data-i18n="setupText">Stopedia finds addresses with HERE, a map service. Each person uses their own free HERE account — about 30,000 free lookups a month. Follow these steps once:</p>
+    <h2 data-i18n="setupTitle">1. Your TomTom key</h2>
+    <p class="hint" data-i18n="setupText">Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:</p>
     <ol class="steps">
-      <li data-i18n="step1">Tap the button below to open HERE and create your free account (your email and a password, on HERE's own site).</li>
-      <li data-i18n="step2">Inside HERE, create a project — any name works, for example “Stopedia”.</li>
-      <li data-i18n="step3">In your project, find “API keys” and create a key. Copy it.</li>
+      <li data-i18n="step1">Tap the button below to open TomTom and create your free account (your email and a password, on TomTom's own site).</li>
+      <li data-i18n="step2">Inside TomTom, go to “API &amp; SDK Keys” and create a key: name it “Stopedia” and select all the products.</li>
+      <li data-i18n="step3">In the keys list, tap the key text in the “Key” column: it copies the whole key and you will see “Copied!”. Careful — copy the key itself, not the key's ID.</li>
       <li data-i18n="step4">Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.</li>
     </ol>
-    <a class="buttonlink" href="https://platform.here.com" target="_blank" rel="noopener" data-i18n="openHere">Open HERE and create my free account</a>
-    <label for="apikey" data-i18n="keyLabel">HERE API key</label>
+    <a class="buttonlink" href="https://my.tomtom.com" target="_blank" rel="noopener" data-i18n="openTomTom">Open TomTom and create my free account</a>
+    <label for="apikey" data-i18n="keyLabel">TomTom API key</label>
     <input type="text" id="apikey" autocomplete="off" spellcheck="false" placeholder="...">
     <button class="secondary" id="savekey" type="button" data-i18n="saveKey">Save and test my key</button>
     <p id="keystatus" class="hint"></p>
@@ -117,14 +117,14 @@
 const STR = {
   en: {
     tagline: "Your stops, in the right order.",
-    setupTitle: "1. Your HERE key",
-    setupText: "Stopedia finds addresses with HERE, a map service. Each person uses their own free HERE account — about 30,000 free lookups a month. Follow these steps once:",
-    step1: "Tap the button below to open HERE and create your free account (your email and a password, on HERE's own site).",
-    step2: "Inside HERE, create a project — any name works, for example “Stopedia”.",
-    step3: "In your project, find “API keys” and create a key. Copy it.",
+    setupTitle: "1. Your TomTom key",
+    setupText: "Stopedia finds addresses with TomTom, a map service. Each person uses their own free TomTom account — address lookups are free up to 20,000 a month and no credit card is needed. Follow these steps once:",
+    step1: "Tap the button below to open TomTom and create your free account (your email and a password, on TomTom's own site).",
+    step2: "Inside TomTom, go to “API & SDK Keys” and create a key: name it “Stopedia” and select all the products.",
+    step3: "In the keys list, tap the key text in the “Key” column: it copies the whole key and you will see “Copied!”. Careful — copy the key itself, not the key's ID.",
     step4: "Come back here, paste the key below, and tap “Save and test my key”. Stopedia checks that it works.",
-    openHere: "Open HERE and create my free account",
-    keyLabel: "HERE API key", saveKey: "Save and test my key",
+    openTomTom: "Open TomTom and create my free account",
+    keyLabel: "TomTom API key", saveKey: "Save and test my key",
     testing: "Testing your key…",
     keyWorks: "Your key works. You can build routes now.",
     keyFails: "That key did not work. Check that you copied the whole key and try again.",
@@ -140,16 +140,16 @@ const STR = {
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.3 — draft, in progress.",
+    footerText: "Version 0.4 — draft, in progress.",
     keySaved: "Key saved on this phone.",
     needKeyPaste: "Paste your key in the field first.",
-    needKey: "Paste your HERE API key first (step 1).",
+    needKey: "Paste your TomTom API key first (step 1).",
     needOrigin: "Write the start address.", needDest: "Write the final destination.",
     needStops: "Write at least one stop.",
     tooMany: "Too many points: Maps allows 10 in total. Remove some stops.",
     working: "Finding each address on the map…",
-    optimizing: "Asking HERE for the real road times between all points…",
-    optRoad: "Order optimized with real road times from HERE: this is the fastest order for these stops.",
+    optimizing: "Asking TomTom for the best order with real road times…",
+    optRoad: "Order optimized by TomTom with real road times: this is the fastest order for these stops.",
     optLine: "Real road times were not available this time, so the order is by straight-line closeness.",
     estTime: "Estimated driving time for the whole route: ",
     notFound: "Address not found: ",
@@ -162,14 +162,14 @@ const STR = {
   },
   es: {
     tagline: "Tus paradas, en el orden correcto.",
-    setupTitle: "1. Tu clave de HERE",
-    setupText: "Stopedia busca las direcciones con HERE, un servicio de mapas. Cada persona usa su propia cuenta gratuita de HERE: unas 30.000 consultas gratis al mes. Sigue estos pasos una sola vez:",
-    step1: "Toca el botón de abajo para abrir HERE y crear tu cuenta gratuita (tu correo y una contraseña, en el sitio de HERE).",
-    step2: "Dentro de HERE, crea un proyecto: cualquier nombre sirve, por ejemplo «Stopedia».",
-    step3: "En tu proyecto, busca «API keys» y crea una clave. Cópiala.",
+    setupTitle: "1. Tu clave de TomTom",
+    setupText: "Stopedia busca las direcciones con TomTom, un servicio de mapas. Cada persona usa su propia cuenta gratuita de TomTom: la búsqueda de direcciones es gratis hasta 20.000 consultas al mes y no pide tarjeta. Sigue estos pasos una sola vez:",
+    step1: "Toca el botón de abajo para abrir TomTom y crear tu cuenta gratuita (tu correo y una contraseña, en el sitio de TomTom).",
+    step2: "Dentro de TomTom, entra a «API & SDK Keys» y crea una clave: ponle de nombre «Stopedia» y selecciona todos los productos.",
+    step3: "En la lista de llaves, toca el texto de la clave en la columna «Key»: se copia la clave entera y verás «Copied!». Ojo: copia la clave misma, no el ID de la llave.",
     step4: "Vuelve aquí, pega la clave abajo y toca «Guardar y probar mi clave». Stopedia verifica que funciona.",
-    openHere: "Abrir HERE y crear mi cuenta gratuita",
-    keyLabel: "Clave API de HERE", saveKey: "Guardar y probar mi clave",
+    openTomTom: "Abrir TomTom y crear mi cuenta gratuita",
+    keyLabel: "Clave API de TomTom", saveKey: "Guardar y probar mi clave",
     testing: "Probando tu clave…",
     keyWorks: "Tu clave funciona. Ya puedes armar rutas.",
     keyFails: "Esa clave no funcionó. Revisa que la hayas copiado completa e inténtalo de nuevo.",
@@ -185,16 +185,16 @@ const STR = {
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.3 — borrador, en avance.",
+    footerText: "Versión 0.4 — borrador, en avance.",
     keySaved: "Clave guardada en este teléfono.",
     needKeyPaste: "Primero pega tu clave en el campo.",
-    needKey: "Primero pega tu clave API de HERE (paso 1).",
+    needKey: "Primero pega tu clave API de TomTom (paso 1).",
     needOrigin: "Escribe la dirección de salida.", needDest: "Escribe el destino final.",
     needStops: "Escribe al menos una parada.",
     tooMany: "Demasiados puntos: Maps permite 10 en total. Quita algunas paradas.",
     working: "Buscando cada dirección en el mapa…",
-    optimizing: "Pidiendo a HERE los tiempos reales por calle entre todos los puntos…",
-    optRoad: "Orden optimizado con los tiempos reales por calle de HERE: es el orden más rápido para estas paradas.",
+    optimizing: "Pidiendo a TomTom el mejor orden con los tiempos reales por calle…",
+    optRoad: "Orden optimizado por TomTom con los tiempos reales por calle: es el orden más rápido para estas paradas.",
     optLine: "Los tiempos reales por calle no estuvieron disponibles esta vez; el orden es por cercanía en línea recta.",
     estTime: "Tiempo estimado de manejo de toda la ruta: ",
     notFound: "Dirección no encontrada: ",
@@ -220,7 +220,7 @@ function applyLang(){
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
 document.getElementById("btn-es").addEventListener("click", () => { lang = "es"; localStorage.setItem("stopedia.lang","es"); applyLang(); });
 
-/* ---------- HERE key ---------- */
+/* ---------- TomTom key ---------- */
 const keyInput = document.getElementById("apikey");
 keyInput.value = localStorage.getItem("stopedia.key") || "";
 document.getElementById("savekey").addEventListener("click", async () => {
@@ -237,15 +237,15 @@ document.getElementById("savekey").addEventListener("click", async () => {
   }
 });
 
-/* ---------- Geocoding (HERE) ---------- */
+/* ---------- Geocoding (TomTom) ---------- */
 async function geocode(address, key){
-  const url = "https://geocode.search.hereapi.com/v1/geocode?q=" + encodeURIComponent(address) + "&apiKey=" + encodeURIComponent(key);
+  const url = "https://api.tomtom.com/search/2/geocode/" + encodeURIComponent(address) + ".json?key=" + encodeURIComponent(key) + "&limit=1";
   const res = await fetch(url);
-  if (!res.ok) throw new Error("HERE " + res.status);
+  if (!res.ok) throw new Error("TomTom " + res.status);
   const data = await res.json();
-  if (!data.items || !data.items.length) return null;
-  const p = data.items[0].position;
-  return { label: address, lat: p.lat, lng: p.lng };
+  if (!data.results || !data.results.length) return null;
+  const p = data.results[0].position;
+  return { label: address, lat: p.lat, lng: p.lon };
 }
 function dist(a, b){
   const R = 6371, dLat = (b.lat-a.lat)*Math.PI/180, dLng = (b.lng-a.lng)*Math.PI/180;
@@ -289,52 +289,30 @@ function refreshBoxPlaceholders(){ boxInputs.forEach((inp, i) => { inp.placehold
 function collectStopTexts(){ return boxInputs.map(b => b.value.trim()).filter(Boolean); }
 function fillBoxes(labels){ boxInputs.forEach((inp, i) => { inp.value = labels[i] || ""; inp.dispatchEvent(new Event("input")); }); }
 
-/* ---------- HERE Matrix: real road travel times ---------- */
-async function fetchTimeMatrix(points, key){
-  const coords = points.map(p => ({ lat: p.lat, lng: p.lng }));
-  const res = await fetch("https://matrix.router.hereapi.com/v8/matrix?apiKey=" + encodeURIComponent(key), {
+/* ---------- TomTom Waypoint Optimization: best order by real road time ---------- */
+/* Points are [origin, ...stops, destination]. TomTom returns optimizedOrder
+   with the indexes of ALL points in visiting order (origin first, destination
+   last), plus the route totals. We map the middle indexes back to stops. */
+async function optimizeWithTomTom(points, key){
+  const body = {
+    waypoints: points.map(p => ({ point: { latitude: p.lat, longitude: p.lng } })),
+    options: {
+      travelMode: "car",
+      waypointConstraints: { originIndex: 0, destinationIndex: points.length - 1 },
+      outputExtensions: ["travelTimes", "routeLengths"]
+    }
+  };
+  const res = await fetch("https://api.tomtom.com/routing/waypointoptimization/1?key=" + encodeURIComponent(key), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ origins: coords, destinations: coords, regionDefinition: { type: "world" }, profile: "car", matrixAttributes: ["travelTimes"] })
+    body: JSON.stringify(body)
   });
-  if (!res.ok) throw new Error("matrix " + res.status);
+  if (!res.ok) throw new Error("optimize " + res.status);
   const data = await res.json();
-  const m = data.matrix;
-  if (!m || !m.travelTimes) throw new Error("matrix empty");
-  const n = points.length, times = [];
-  for (let i = 0; i < n; i++) {
-    const row = [];
-    for (let j = 0; j < n; j++) {
-      const v = m.travelTimes[i * n + j];
-      row.push((typeof v === "number" && v >= 0) ? v : Infinity);
-    }
-    times.push(row);
-  }
-  return times;
-}
-/* Nodes are [origin, ...stops, destination]. Tries every order of the stops
-   (at most 8, so at most 40320 orders) and keeps the fastest total time. */
-function bestOrderByTime(times, stopCount){
-  if (stopCount === 0) return { order: [], total: times[0][1] };
-  const destIdx = stopCount + 1;
-  const idxs = []; for (let i = 1; i <= stopCount; i++) idxs.push(i);
-  let best = null, bestCost = Infinity;
-  (function permute(arr, l){
-    if (l === arr.length) {
-      let cost = times[0][arr[0]];
-      for (let k = 0; k + 1 < arr.length; k++) cost += times[arr[k]][arr[k + 1]];
-      cost += times[arr[arr.length - 1]][destIdx];
-      if (cost < bestCost) { bestCost = cost; best = arr.slice(); }
-      return;
-    }
-    for (let i = l; i < arr.length; i++) {
-      const tmp = arr[l]; arr[l] = arr[i]; arr[i] = tmp;
-      permute(arr, l + 1);
-      const tmp2 = arr[l]; arr[l] = arr[i]; arr[i] = tmp2;
-    }
-  })(idxs, 0);
-  if (!best || !isFinite(bestCost)) return null;
-  return { order: best.map(i => i - 1), total: bestCost };
+  if (!data.optimizedOrder || data.optimizedOrder.length !== points.length) throw new Error("optimize empty");
+  const order = data.optimizedOrder.slice(1, -1).map(i => i - 1);
+  const rs = data.summary && data.summary.routeSummary;
+  return { order, total: rs ? rs.travelTimeInSeconds : null };
 }
 function fmtDuration(sec){
   const m = Math.round(sec / 60), h = Math.floor(m / 60), mm = m % 60;
@@ -367,14 +345,13 @@ document.getElementById("build").addEventListener("click", async () => {
       if (!g) { statusEl.textContent = t("notFound") + s; return; }
       pts.push(g);
     }
-    // First choice: optimize with real road times from HERE (fastest order overall).
+    // First choice: TomTom Waypoint Optimization with real road times.
     statusEl.textContent = t("optimizing");
     let ordered = null, method = "line", totalSec = null;
     try {
-      const times = await fetchTimeMatrix([origin, ...pts, destination], key);
-      const best = bestOrderByTime(times, pts.length);
-      if (best) { ordered = best.order.map(i => pts[i]); method = "road"; totalSec = best.total; }
-    } catch (e) { /* road times unavailable: fall back below */ }
+      const opt = await optimizeWithTomTom([origin, ...pts, destination], key);
+      if (opt) { ordered = opt.order.map(i => pts[i]); method = "road"; totalSec = opt.total; }
+    } catch (e) { /* optimization unavailable: fall back below */ }
     if (!ordered) {
       // Fallback: nearest-neighbour by straight-line distance.
       ordered = [];
