@@ -37,7 +37,7 @@
   .dd-panel { position: absolute; left: 0; top: calc(100% + 8px); min-width: 230px; max-width: min(320px, 88vw); background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 8px; z-index: 50; opacity: 0; transform: translateY(6px); visibility: hidden; pointer-events: none; transition: opacity .2s ease-out, transform .2s ease-out, visibility 0s linear .2s; }
   .dd.open .dd-panel { opacity: 1; transform: translateY(0); visibility: visible; pointer-events: auto; transition: opacity .2s ease-out, transform .2s ease-out; }
   .dd-right .dd-panel { left: auto; right: 0; }
-  #sharedd .dd-panel, #navchooser .dd-panel { left: 0; right: 0; max-width: none; }
+  #sharedd .dd-panel { left: 0; right: 0; max-width: none; }
   .dd-head { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); padding: 8px 10px 4px; }
   .dd-note { font-size: 13px; color: var(--muted); padding: 6px 10px 8px; margin: 0; line-height: 1.45; }
   .dd-item { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; background: transparent; border: none; color: var(--ink); font-family: inherit; font-size: 15px; font-weight: 600; padding: 10px; border-radius: 9px; cursor: pointer; transition: background-color .15s ease; }
@@ -47,7 +47,14 @@
   .dd-check { color: var(--accent); font-weight: 800; width: 16px; flex: 0 0 auto; visibility: hidden; }
   .dd-item.active .dd-check { visibility: visible; }
   section.dd-host-open { position: relative; z-index: 30; }
-  #navtrigger { width: 100%; margin-top: 12px; padding: 13px 15px; font-size: 16px; text-align: left; }
+  /* ---------- Navigator-first selector (0.25) ---------- */
+  .navseg { display:flex; gap:4px; background: var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:4px; margin-top:2px; }
+  .navsegbtn { flex:1 1 0; min-width:0; display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; background:transparent; border:1px solid transparent; color:var(--muted); border-radius:9px; padding:10px 6px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition: background-color .16s ease, color .16s ease; }
+  .navsegbtn:hover { color:var(--ink); }
+  .navsegbtn.active { background:var(--accent); color:var(--paper); font-weight:800; box-shadow:0 4px 14px rgba(0,0,0,.25); }
+  .navsegbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .recbadge { font-size:9px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; background:var(--accent-soft); color:var(--amber); border-radius:999px; padding:2px 7px; white-space:nowrap; }
+  .navsegbtn.active .recbadge { background: rgba(9,27,37,.28); color:var(--paper); }
   main { max-width: 760px; margin: 0 auto; padding: 22px 20px; }
   section { background: var(--surface); border:1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding:22px; margin-bottom:18px; animation: rise .5s ease both; }
   @keyframes rise { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
@@ -179,7 +186,12 @@
   #result li.donestop .stoplabel { opacity:.55; text-decoration: line-through; }
   #progressline { font-weight:650; color: var(--amber); }
   #esttime { font-size:21px; font-weight:650; color: var(--ink); letter-spacing:.2px; }
-  .navbtn.active { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight:700; }
+  /* ---------- Leg-by-leg delivery + discard (0.25) ---------- */
+  .resulthead { display:flex; justify-content:flex-end; margin-bottom:2px; }
+  #discardroute { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:9px; padding:7px 11px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; }
+  #discardroute:hover { color:var(--terra); border-color:var(--terra); }
+  #result li.destitem { display:flex; align-items:center; gap:6px; }
+  .legbtn { margin-left:auto; flex:none; }
   #mapbtn { width:100%; margin-top:10px; padding:14px; font-size:16px; }
   #routemap { height:320px; border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; margin-top:12px; background: var(--surface-2); }
   .mapmark { width:26px; height:26px; border-radius:50%; background: var(--accent); color: var(--paper); font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid rgba(255,248,238,.92); box-shadow:0 1px 4px rgba(0,0,0,.35); }
@@ -265,6 +277,12 @@
     <div class="subpage active" id="subpage-addresses" role="tabpanel" aria-labelledby="subtab-addresses">
   <section id="builder">
     <h2 data-i18n="buildTitle">Build a route</h2>
+    <label id="navlabel" data-i18n="navLabel">Which navigator will you use?</label>
+    <div class="navseg" id="navseg" role="group" aria-labelledby="navlabel">
+      <button type="button" class="navsegbtn" data-navsel="google" aria-pressed="true">Google Maps <span class="recbadge" data-i18n="recBadge">Recommended</span></button>
+      <button type="button" class="navsegbtn" data-navsel="apple" aria-pressed="false">Apple Maps</button>
+      <button type="button" class="navsegbtn" data-navsel="waze" aria-pressed="false">Waze</button>
+    </div>
     <label for="country" data-i18n="countryLabel">Country</label>
     <select id="country"></select>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
@@ -273,6 +291,7 @@
     <div class="fieldwrap"><img class="fieldlogo" src="logo-flat.png" alt="" aria-hidden="true"><input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 405 Lexington Ave, New York, NY 10174"></div>
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
+    <p class="hint" id="navnote"></p>
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
     <p class="hint" data-i18n="dragHint">Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.</p>
     <button class="primary" id="build" type="button" data-i18n="buildBtn">Order my stops</button>
@@ -331,6 +350,9 @@
     <div class="subpage hidden" id="subpage-result" role="tabpanel" aria-labelledby="subtab-result">
   <section id="resultcard">
     <div id="result" class="hidden">
+      <div class="resulthead">
+        <button type="button" id="discardroute" aria-label="Discard route"><span aria-hidden="true">✕</span> <span data-i18n="discardRoute">Discard route</span></button>
+      </div>
       <div id="savereminder" class="notice hidden">
         <p style="margin-top:0"><strong data-i18n="remindTitle">Do you want to save this route?</strong></p>
         <p class="hint" data-i18n="remindText">If you don't save it, it stays only as your current work — it is not added to Saved routes.</p>
@@ -339,18 +361,11 @@
           <button class="secondary" id="remindlater" type="button" data-i18n="remindLater">Not now</button>
         </div>
       </div>
+      <a class="mapslink hidden" id="nextstop" href="#" target="_blank" rel="noopener"></a>
       <ol id="ordered"></ol>
       <p id="progressline" class="hint"></p>
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
-      <div class="dd" id="navchooser">
-        <button class="secondary dd-trigger" type="button" id="navtrigger" aria-haspopup="true" aria-expanded="false"><span id="navtriggerlabel">Open in Google Maps</span><span class="dd-chev" aria-hidden="true">▾</span></button>
-        <div class="dd-panel" role="menu">
-          <button class="dd-item navbtn" type="button" id="navgoogle" data-nav="google" role="menuitem"><span>Google Maps</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item navbtn" type="button" id="navapple" data-nav="apple" role="menuitem"><span>Apple Maps</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-          <button class="dd-item navbtn" type="button" id="navwaze" data-nav="waze" role="menuitem"><span data-i18n="wazeNext">Waze (next stop)</span><span class="dd-ext" aria-hidden="true">↗</span></button>
-        </div>
-      </div>
       <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener">Open route in Google Maps</a>
       <div class="dd" id="sharedd">
         <button class="secondary dd-trigger" id="shareroute" type="button" aria-haspopup="true" aria-expanded="false"><span data-i18n="shareRoute">🔗 Share route</span><span class="dd-chev" aria-hidden="true">▾</span></button>
@@ -429,7 +444,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.24 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.25 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -497,7 +512,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.24 — draft, in progress.",
+    footerText: "Version 0.25 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -566,13 +581,17 @@ const STR = {
     demoTag: "Example",
     viewMap: "🗺 View map",
     mapFail: "The map could not be shown. Check your connection and your TomTom key, then try again.",
-    openApple: "Open route in Apple Maps",
-    openWaze: "Open next stop in Waze",
-    wazeNext: "Waze (next stop)",
     doneWord: "done",
     markDone: "Mark as done",
     qrCaption: "Scan to open it on your phone",
-    openIn: "Open in",
+    navLabel: "Which navigator will you use?",
+    recBadge: "Recommended",
+    navNoteGoogle: "Google Maps takes the whole route in one link: start, up to 9 stops and destination.",
+    navNoteApple: "Apple Maps accepts only one destination per link, so your route is delivered leg by leg. For the whole route in a single link, use Google Maps.",
+    navNoteWaze: "Waze accepts only one destination per link, so your route is delivered leg by leg. For the whole route in a single link, use Google Maps.",
+    navigateBtn: "Navigate",
+    nextStopLabel: "Next stop",
+    discardRoute: "Discard route",
     langCurrent: "English"
   },
   es: {
@@ -637,7 +656,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.24 — borrador, en avance.",
+    footerText: "Versión 0.25 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -706,13 +725,17 @@ const STR = {
     demoTag: "Ejemplo",
     viewMap: "🗺 Ver mapa",
     mapFail: "No se pudo mostrar el mapa. Revisa tu conexión y tu clave de TomTom e inténtalo de nuevo.",
-    openApple: "Abrir la ruta en Apple Maps",
-    openWaze: "Abrir la siguiente parada en Waze",
-    wazeNext: "Waze (siguiente parada)",
     doneWord: "hechas",
     markDone: "Marcar como hecha",
     qrCaption: "Escanéala para abrirla en tu teléfono",
-    openIn: "Abrir en",
+    navLabel: "¿Qué navegador vas a usar?",
+    recBadge: "Recomendado",
+    navNoteGoogle: "Google Maps recibe la ruta completa en un solo enlace: salida, hasta 9 paradas y destino.",
+    navNoteApple: "Apple Maps acepta un solo destino por enlace, así que tu ruta se entrega tramo a tramo. Para recibir la ruta completa en un solo enlace, usa Google Maps.",
+    navNoteWaze: "Waze acepta un solo destino por enlace, así que tu ruta se entrega tramo a tramo. Para recibir la ruta completa en un solo enlace, usa Google Maps.",
+    navigateBtn: "Navegar",
+    nextStopLabel: "Siguiente parada",
+    discardRoute: "Descartar ruta",
     langCurrent: "Español"
   }
 };
@@ -727,10 +750,11 @@ function applyLang(){
   if (typeof refreshBoxPlaceholders === "function") refreshBoxPlaceholders();
   if (typeof renderCountryOptions === "function") renderCountryOptions();
   if (typeof refreshHomeLang === "function") refreshHomeLang();
+  if (typeof renderNavUI === "function") renderNavUI();
   renderSaved();
   if (window.__stopediaBooted) {
     if (typeof currentRoute !== "undefined" && currentRoute && typeof renderResult === "function") renderResult();
-    else if (typeof updateNavLink === "function") updateNavLink();
+    else if (typeof renderDelivery === "function") renderDelivery();
   }
 }
 document.getElementById("btn-en").addEventListener("click", () => { lang = "en"; localStorage.setItem("stopedia.lang","en"); applyLang(); });
@@ -1127,10 +1151,14 @@ function fmtDuration(sec){
 }
 
 /* === PURE-V015-BEGIN === */
-/* Pure helpers for the 0.15 result improvements: unit conversion, Apple
-   Maps / Waze link building, en-route check counting. No DOM, no storage —
-   unit-testable in node. Check state is a Set of stopKey() strings, keyed
-   by coordinates + address so drag-reordering keeps each stop's state. */
+/* Pure helpers for the result: unit conversion, en-route check counting,
+   and (0.25) the leg-by-leg link builders for Apple Maps and Waze — both
+   accept ONE destination per link, so a route is delivered one leg at a
+   time. No DOM, no storage — unit-testable in node. Check state is a Set
+   of stopKey() strings, keyed by coordinates + address so drag-reordering
+   keeps each stop's state. The targets of a route, in order, are its
+   stops followed by the final destination: leg i starts at the previous
+   target (or at the origin, for leg 0) and ends at target i. */
 function usesMiles(cc){ return cc === "US" || cc === "GB"; }
 function fmtDistance(meters, cc){
   if (meters === null || meters === undefined || isNaN(meters)) return "—";
@@ -1138,20 +1166,21 @@ function fmtDistance(meters, cc){
   return (meters / 1000).toFixed(1) + " km";
 }
 function stopKey(p){ return p.lat.toFixed(6) + "," + p.lng.toFixed(6) + "|" + p.label; }
-function appleMapsUrl(route){
+function legTargets(route){ return route.stops.concat([route.destination]); }
+function appleLegUrl(route, idx){
+  const targets = legTargets(route);
+  const prev = idx === 0 ? route.origin : targets[idx - 1];
   const e = (p) => encodeURIComponent(p.lat + "," + p.lng);
-  let u = "https://maps.apple.com/?saddr=" + e(route.origin);
-  route.stops.forEach(p => { u += "&daddr=" + e(p); });
-  u += "&daddr=" + e(route.destination) + "&dirflg=d";
-  return u;
+  return "https://maps.apple.com/?saddr=" + e(prev) + "&daddr=" + e(targets[idx]) + "&dirflg=d";
 }
-function wazeNextPoint(route, done){
-  for (const p of route.stops) { if (!done.has(stopKey(p))) return p; }
-  return route.destination;
+function wazeLegUrl(p){ return "https://waze.com/ul?ll=" + p.lat + "," + p.lng + "&navigate=yes"; }
+function legUrl(route, idx, nav){
+  const targets = legTargets(route);
+  return nav === "apple" ? appleLegUrl(route, idx) : wazeLegUrl(targets[idx]);
 }
-function wazeUrl(route, done){
-  const p = wazeNextPoint(route, done);
-  return "https://waze.com/ul?ll=" + p.lat + "," + p.lng + "&navigate=yes";
+function nextTargetIndex(route, done){
+  for (let i = 0; i < route.stops.length; i++) { if (!done.has(stopKey(route.stops[i]))) return i; }
+  return done.has(stopKey(route.destination)) ? -1 : route.stops.length;
 }
 function countDone(route, done){
   let n = 0;
@@ -1331,13 +1360,38 @@ function renderResult(){
   const resEl = document.getElementById("result");
   closeShareMenu();
   syncResultSubtab();
-  if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); return; }
+  if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); renderDelivery(); return; }
+  const nav = getNav();
+  const legMode = nav !== "google";
   const ol = document.getElementById("ordered");
   ol.innerHTML = "";
   const mkFixed = (p) => { const li = document.createElement("li"); li.textContent = p.label; return li; };
-  const originLi = mkFixed(currentRoute.origin), destLi = mkFixed(currentRoute.destination);
+  const originLi = mkFixed(currentRoute.origin);
   ol.appendChild(originLi);
-  currentRoute.stops.forEach(p => {
+  /* Destination row: plain text in Google mode, as before. In leg mode
+     (Apple/Waze, 0.25) it is the final leg's target, so it joins the
+     en-route checks and carries its own Navigate button while not done. */
+  let destLi;
+  if (!legMode) {
+    destLi = mkFixed(currentRoute.destination);
+  } else {
+    destLi = document.createElement("li"); destLi.className = "destitem";
+    const dDone = doneStops.has(stopKey(currentRoute.destination));
+    if (dDone) destLi.classList.add("donestop");
+    const dSpace = document.createElement("span"); dSpace.className = "draghandle"; dSpace.style.visibility = "hidden"; dSpace.textContent = "⠿";
+    const dChk = document.createElement("button"); dChk.type = "button"; dChk.className = "stopcheck" + (dDone ? " done" : "");
+    dChk.textContent = "✓"; dChk.title = t("markDone"); dChk.setAttribute("aria-label", t("markDone"));
+    dChk.addEventListener("click", () => toggleDone(currentRoute.destination));
+    const dLab = document.createElement("span"); dLab.className = "stoplabel"; dLab.textContent = currentRoute.destination.label;
+    destLi.append(dSpace, dChk, dLab);
+    if (!dDone) {
+      const dNav = document.createElement("button"); dNav.type = "button"; dNav.className = "small legbtn"; dNav.textContent = t("navigateBtn");
+      dNav.addEventListener("click", () => window.open(legUrl(currentRoute, currentRoute.stops.length, nav), "_blank"));
+      destLi.appendChild(dNav);
+    }
+    destLi._point = currentRoute.destination;
+  }
+  currentRoute.stops.forEach((p, i) => {
     const li = document.createElement("li"); li.className = "stopitem";
     const done = doneStops.has(stopKey(p));
     if (done) li.classList.add("donestop");
@@ -1347,18 +1401,21 @@ function renderResult(){
     chk.addEventListener("click", () => toggleDone(p));
     const lab = document.createElement("span"); lab.className = "stoplabel"; lab.textContent = p.label;
     li.append(handle, chk, lab);
+    /* Leg mode (0.25): each not-done stop row carries a Navigate button
+       opening the chosen app with THIS leg only. Done rows lose it. */
+    if (legMode && !done) {
+      const navBtn = document.createElement("button"); navBtn.type = "button"; navBtn.className = "small legbtn"; navBtn.textContent = t("navigateBtn");
+      navBtn.addEventListener("click", () => window.open(legUrl(currentRoute, i, nav), "_blank"));
+      li.appendChild(navBtn);
+    }
     li._point = p;
     attachDrag(handle, li, () => Array.from(ol.querySelectorAll(".stopitem")), (lis) => {
       currentRoute.stops = lis.map(x => x._point);
-      ol.appendChild(originLi);
-      lis.forEach(x => ol.appendChild(x));
-      ol.appendChild(destLi);
-      // Manual order: totals and the map line are refreshed with ONE
-      // Calculate Route call; until it answers, totals show "—".
+      // Manual order: the result is re-rendered whole, so the leg buttons
+      // chain from the NEW previous points; totals and the map line are
+      // refreshed with ONE Calculate Route call (until it answers, "—").
       if (buildInfo) { buildInfo.manual = true; buildInfo.totalSec = null; buildInfo.totalMeters = null; buildInfo.geometry = null; }
-      document.getElementById("methodnote").textContent = t("manualNote");
-      document.getElementById("esttime").textContent = totalsLineText();
-      updateNavLink();
+      renderResult();
       saveWorkState();
       refreshManualTotals();
     });
@@ -1368,7 +1425,7 @@ function renderResult(){
   document.getElementById("progressline").textContent = currentRoute.stops.length ? (countDone(currentRoute, doneStops) + "/" + currentRoute.stops.length + " " + t("doneWord")) : "";
   document.getElementById("methodnote").textContent = (buildInfo && buildInfo.manual) ? t("manualNote") : ((buildInfo && buildInfo.method === "road") ? t("optRoad") : t("optLine"));
   document.getElementById("esttime").textContent = totalsLineText();
-  updateNavLink();
+  renderDelivery();
   resEl.classList.remove("hidden");
   updateReminder();
   renderQr();
@@ -1384,24 +1441,57 @@ function getNav(){
   const n = localStorage.getItem("stopedia.nav");
   return (n === "apple" || n === "waze") ? n : "google";
 }
-/* The big route button follows the chosen navigator. TRUTH IN LABELING:
-   Waze links accept ONE destination only, so the Waze option is labeled
-   "next stop" and points at the first not-completed stop (or the final
-   destination once every stop is checked). */
-function updateNavLink(){
-  const a = document.getElementById("mapslink");
-  if (!a) return;
+/* ---------- Navigator-first (0.25) ---------- */
+/* The navigator is chosen FIRST, at the top of the Direcciones subtab:
+   the segmented selector there is the SINGLE source of truth. It writes
+   the same stopedia.nav preference the 0.15 result dropdown used (so an
+   existing choice carries over), refreshes the conditions note under
+   the stop boxes, and — when a result is on screen — re-renders ONLY
+   its delivery in the new mode, without rebuilding the route. */
+function renderNavUI(){
   const nav = getNav();
-  a.textContent = nav === "apple" ? t("openApple") : (nav === "waze" ? t("openWaze") : t("openMaps"));
-  const ntl = document.getElementById("navtriggerlabel");
-  if (ntl) ntl.textContent = t("openIn") + " " + (nav === "apple" ? "Apple Maps" : (nav === "waze" ? t("wazeNext") : "Google Maps"));
-  a.href = currentRoute ? (nav === "apple" ? appleMapsUrl(currentRoute) : (nav === "waze" ? wazeUrl(currentRoute, doneStops) : mapsUrl(currentRoute))) : "#";
-  document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.nav === nav));
+  document.querySelectorAll("[data-navsel]").forEach(b => {
+    const on = b.dataset.navsel === nav;
+    b.classList.toggle("active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  const note = document.getElementById("navnote");
+  if (note) note.textContent = t(nav === "apple" ? "navNoteApple" : (nav === "waze" ? "navNoteWaze" : "navNoteGoogle"));
+  const db = document.getElementById("discardroute");
+  if (db) db.setAttribute("aria-label", t("discardRoute"));
 }
-document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => {
-  try { localStorage.setItem("stopedia.nav", b.dataset.nav); } catch (e) {}
-  updateNavLink();
+document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("click", () => {
+  try { localStorage.setItem("stopedia.nav", b.dataset.navsel); } catch (e) {}
+  renderNavUI();
+  if (currentRoute) renderResult();
 }));
+/* The result's delivery, following the selector. Google mode: the one
+   big open button carries the full-route link, exactly as before. Leg
+   mode (Apple/Waze): the big button hides, and a prominent "Next stop"
+   button above the list opens the leg to the first not-done target —
+   stop N, or the final destination once every stop is done. When the
+   destination itself is checked done there is nothing left to open,
+   and the button disappears. */
+function renderDelivery(){
+  const a = document.getElementById("mapslink");
+  const nx = document.getElementById("nextstop");
+  if (!a || !nx) return;
+  const nav = getNav();
+  if (!currentRoute) { a.classList.add("hidden"); nx.classList.add("hidden"); return; }
+  if (nav === "google") {
+    nx.classList.add("hidden");
+    a.classList.remove("hidden");
+    a.textContent = t("openMaps");
+    a.href = mapsUrl(currentRoute);
+    return;
+  }
+  a.classList.add("hidden");
+  const idx = nextTargetIndex(currentRoute, doneStops);
+  if (idx < 0) { nx.classList.add("hidden"); return; }
+  nx.classList.remove("hidden");
+  nx.textContent = t("nextStopLabel") + ": " + (idx < currentRoute.stops.length ? (t("stopWord") + " " + (idx + 1)) : t("destLabel"));
+  nx.href = legUrl(currentRoute, idx, nav);
+}
 function toggleDone(p){
   const k = stopKey(p);
   if (doneStops.has(k)) doneStops.delete(k); else doneStops.add(k);
@@ -1658,8 +1748,12 @@ document.getElementById("remindlater").addEventListener("click", () => {
   updateReminder();
   saveWorkState();
 });
-document.getElementById("newroute").addEventListener("click", () => {
-  if (!confirm(t("confirmNew"))) return;
+/* The full reset of the current work, shared by "New route" (which asks
+   first, as before) and the result card's ✕ "Discard route" (0.25, which
+   acts directly): address boxes, built result, done checks and the
+   persisted working state are all cleared. Saved routes and the TomTom
+   key are NOT touched. */
+function clearCurrentWork(){
   document.getElementById("origin").value = "";
   document.getElementById("destination").value = "";
   fillBoxes([]);
@@ -1678,6 +1772,13 @@ document.getElementById("newroute").addEventListener("click", () => {
   activateSubtab("addresses");
   statusEl.textContent = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+document.getElementById("newroute").addEventListener("click", () => {
+  if (!confirm(t("confirmNew"))) return;
+  clearCurrentWork();
+});
+document.getElementById("discardroute").addEventListener("click", () => {
+  clearCurrentWork();
 });
 
 /* ---------- Pure text helpers for photo reading & pasting (unit-testable) ---------- */
@@ -2001,20 +2102,14 @@ document.addEventListener("keydown", (e) => {
 });
 const ddShare = setupDropdown("sharedd", "shareroute");
 const ddAi = setupDropdown("aidd", "aibtn");
-const ddNav = setupDropdown("navchooser", "navtrigger");
 const ddLang = setupDropdown("langdd", "langtrigger");
 /* The "System" share item exists only where Web Share does. */
 if (!navigator.share) { const sys = document.getElementById("sharesys"); if (sys) sys.style.display = "none"; }
-/* Choosing a navigator sets + remembers it (the handler registered in
-   the 0.15 section above runs first) and then opens the route in it,
-   through the same href the big route button carries. */
-document.querySelectorAll(".navbtn").forEach(b => b.addEventListener("click", () => {
-  if (!currentRoute) return;
-  updateNavLink();
-  const href = document.getElementById("mapslink").href;
-  if (href && href !== "#") window.open(href, "_blank");
-}));
-updateNavLink();
+/* 0.25: the result-stage "Open in…" dropdown is gone — the navigator is
+   chosen first, on Direcciones. Sync the selector, its conditions note
+   and the result delivery with the persisted preference. */
+renderNavUI();
+renderDelivery();
 /* Sticky top bar: it gains its hairline once the page is scrolled. */
 const _topbar = document.getElementById("topbar");
 function syncTopbar(){ if (_topbar) _topbar.classList.toggle("scrolled", window.scrollY > 4); }
