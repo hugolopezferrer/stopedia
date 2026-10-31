@@ -341,6 +341,10 @@
      global reduced-motion block flattens this animation too. */
   @keyframes ackpulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(240,120,67,0); } 30% { box-shadow: 0 0 0 5px rgba(240,120,67,.55); } }
   #navack.ackpulse { animation: ackpulse .55s ease-in-out 2; }
+  /* Conditional batch tip bar (0.36): a slim strip under the navigator
+     selector — theme tokens only, so it follows dark/light for free. */
+  .tipbar { background: var(--surface-2); border:1px solid var(--line); border-radius: var(--radius); padding:10px 14px; margin:12px 0 4px; }
+  .tipbar p { margin:2px 0 8px; font-size:14px; color: var(--ink); }
   /* Delete-key confirmation (0.30): the consequences list inside the
      in-panel confirmation notice. */
   .delkeylist { margin:8px 0; padding-left:20px; }
@@ -460,10 +464,23 @@
     </div>
     <div class="notice hidden" id="navack" style="margin:12px 0 4px">
       <p style="margin-top:0" id="navacktext"></p>
+      <div id="navacktip" class="hidden">
+        <p id="navacktiptext"></p>
+        <div class="btnrow" style="margin-bottom:10px">
+          <button class="secondary" id="navacktipbtn" type="button" data-i18n="batchTipBtn">Switch to batch</button>
+        </div>
+      </div>
       <p><strong id="navackq" data-i18n="navAckQ">Do you agree?</strong></p>
       <div class="btnrow">
         <button class="secondary" id="navackyes" type="button" data-i18n="navAckYes">Yes, I agree</button>
         <button class="secondary" id="navackno" type="button" data-i18n="navAckNo">No, use Google Maps</button>
+      </div>
+    </div>
+    <div class="tipbar hidden" id="batchtip">
+      <p id="batchtiptext"></p>
+      <div class="btnrow">
+        <button class="secondary" id="batchtipbtn" type="button" data-i18n="batchTipBtn">Switch to batch</button>
+        <button class="small" id="batchtipclose" type="button" aria-label="Dismiss tip">✕</button>
       </div>
     </div>
     <label id="modelabel" data-i18n="workModeLabel">Route or batches?</label>
@@ -698,7 +715,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.35 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.36 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -774,7 +791,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in your navigator, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.35 — draft, in progress.",
+    footerText: "Version 0.36 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     themeDark: "Dark",
@@ -787,6 +804,9 @@ const STR = {
     navAckQ: "Do you agree?",
     navAckYes: "Yes, I agree",
     navAckNo: "No, use Google Maps",
+    batchTip: "Tip: if your day has several stops, switch it to a batch. Then every leg — from stop 1 to stop 2, from stop 2 to stop 3, and so on — stays saved together in a single batch, and you move along with the Next stop button.",
+    batchTipBtn: "Switch to batch",
+    batchTipClose: "Dismiss tip",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -974,7 +994,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en tu navegador, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.35 — borrador, en avance.",
+    footerText: "Versión 0.36 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     themeDark: "Oscuro",
@@ -987,6 +1007,9 @@ const STR = {
     navAckQ: "¿Estás de acuerdo?",
     navAckYes: "Sí, de acuerdo",
     navAckNo: "No, usar Google Maps",
+    batchTip: "Consejo: si tu jornada tiene varias paradas, pásala a lote. Así cada tramo — de la parada 1 a la 2, de la 2 a la 3, y así sucesivamente — queda guardado junto en un solo lote, y avanzas con el botón Siguiente parada.",
+    batchTipBtn: "Pasar a lote",
+    batchTipClose: "Cerrar consejo",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -2479,6 +2502,7 @@ function renderNavUI(){
 }
 document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("click", () => {
   try { localStorage.setItem("stopedia.nav", b.dataset.navsel); } catch (e) {}
+  batchTipDismissed = false; /* a fresh navigator choice re-arms the 0.36 tip */
   renderNavUI();
   if (currentRoute) renderResult();
 }));
@@ -2506,6 +2530,7 @@ function renderNavAck(){
   const need = (nav === "apple" || nav === "waze") && !navAcked(nav);
   panel.classList.toggle("hidden", !need);
   if (need) document.getElementById("navacktext").textContent = t(nav === "apple" ? "navAckApple" : "navAckWaze");
+  renderBatchTip();
 }
 function flagNavAck(){
   renderNavAck();
@@ -2528,6 +2553,48 @@ document.getElementById("navackno").addEventListener("click", () => {
   renderNavUI();
   if (currentRoute) renderResult();
 });
+/* ---------- Conditional batch recommendation (0.36) ---------- */
+/* Hugo's refinement: the batch advice is NOT fixed text — it appears
+   only when it applies, i.e. the chosen navigator is Apple Maps or
+   Waze AND the form is in single-route mode. Two carriers, one text:
+   (A) a line inside the agreement panel, before the question, while
+   that navigator is still un-acknowledged; (B) once acknowledged, a
+   slim tip bar under the selector with the same advice, a ✕ that puts
+   it away until the navigator selection changes again (the navsel
+   handler resets batchTipDismissed), and in both carriers a
+   [Switch to batch] button. The switch is setBuildMode("batch"): the
+   form's boxes are shared between modes and the start/destination
+   fields sit outside them, so everything already typed — start,
+   destination and every stop, in order — carries over untouched;
+   switching from the panel leaves the panel open and the agreement
+   still to answer (switching does NOT acknowledge anything). In
+   batch mode, or with Google Maps, the recommendation never shows. */
+let batchTipDismissed = false;
+function renderBatchTip(){
+  const nav = getNav();
+  const legNav = (nav === "apple" || nav === "waze");
+  const panel = document.getElementById("navack");
+  const panelOpen = !!(panel && !panel.classList.contains("hidden"));
+  const inPanel = document.getElementById("navacktip");
+  if (inPanel) {
+    const show = panelOpen && buildMode === "single";
+    inPanel.classList.toggle("hidden", !show);
+    if (show) document.getElementById("navacktiptext").textContent = t("batchTip");
+  }
+  const bar = document.getElementById("batchtip");
+  if (bar) {
+    const show = legNav && buildMode === "single" && !panelOpen && !batchTipDismissed;
+    bar.classList.toggle("hidden", !show);
+    if (show) {
+      document.getElementById("batchtiptext").textContent = t("batchTip");
+      document.getElementById("batchtipclose").setAttribute("aria-label", t("batchTipClose"));
+    }
+  }
+}
+function switchToBatchFromTip(){ setBuildMode("batch"); }
+document.getElementById("batchtipbtn").addEventListener("click", switchToBatchFromTip);
+document.getElementById("navacktipbtn").addEventListener("click", switchToBatchFromTip);
+document.getElementById("batchtipclose").addEventListener("click", () => { batchTipDismissed = true; renderBatchTip(); });
 /* ---------- Single route ⇄ Batches mode toggle (0.26) ---------- */
 /* The second segmented control in Direcciones, built from the same
    component as the navigator selector. Single route = the classic
@@ -2544,6 +2611,7 @@ function renderModeUI(){
   if (lh) lh.textContent = t(buildMode === "batch" ? "batchHint" : "limitHint");
   const ab = document.getElementById("addstop");
   if (ab) ab.classList.toggle("hidden", buildMode !== "batch");
+  renderBatchTip();
 }
 function setBuildMode(m){
   if (m !== "batch" && m !== "single") return;
