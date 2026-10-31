@@ -16,36 +16,43 @@
     --terra:#ff9a78; --terra-soft:#4b2924;
     --blue:#8dc7dc; --blue-soft:#163d4e;
     --shadow:0 16px 44px rgba(0,0,0,.3); --radius:14px;
-    /* Orange liquid glass (0.28) with bubble relief + gloss (0.29): ONE
-       treatment, defined here and applied to every button-like control
-       in the app. Translucent orange gradient, a soft blur behind the
-       button, a lighter rim — and, since 0.29, a raised bubble relief
-       lit from the TOP-LEFT, the same direction on every button.
+    /* Orange liquid glass (0.28) with bubble relief + gloss (0.29),
+       recalibrated in 0.30: ONE treatment, defined here and applied to
+       every button-like control in the app. Translucent orange gradient,
+       a soft blur behind the button, a lighter rim — and a raised bubble
+       relief lit from the TOP-LEFT, the same direction on every button.
        --glass-spec is the specular pool where the light lands (anchored
-       at 18% 0%, gone by the middle of the button); --glass-sheen is a
-       soft diagonal wash beneath it; both ride on top of every tint
-       stack. The relief itself lives in --glass-shadow: a hard top
-       light line, a shallow inner glow below it, an inner shade at the
-       bottom for roundness, and a deeper drop shadow so the bubble
-       floats over the surface; --glass-shadow-pressed compresses that
-       relief while a button is held down. --glass-bg-strong is the same
-       glass mixed thicker, for the ACTIVE pill (chosen tab / navigator
-       / mode); --glass-hilite is only the light layers, layered over
-       the solid accent on the big action buttons. */
-    --glass-spec: radial-gradient(150% 55% at 18% 0%, rgba(255,238,214,.50), rgba(255,238,214,0) 55%);
-    --glass-sheen: linear-gradient(115deg, rgba(255,240,220,.28), rgba(255,240,220,0) 42%);
-    --glass-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.30), rgba(240,120,67,.16));
-    --glass-bg-hover: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.44), rgba(240,120,67,.26));
-    --glass-bg-strong: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.88), rgba(240,120,67,.64));
+       at 18% 0%); --glass-sheen is a soft diagonal wash beneath it; both
+       ride on top of every tint stack. The relief itself lives in
+       --glass-shadow: a top light line, a shallow inner glow below it,
+       an inner shade at the bottom for roundness, and a drop shadow so
+       the bubble floats over the surface; --glass-shadow-pressed
+       compresses that relief while a button is held down.
+       --glass-bg-strong is the same glass mixed thicker, for the ACTIVE
+       pill (chosen tab / navigator / mode); --glass-hilite is only the
+       light layers, layered over the solid accent on the big action
+       buttons. 0.30 turned the 0.29 gloss WAY down — Hugo's verdict on
+       the live app was "too much shine": the specular peak drops from
+       .50 to .20 and its pool is gone by 35% instead of 55%, the sheen
+       from .28 to .10 gone by 30%, the relief's light and shade sit at
+       roughly half strength, and the tint itself is lighter (top .26,
+       bottom .09) over a slightly stronger blur (10px), so the buttons
+       read as orange glass with the blurred background showing through
+       where they sit — one subtle light in one corner, nothing more. */
+    --glass-spec: radial-gradient(150% 55% at 18% 0%, rgba(255,238,214,.20), rgba(255,238,214,0) 35%);
+    --glass-sheen: linear-gradient(115deg, rgba(255,240,220,.10), rgba(255,240,220,0) 30%);
+    --glass-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.26), rgba(240,120,67,.09));
+    --glass-bg-hover: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.38), rgba(240,120,67,.18));
+    --glass-bg-strong: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(240,120,67,.85), rgba(240,120,67,.60));
     --glass-border: rgba(255,170,120,.38);
     --glass-border-strong: rgba(255,170,120,.62);
-    --glass-shadow: inset 0 1px 0 rgba(255,230,200,.55), inset 0 12px 16px -10px rgba(255,226,190,.45), inset 0 -10px 14px -10px rgba(20,8,4,.45), 0 8px 22px rgba(0,0,0,.32);
-    --glass-shadow-pressed: inset 0 1px 0 rgba(255,230,200,.28), inset 0 6px 10px -6px rgba(255,226,190,.20), inset 0 -5px 8px -5px rgba(20,8,4,.40), inset 0 4px 12px rgba(20,8,4,.38), 0 3px 10px rgba(0,0,0,.28);
-    --glass-blur: blur(8px) saturate(1.25);
-    --glass-hilite: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(255,226,198,.5), rgba(255,226,198,0) 55%);
-    --glass-danger-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(255,110,74,.30), rgba(255,110,74,.15));
+    --glass-shadow: inset 0 1px 0 rgba(255,230,200,.28), inset 0 12px 16px -10px rgba(255,226,190,.22), inset 0 -10px 14px -10px rgba(20,8,4,.22), 0 7px 18px rgba(0,0,0,.28);
+    --glass-shadow-pressed: inset 0 1px 0 rgba(255,230,200,.15), inset 0 6px 10px -6px rgba(255,226,190,.10), inset 0 -5px 8px -5px rgba(20,8,4,.20), inset 0 4px 12px rgba(20,8,4,.20), 0 2px 8px rgba(0,0,0,.24);
+    --glass-blur: blur(10px) saturate(1.25);
+    --glass-hilite: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(255,226,198,.30), rgba(255,226,198,0) 45%);
+    --glass-danger-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(255,110,74,.26), rgba(255,110,74,.09));
     --glass-danger-border: rgba(255,160,130,.45);
-    --glass-blue-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(170,220,245,.30), rgba(170,220,245,.13));
+    --glass-blue-bg: var(--glass-spec), var(--glass-sheen), linear-gradient(rgba(170,220,245,.26), rgba(170,220,245,.08));
     --glass-blue-border: rgba(170,220,245,.4);
   }
   * { box-sizing: border-box; }
@@ -217,6 +224,10 @@
   .homebenefits svg { flex:0 0 auto; }
   .notice { background: var(--accent-soft); border:1px solid var(--accent); border-radius: var(--radius); padding:16px 18px; margin-bottom:16px; }
   .notice p { margin:8px 0; font-size:15px; color: var(--ink); }
+  /* Delete-key confirmation (0.30): the consequences list inside the
+     in-panel confirmation notice. */
+  .delkeylist { margin:8px 0; padding-left:20px; }
+  .delkeylist li { margin:6px 0; font-size:15px; color: var(--ink); }
   .keyappliedline { font-weight:650; font-size:16px; margin:14px 0 8px; color: var(--ink); }
   .keycheck { color: var(--accent); font-weight:800; }
   .keymask { background: var(--surface-2); color: var(--muted); border-radius:12px; padding:11px 14px; letter-spacing:2px; font-size:15px; margin:6px 0; word-break: break-all; }
@@ -470,7 +481,23 @@
     <div id="keyapplied" class="hidden">
       <p class="keyappliedline"><span class="keycheck">✓</span> <span data-i18n="keyApplied">API key applied</span></p>
       <p class="keymask" id="keymask"></p>
-      <div class="btnrow"><button class="secondary" id="editkey" type="button" data-i18n="editKey">Edit API key</button></div>
+      <div class="btnrow">
+        <button class="secondary" id="editkey" type="button" data-i18n="editKey">Edit API key</button>
+        <button class="secondary danger" id="deletekey" type="button" data-i18n="deleteKey">Delete key</button>
+      </div>
+      <div class="notice hidden" id="keydelconfirm" style="margin:14px 0 0">
+        <p style="margin-top:0"><strong data-i18n="delKeyTitle">Delete your TomTom key?</strong></p>
+        <p data-i18n="delKeyIntro">If you delete the key:</p>
+        <ul class="delkeylist">
+          <li data-i18n="delKeyC1">Stopedia will not be able to build or optimize routes until you paste a key again.</li>
+          <li data-i18n="delKeyC2">Your saved routes and current work stay on this device — they are not deleted.</li>
+          <li data-i18n="delKeyC3">You will need the key from your TomTom account again, so keep that account access handy.</li>
+        </ul>
+        <div class="btnrow">
+          <button class="secondary danger" id="delkeyyes" type="button" data-i18n="delKeyYes">Yes, delete</button>
+          <button class="secondary" id="delkeycancel" type="button" data-i18n="cancelKey">Cancel</button>
+        </div>
+      </div>
     </div>
     <div id="keyedit">
       <p id="keybadnote" class="keybad hidden" data-i18n="keyBad">The saved key did not work — paste a new key below.</p>
@@ -495,7 +522,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.29 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.30 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -528,6 +555,14 @@ const STR = {
     countryLabel: "Country",
     keyApplied: "API key applied",
     editKey: "Edit API key",
+    deleteKey: "Delete key",
+    delKeyTitle: "Delete your TomTom key?",
+    delKeyIntro: "If you delete the key:",
+    delKeyC1: "Stopedia will not be able to build or optimize routes until you paste a key again.",
+    delKeyC2: "Your saved routes and current work stay on this device — they are not deleted.",
+    delKeyC3: "You will need the key from your TomTom account again, so keep that account access handy.",
+    delKeyYes: "Yes, delete",
+    keyDeleted: "Key deleted.",
     cancelKey: "Cancel",
     keyBad: "The saved key did not work — paste a new key below.",
     keyPh: "Paste your TomTom key here",
@@ -563,7 +598,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.29 — draft, in progress.",
+    footerText: "Version 0.30 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -685,6 +720,14 @@ const STR = {
     countryLabel: "País",
     keyApplied: "Clave API aplicada",
     editKey: "Editar clave API",
+    deleteKey: "Borrar clave",
+    delKeyTitle: "¿Borrar tu clave de TomTom?",
+    delKeyIntro: "Si borras la clave:",
+    delKeyC1: "Stopedia no podrá armar ni optimizar rutas hasta que pegues una clave de nuevo.",
+    delKeyC2: "Tus rutas guardadas y tu trabajo actual se quedan en este aparato: no se borran.",
+    delKeyC3: "Vas a necesitar la clave de tu cuenta de TomTom otra vez, así que ten a mano el acceso a esa cuenta.",
+    delKeyYes: "Sí, borrar",
+    keyDeleted: "Clave borrada.",
     cancelKey: "Cancelar",
     keyBad: "La clave guardada no funcionó: pega una clave nueva abajo.",
     keyPh: "Pega aquí tu clave de TomTom",
@@ -720,7 +763,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.29 — borrador, en avance.",
+    footerText: "Versión 0.30 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -877,6 +920,10 @@ function renderKeyPanel(){
   const edit = document.getElementById("keyedit");
   document.getElementById("keybadnote").classList.toggle("hidden", !(key && bad));
   document.getElementById("cancelkey").classList.toggle("hidden", !key);
+  /* Any re-render of the panel closes the delete-key confirmation
+     (0.30): it is a one-shot question tied to the applied view, never
+     a state that survives a panel switch. */
+  document.getElementById("keydelconfirm").classList.add("hidden");
   if (key && !bad) {
     document.getElementById("keymask").textContent = "••••••••••••" + key.slice(-4);
     applied.classList.remove("hidden");
@@ -901,6 +948,30 @@ document.getElementById("cancelkey").addEventListener("click", () => {
   keyInput.value = "";
   document.getElementById("keystatus").textContent = "";
   renderKeyPanel();
+});
+
+/* ---------- Delete the saved key (0.30) ---------- */
+/* The Delete button lives in the APPLIED view only, next to Edit. It
+   opens an in-panel confirmation that lists the consequences BEFORE
+   the choice; Cancel changes nothing. Confirming removes the key AND
+   the keybad flag and returns the panel to the no-key state — the
+   step-by-step guide (this same panel's edit view) plus the no-key
+   notice above — with a brief "Key deleted." note. Saved routes,
+   saved batches and the working state are NOT touched; the existing
+   guards (Home CTA, build) then route to this tab on their own. */
+document.getElementById("deletekey").addEventListener("click", () => {
+  document.getElementById("keydelconfirm").classList.remove("hidden");
+});
+document.getElementById("delkeycancel").addEventListener("click", () => {
+  document.getElementById("keydelconfirm").classList.add("hidden");
+});
+document.getElementById("delkeyyes").addEventListener("click", () => {
+  try { localStorage.removeItem("stopedia.key"); } catch (e) {}
+  try { localStorage.removeItem("stopedia.keybad"); } catch (e) {}
+  keyInput.value = "";
+  document.getElementById("nokeynotice").classList.remove("hidden");
+  renderKeyPanel();
+  document.getElementById("keystatus").textContent = t("keyDeleted");
 });
 
 /* ---------- Main tabs + route subtabs (0.19, Home added 0.21) ---------- */
