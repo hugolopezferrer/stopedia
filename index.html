@@ -48,6 +48,9 @@
   .route-card .meta { font-size:13px; color: var(--muted); margin-bottom:8px; }
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
   a.mapslink { display:block; text-align:center; background: var(--ink); color: var(--cream); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; }
+  #shareroute { width:100%; margin-top:10px; padding:14px; font-size:16px; }
+  #sharemenu { border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:8px; background: var(--surface); }
+  #sharemenu .btnrow { margin-top:0; }
   .hidden { display:none; }
   .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
   .progress { height:10px; background: var(--surface-2); border-radius:5px; overflow:hidden; margin-top:12px; }
@@ -130,6 +133,15 @@
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
       <a class="mapslink" id="mapslink" href="#" target="_blank" rel="noopener" data-i18n="openMaps">Open route in Google Maps</a>
+      <button class="secondary" id="shareroute" type="button" data-i18n="shareRoute">🔗 Share route</button>
+      <div id="sharemenu" class="hidden">
+        <div class="btnrow">
+          <button class="small" type="button" id="sharewa" data-i18n="shareWhatsApp">WhatsApp</button>
+          <button class="small" type="button" id="sharetg" data-i18n="shareTelegram">Telegram</button>
+          <button class="small" type="button" id="sharemail" data-i18n="shareEmail">Email</button>
+          <button class="small" type="button" id="sharecopy" data-i18n="shareCopy">Copy</button>
+        </div>
+      </div>
       <label for="routename" data-i18n="routeNameLabel">Name for this route</label>
       <input type="text" id="routename" data-i18n-ph="routeNamePh" placeholder="e.g. Pharmacies — Friday">
       <button class="primary" id="saveroute" type="button" data-i18n="saveRouteBtn">Save this route</button>
@@ -238,7 +250,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.13 — draft, in progress.</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.14 — draft, in progress.</span></footer>
 
 <script>
 "use strict";
@@ -292,7 +304,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.13 — draft, in progress.",
+    footerText: "Version 0.14 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -340,6 +352,14 @@ const STR = {
     geminiNoCopy: "The copy did not work. In Gemini, ask it to extract the addresses, one per line, with ZIP codes.",
     sharePhoto: "📤 Share the photo with my AI",
     shareNoSupport: "This browser cannot share the photo from here. Open your AI app and attach the photo there.",
+    shareRoute: "🔗 Share route",
+    routeCopied: "Route copied — paste it anywhere.",
+    shareStart: "Start",
+    shareDest: "Destination",
+    shareWhatsApp: "WhatsApp",
+    shareTelegram: "Telegram",
+    shareEmail: "Email",
+    shareCopy: "Copy",
     aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments."
   },
   es: {
@@ -390,7 +410,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.13 — borrador, en avance.",
+    footerText: "Versión 0.14 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -438,6 +458,14 @@ const STR = {
     geminiNoCopy: "No se pudo copiar automáticamente. En Gemini, pídele que extraiga las direcciones, una por línea, con el código postal.",
     sharePhoto: "📤 Compartir la foto con mi IA",
     shareNoSupport: "Este navegador no puede compartir la foto desde aquí. Abre tu aplicación de IA y adjunta la foto allá.",
+    shareRoute: "🔗 Compartir ruta",
+    routeCopied: "Ruta copiada: pégala donde quieras.",
+    shareStart: "Salida",
+    shareDest: "Destino",
+    shareWhatsApp: "WhatsApp",
+    shareTelegram: "Telegram",
+    shareEmail: "Correo electrónico",
+    shareCopy: "Copiar",
     aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios."
   }
 };
@@ -873,6 +901,8 @@ function updateReminder(){
 }
 function renderResult(){
   const resEl = document.getElementById("result");
+  const shareMenuEl = document.getElementById("sharemenu");
+  if (shareMenuEl) shareMenuEl.classList.add("hidden");
   if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); return; }
   const ol = document.getElementById("ordered");
   ol.innerHTML = "";
@@ -905,6 +935,85 @@ function renderResult(){
   resEl.classList.remove("hidden");
   updateReminder();
 }
+/* ---------- Share the built route (0.14) ---------- */
+/* The button lives inside #result, so renderResult shows it exactly when a
+   route result is on screen — freshly built or restored — and it disappears
+   with the result. The payload is built from the CURRENT result
+   (currentRoute + buildInfo), the same data behind the Maps link: no
+   TomTom call, so sharing works identically after a v0.12 restore. */
+function buildShareText(){
+  const lines = [t("shareStart") + ": " + currentRoute.origin.label];
+  currentRoute.stops.forEach((p, i) => lines.push(t("stopWord") + " " + (i + 1) + ": " + p.label));
+  lines.push(t("shareDest") + ": " + currentRoute.destination.label);
+  // Same condition that puts the estimate on screen in renderResult.
+  if (buildInfo && !buildInfo.manual && buildInfo.method === "road" && buildInfo.totalSec !== null && buildInfo.totalSec !== undefined)
+    lines.push(t("estTime") + fmtDuration(buildInfo.totalSec));
+  return lines.join("\n");
+}
+function sharePayload(){
+  return { text: buildShareText(), url: mapsUrl(currentRoute) };
+}
+async function copyShareText(){
+  const p = sharePayload();
+  const full = p.text + "\n" + p.url;
+  let ok = false;
+  try { await navigator.clipboard.writeText(full); ok = true; }
+  catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = full;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand("copy"); } catch (e2) { ok = false; }
+    ta.remove();
+  }
+  if (ok) statusEl.textContent = t("routeCopied");
+}
+function closeShareMenu(){ document.getElementById("sharemenu").classList.add("hidden"); }
+document.getElementById("shareroute").addEventListener("click", async (ev) => {
+  ev.stopPropagation();
+  if (!currentRoute) return;
+  const menu = document.getElementById("sharemenu");
+  if (navigator.share) {
+    const p = sharePayload();
+    let can = true;
+    if (navigator.canShare) { try { can = navigator.canShare({ title: "Stopedia", text: p.text, url: p.url }); } catch (e) { can = false; } }
+    if (can) {
+      try { await navigator.share({ title: "Stopedia", text: p.text, url: p.url }); closeShareMenu(); return; }
+      catch (e) { if (e && e.name === "AbortError") return; /* user cancelled: stay silent; any other failure falls through to the menu */ }
+    }
+  }
+  // No Web Share — common on desktop browsers: open the inline share menu.
+  menu.classList.toggle("hidden");
+});
+/* Inline share menu (desktop fallback): direct links built from the same
+   payload. Each opens in a new tab except Copy; choosing anything — or
+   tapping outside the menu — closes it. */
+document.getElementById("sharewa").addEventListener("click", () => {
+  if (!currentRoute) return;
+  const p = sharePayload();
+  window.open("https://wa.me/?text=" + encodeURIComponent(p.text + "\n" + p.url), "_blank");
+  closeShareMenu();
+});
+document.getElementById("sharetg").addEventListener("click", () => {
+  if (!currentRoute) return;
+  const p = sharePayload();
+  window.open("https://t.me/share/url?url=" + encodeURIComponent(p.url) + "&text=" + encodeURIComponent(p.text), "_blank");
+  closeShareMenu();
+});
+document.getElementById("sharemail").addEventListener("click", () => {
+  if (!currentRoute) return;
+  const p = sharePayload();
+  window.open("mailto:?subject=Stopedia&body=" + encodeURIComponent(p.text + "\n" + p.url), "_blank");
+  closeShareMenu();
+});
+document.getElementById("sharecopy").addEventListener("click", async () => {
+  closeShareMenu();
+  if (currentRoute) await copyShareText();
+});
+document.addEventListener("click", (e) => {
+  const menu = document.getElementById("sharemenu");
+  if (menu && !menu.classList.contains("hidden") && !menu.contains(e.target)) closeShareMenu();
+});
 function restoreWorkState(){
   let st = null;
   try { st = JSON.parse(localStorage.getItem(WORK_KEY) || "null"); } catch (e) { st = null; }

@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.13** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.14** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.14 (October 31, 2026): a “Share route” button in the results area. Whenever a route is on screen — freshly built or restored from your last session — the button shares it with any app through the phone's share sheet: a short summary (start, each stop numbered, destination, and the estimated driving time when the route shows it) together with the Google Maps link. The summary is built from the route already on screen, so sharing makes no TomTom calls. It works on computers too: where a browser has no share sheet — common on desktop — the button opens a small menu instead, with WhatsApp, Telegram and email links built from the same summary and link, plus a Copy option that puts them on the clipboard, ready to paste anywhere. And if you open the share sheet and change your mind, nothing happens — no error, no message.
 
 New in 0.13 (October 31, 2026): the “Your TomTom key” panel shows your key as applied. Once a key is saved, the panel shows a calm “API key applied” line with the key masked — only its last 4 characters visible — and an “Edit API key” button, instead of the bare input; editing opens the field empty, with Save and Cancel. Once entered, the key stays saved on the device until you edit or replace it, so you don't type it again on each visit. And if TomTom ever rejects the saved key (a 401 error), the panel flags it — “The saved key did not work” — and opens in edit mode so you can fix it, instead of showing an “applied” badge that doesn't work.
 
@@ -61,7 +63,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.13** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.14** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.14 (31 de octubre de 2026): un botón «Compartir ruta» en el área de resultados. Siempre que haya una ruta en pantalla — recién armada o restaurada de tu última sesión —, el botón la comparte con cualquier aplicación desde el menú de compartir del teléfono: un resumen corto (salida, cada parada numerada, destino y el tiempo estimado de manejo cuando la ruta lo muestra) junto con el enlace de Google Maps. El resumen se arma con la ruta que ya está en pantalla, así que compartir no hace ninguna llamada a TomTom. También funciona en computadoras: donde el navegador no tiene menú de compartir — lo común en escritorio —, el botón abre en su lugar un menú pequeño, con enlaces de WhatsApp, Telegram y correo electrónico armados con ese mismo resumen y enlace, más una opción Copiar que los deja en el portapapeles, listos para pegar donde quieras. Y si abres el menú de compartir y cambias de idea, no pasa nada: ni error ni mensaje.
 
 Nuevo en la 0.13 (31 de octubre de 2026): el panel «Tu clave de TomTom» muestra la clave como aplicada. Cuando hay una clave guardada, el panel enseña una línea tranquila «Clave API aplicada» con la clave enmascarada — solo se ven sus últimos 4 caracteres — y un botón «Editar clave API», en vez del campo desnudo; al editar, el campo se abre vacío, con Guardar y Cancelar. Una vez ingresada, la clave queda guardada en el aparato hasta que la edites o la reemplaces, así que no hay que escribirla en cada visita. Y si TomTom alguna vez rechaza la clave guardada (error 401), el panel lo marca — «La clave guardada no funcionó» — y se abre en modo de edición para que la corrijas, en vez de mostrar una insignia de «aplicada» que no funciona.
 
