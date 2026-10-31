@@ -1,6 +1,6 @@
 // Stopedia service worker — caches the app shell so Stopedia opens offline.
 // Saved routes and the TomTom key live in localStorage, not in this cache.
-const CACHE = "stopedia-v0.19";
+const CACHE = "stopedia-v0.20";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./header-ny-satellite.webp", "./logo-badge.png", "./logo-flat.png"];
 
 self.addEventListener("install", (e) => {

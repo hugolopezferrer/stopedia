@@ -132,6 +132,9 @@
   .stopbox .check { min-width:24px; text-align:center; font-weight:700; color: var(--accent); visibility:hidden; }
   .stopbox.filled input { border-color: var(--accent); border-width:2px; }
   .stopbox.filled .check { visibility:visible; }
+  .stopbox .stopclear { flex:0 0 auto; min-width:28px; height:28px; padding:0 4px; background:transparent; border:none; border-radius:8px; color:var(--muted); font-size:14px; line-height:1; cursor:pointer; visibility:hidden; }
+  .stopbox.filled .stopclear { visibility:visible; }
+  .stopbox .stopclear:hover { color:var(--terra); background:var(--surface-2); }
   .draghandle { touch-action:none; cursor:grab; font-size:20px; line-height:1; padding:8px 6px; color: var(--line-strong); user-select:none; -webkit-user-select:none; }
   .draghandle:active { cursor:grabbing; }
   .dragging { opacity:.6; background: var(--blue-soft); border-radius:8px; }
@@ -396,7 +399,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.19 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.20 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span></footer>
 
 <script>
 "use strict";
@@ -426,6 +429,7 @@ const STR = {
     keyPh: "Paste your TomTom key here",
     flagNoPostal: "Missing postal code",
     flagCheck: "Check this address",
+    flagMisread: "Looks misread — edit or delete it",
     remindTitle: "Do you want to save this route?",
     remindText: "If you don't save it, it stays only as your current work — it is not added to Saved routes.",
     remindSave: "Save route",
@@ -447,6 +451,7 @@ const STR = {
     destLabel: "Final destination", destPh: "e.g. 405 Lexington Ave, New York, NY 10174",
     stopsLabel: "Stops — one address per box, in any order", stopsPh: "One address per line",
     stopWord: "Stop",
+    clearStop: "Clear this stop",
     limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.",
     buildBtn: "Order my stops", openMaps: "Open route in Google Maps",
     routeNameLabel: "Name for this route", routeNamePh: "e.g. Pharmacies — Friday",
@@ -454,7 +459,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.19 — draft, in progress.",
+    footerText: "Version 0.20 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
@@ -469,7 +474,9 @@ const STR = {
     optRoad: "Order optimized by TomTom with real road times: this is the fastest order for these stops.",
     optLine: "Real road times were not available this time, so the order is by straight-line closeness.",
     estTime: "Estimated driving time for the whole route: ",
-    notFound: "Address not found: ",
+    stopNotFound: "⚠ Stop {n} was not recognized and was left out of the route. Edit its box or clear it and try another way.",
+    originNotFound: "⚠ The start address was not recognized. Edit it or clear it and try another way.",
+    destNotFound: "⚠ The final destination was not recognized. Edit it or clear it and try another way.",
     routeSaved: "Route saved. Find it below in Saved routes.",
     needName: "Give the route a name first.",
     open: "Open in Maps", edit: "Edit", del: "Delete",
@@ -552,6 +559,7 @@ const STR = {
     keyPh: "Pega aquí tu clave de TomTom",
     flagNoPostal: "Falta el código postal",
     flagCheck: "Revisa esta dirección",
+    flagMisread: "Parece mal leída — edítala o bórrala",
     remindTitle: "¿Quieres guardar esta ruta?",
     remindText: "Si no la guardas, queda solo como tu trabajo actual: no se agrega a Rutas guardadas.",
     remindSave: "Guardar ruta",
@@ -573,6 +581,7 @@ const STR = {
     destLabel: "Destino final", destPh: "ej. 405 Lexington Ave, New York, NY 10174",
     stopsLabel: "Paradas — una dirección por casilla, en cualquier orden", stopsPh: "Una dirección por línea",
     stopWord: "Parada",
+    clearStop: "Limpiar esta parada",
     limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta. Las casillas llenas se marcan con un check; las vacías se ignoran.",
     buildBtn: "Ordenar mis paradas", openMaps: "Abrir la ruta en Google Maps",
     routeNameLabel: "Nombre para esta ruta", routeNamePh: "ej. Farmacias — viernes",
@@ -580,7 +589,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.19 — borrador, en avance.",
+    footerText: "Versión 0.20 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
@@ -595,7 +604,9 @@ const STR = {
     optRoad: "Orden optimizado por TomTom con los tiempos reales por calle: es el orden más rápido para estas paradas.",
     optLine: "Los tiempos reales por calle no estuvieron disponibles esta vez; el orden es por cercanía en línea recta.",
     estTime: "Tiempo estimado de manejo de toda la ruta: ",
-    notFound: "Dirección no encontrada: ",
+    stopNotFound: "⚠ La parada {n} no fue reconocida y quedó fuera de la ruta. Edita su caja o límpiala y prueba de otra manera.",
+    originNotFound: "⚠ La dirección de salida no fue reconocida. Edítala o límpiala y prueba de otra manera.",
+    destNotFound: "⚠ El destino final no fue reconocido. Edítalo o límpialo y prueba de otra manera.",
     routeSaved: "Ruta guardada. Está abajo, en Rutas guardadas.",
     needName: "Primero ponle un nombre a la ruta.",
     open: "Abrir en Maps", edit: "Editar", del: "Borrar",
@@ -954,21 +965,31 @@ function attachDrag(handle, item, getItems, onReorder){
 const MAXSTOPS = 8;
 const boxWrap = document.getElementById("stopboxes");
 const boxInputs = [];
+const boxClearBtns = [];
 for (let i = 0; i < MAXSTOPS; i++) {
   const row = document.createElement("div"); row.className = "stopbox";
   const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
   const num = document.createElement("span"); num.className = "num"; num.textContent = i + 1;
   const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
+  /* Per-box clear button (0.20): empties ONLY its own box (a misread can
+     be wiped and retried another way). Shown while the box has content
+     (the row's "filled" class drives visibility); clearing fires the
+     input event, so the filled state and the state save stay current. */
+  const clr = document.createElement("button"); clr.type = "button"; clr.className = "stopclear"; clr.textContent = "✕"; clr.setAttribute("aria-label", t("clearStop"));
+  clr.addEventListener("click", () => { inp.value = ""; inp.dispatchEvent(new Event("input")); inp.focus(); });
   const chk = document.createElement("span"); chk.className = "check"; chk.textContent = "✓";
-  row.append(handle, num, inp, chk); boxWrap.appendChild(row);
+  row.append(handle, num, inp, clr, chk); boxWrap.appendChild(row);
   row._input = inp;
+  row._clear = clr;
   attachDrag(handle, row, () => Array.from(boxWrap.children), (rows) => {
     boxInputs.length = 0;
-    rows.forEach(r => { boxWrap.appendChild(r); boxInputs.push(r._input); });
+    boxClearBtns.length = 0;
+    rows.forEach(r => { boxWrap.appendChild(r); boxInputs.push(r._input); boxClearBtns.push(r._clear); });
     refreshBoxPlaceholders();
     queueSaveWork();
   });
   boxInputs.push(inp);
+  boxClearBtns.push(clr);
   inp.addEventListener("input", () => row.classList.toggle("filled", !!inp.value.trim()));
   inp.addEventListener("keydown", (e) => {
     if (e.key === "Enter") { e.preventDefault(); const nx = boxInputs[i + 1]; if (nx) nx.focus(); }
@@ -984,8 +1005,14 @@ for (let i = 0; i < MAXSTOPS; i++) {
     }
   });
 }
-function refreshBoxPlaceholders(){ boxInputs.forEach((inp, i) => { inp.placeholder = t("stopWord") + " " + (i + 1); }); }
+function refreshBoxPlaceholders(){
+  boxInputs.forEach((inp, i) => { inp.placeholder = t("stopWord") + " " + (i + 1); });
+  boxClearBtns.forEach(btn => { if (btn) btn.setAttribute("aria-label", t("clearStop")); });
+}
 function collectStopTexts(){ return boxInputs.map(b => b.value.trim()).filter(Boolean); }
+/* Non-empty boxes WITH their 1-based box number (0.20): the build flow
+   needs the number to name an unrecognized stop without echoing its text. */
+function collectStopEntries(){ return boxInputs.map((b, i) => ({ num: i + 1, text: b.value.trim() })).filter(e => e.text); }
 function fillBoxes(labels){ boxInputs.forEach((inp, i) => { inp.value = labels[i] || ""; inp.dispatchEvent(new Event("input")); }); }
 
 /* ---------- TomTom Waypoint Optimization: best order by real road time ---------- */
@@ -1089,15 +1116,21 @@ document.getElementById("build").addEventListener("click", async () => {
   statusEl.textContent = t("working");
   try {
     const origin = await geocode(originTxt, key);
-    if (!origin) { statusEl.textContent = t("notFound") + originTxt; return; }
+    if (!origin) { statusEl.textContent = t("originNotFound"); return; }
     const destination = await geocode(destTxt, key);
-    if (!destination) { statusEl.textContent = t("notFound") + destTxt; return; }
+    if (!destination) { statusEl.textContent = t("destNotFound"); return; }
+    /* Stops that cannot be found are LEFT OUT of the route and named by
+       box number only — raw address text is NEVER echoed into a message
+       (0.20) — while the route is still built from the stops that did
+       resolve. Start/destination failures above still block the build. */
     const pts = [];
-    for (const s of stopTxts) {
-      const g = await geocode(s, key);
-      if (!g) { statusEl.textContent = t("notFound") + s; return; }
+    const badStops = [];
+    for (const e of collectStopEntries()) {
+      const g = await geocode(e.text, key);
+      if (!g) { badStops.push(e.num); continue; }
       pts.push(g);
     }
+    if (!pts.length) { statusEl.textContent = badStops.map(n => t("stopNotFound").replace("{n}", n)).join(" "); return; }
     // First choice: TomTom Waypoint Optimization with real road times.
     statusEl.textContent = t("optimizing");
     let ordered = null, method = "line", totalSec = null, totalMeters = null, geometry = null;
@@ -1133,7 +1166,7 @@ document.getElementById("build").addEventListener("click", async () => {
     renderResult();
     saveWorkState();
     activateSubtab("result");
-    statusEl.textContent = "";
+    statusEl.textContent = badStops.map(n => t("stopNotFound").replace("{n}", n)).join(" ");
   } catch (e) {
     if (String(e && e.message).includes("401")) markKeyBad();
     statusEl.textContent = "Error: " + e.message;
@@ -1613,6 +1646,20 @@ function ocrCleanSingle(raw){
   // One address read from a photo: join its lines into a single line.
   return ocrCleanLines(raw).join(", ").replace(/,\s*,/g, ", ").replace(/\s+/g, " ").trim();
 }
+function pickSingleAddress(raw){
+  // Single-address scan (0.20): a photo of ONE address can OCR into a
+  // whole page of text. When the read is long (>140 chars once joined)
+  // or spans several lines, keep only the most address-like line — the
+  // longest line containing a digit; fallback: the first non-empty
+  // line — instead of joining the whole page into the stop box.
+  const lines = ocrCleanLines(raw);
+  if (!lines.length) return "";
+  const joined = ocrCleanSingle(raw);
+  if (lines.length <= 1 && joined.length <= 140) return joined;
+  const withDigit = lines.filter(l => /\d/.test(l));
+  if (withDigit.length) return withDigit.reduce((a, b) => (b.length > a.length ? b : a));
+  return lines[0];
+}
 function ocrSymbolRatio(s){
   const cleaned = String(s || "").replace(/[\s,.\-#]/g, "");
   if (!cleaned.length) return 1;
@@ -1629,6 +1676,7 @@ function dubiousReason(text, cc){
   // Countries with no pattern in POSTAL_RES skip the postal check entirely.
   const s = String(text || "").trim();
   if (s.length < 8) return "check";              // too short to be a full address
+  if (s.length > 140 || !/\d/.test(s)) return "misread"; // a whole page of OCR text, or no number anywhere: likely misread (0.20)
   const re = postalReFor(cc || "US");
   if (re && !re.test(s)) return "postal";        // no postal code for the selected country
   if (/[|~^{}]/.test(s)) return "check";         // typical OCR garbage characters
@@ -1718,7 +1766,7 @@ scanInput.addEventListener("change", async () => {
     const raw = await ocrRecognize(file, (p) => showOcrProgress(p));
     showOcrProgress(null);
     if (scanMode === "one") {
-      const txt = ocrCleanSingle(raw);
+      const txt = pickSingleAddress(raw);
       if (ocrLooksGarbage(txt)) { addStatus.textContent = t("scanNoRead"); return; }
       const target = pickScanTarget();
       if (!target) { addStatus.textContent = t("scanBoxesFull"); return; }
@@ -1751,7 +1799,7 @@ function makeReviewRow(value){
   const flag = () => {
     const r = dubiousReason(inp.value, getCountry());
     warn.style.visibility = r ? "visible" : "hidden";
-    reason.textContent = r === "postal" ? t("flagNoPostal") : (r ? t("flagCheck") : "");
+    reason.textContent = r === "postal" ? t("flagNoPostal") : (r === "misread" ? t("flagMisread") : (r ? t("flagCheck") : ""));
   };
   inp.addEventListener("input", flag);
   del.addEventListener("click", () => row.remove());
