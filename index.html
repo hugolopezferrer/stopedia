@@ -182,6 +182,7 @@
   .hme-totals small { display:block; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: var(--muted); margin-top:2px; }
   .hme-dot { color: var(--line-strong); font-size:20px; }
   .hme-chip { background: var(--accent); color: var(--paper); border-radius:999px; padding:5px 11px; font-size:13px; font-weight:700; }
+  .hme-demotag { position:absolute; top:-9px; right:12px; font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; background: var(--surface-2); color: var(--muted); border:1px solid var(--line); border-radius:999px; padding:2px 8px; line-height:1.5; }
   .hmescene.fadeout .hme-drift { opacity:0; }
   .hmescene.fadeout .hme-totals { opacity:0; transform: translate(-50%, 10px); }
   .hmescene.hme-reset *, .hmescene.hme-reset *::before, .hmescene.hme-reset *::after { transition: none !important; }
@@ -201,6 +202,7 @@
   #result li.donestop .stoplabel { opacity:.55; text-decoration: line-through; }
   #progressline { font-weight:650; color: var(--amber); }
   #esttime { font-size:21px; font-weight:650; color: var(--ink); letter-spacing:.2px; }
+  .estnote { font-size:13px; color: var(--muted); margin:6px 0 10px; line-height:1.45; }
   .navbtn.active { background: var(--accent); color: var(--paper); border-color: var(--accent); font-weight:700; }
   #mapbtn { width:100%; margin-top:10px; padding:14px; font-size:16px; }
   #routemap { height:320px; border:1px solid var(--line); border-radius: var(--radius); overflow:hidden; margin-top:12px; background: var(--surface-2); }
@@ -279,6 +281,7 @@
         <span class="hme-pin pre" style="left:71.88%; top:13%;" data-sx="71.88" data-sy="13" data-ox="32.5" data-oy="66.8" data-sl="2" data-ol="4"><img src="logo-badge.png" alt=""><span class="hme-num">2</span></span>
       </div>
       <div class="hme-totals" id="hme-totals">
+        <span class="hme-demotag" data-i18n="demoTag">Example</span>
         <span class="hme-num-wrap"><b id="hme-time">0 min</b><small data-i18n="totalTimeLabel">Total time</small></span>
         <span class="hme-dot" aria-hidden="true">·</span>
         <span class="hme-num-wrap"><b id="hme-dist">0.0 mi</b><small data-i18n="totalDistLabel">Total distance</small></span>
@@ -383,6 +386,7 @@
       <p id="progressline" class="hint"></p>
       <p id="methodnote" class="hint"></p>
       <p id="esttime" class="hint"></p>
+      <p id="estnote" class="estnote"><span aria-hidden="true">⚠</span> <span data-i18n="estNote">Times and distances are estimates — they can change with traffic, road conditions and weather.</span></p>
       <div class="dd" id="navchooser">
         <button class="secondary dd-trigger" type="button" id="navtrigger" aria-haspopup="true" aria-expanded="false"><span id="navtriggerlabel">Open in Google Maps</span><span class="dd-chev" aria-hidden="true">▾</span></button>
         <div class="dd-panel" role="menu">
@@ -469,7 +473,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.21 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.22 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span></footer>
 
 <script>
 "use strict";
@@ -539,7 +543,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.21 — draft, in progress.",
+    footerText: "Version 0.22 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
@@ -604,6 +608,8 @@ const STR = {
     aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, and postal code). Reply with ONLY the addresses, one per line, with no numbering and no comments.",
     totalTimeLabel: "Total time",
     totalDistLabel: "Total distance",
+    estNote: "Times and distances are estimates — they can change with traffic, road conditions and weather.",
+    demoTag: "Example",
     viewMap: "🗺 View map",
     mapFail: "The map could not be shown. Check your connection and your TomTom key, then try again.",
     openApple: "Open route in Apple Maps",
@@ -679,7 +685,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.21 — borrador, en avance.",
+    footerText: "Versión 0.22 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
@@ -744,6 +750,8 @@ const STR = {
     aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad y código postal). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios.",
     totalTimeLabel: "Tiempo total",
     totalDistLabel: "Distancia total",
+    estNote: "Los tiempos y las distancias son estimados: pueden cambiar según el tráfico, el estado de las vías y el clima.",
+    demoTag: "Ejemplo",
     viewMap: "🗺 Ver mapa",
     mapFail: "No se pudo mostrar el mapa. Revisa tu conexión y tu clave de TomTom e inténtalo de nuevo.",
     openApple: "Abrir la ruta en Apple Maps",
