@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.22** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.23** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.23 (October 31, 2026): the disclaimers move to their proper home. The estimates sentence no longer sits under the result totals — like the comparable route apps, Stopedia now keeps its conditions and limitations in one legal page, linked from the footer of every tab as “Legal notice”. The new page is published in draft, in English and Spanish, with the standard sections: what Stopedia is, “as is” with no warranty, routes and times as estimates, do not use while driving, your own TomTom key and your responsibility for it, third-party services and their terms — including the conditions TomTom requires to flow down to end users — your addresses and your responsibility for them, no professional or safety guarantee, limitation of liability, indemnification, changes, governing law, and contact. The Home demo's “Example” tag stays: it labels a demo, it is not a disclaimer.
 
 New in 0.22 (October 31, 2026): the numbers now carry their warning. Directly under the result totals — for optimized routes, hand-adjusted orders and restored results alike — a small ⚠ line says it plainly: times and distances are estimates, and they can change with traffic, road conditions and weather. The note lives in the result card, right under the numbers it qualifies, so it travels with them on screen; it is not added to the shared route text. And the Home demo's totals card is now tagged “Example”, so the illustrative 32 min · 18.4 mi of the showcase can never be mistaken for a real computed route.
 
@@ -79,7 +81,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.22** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.23** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.23 (31 de octubre de 2026): los descargos se mudan a su sitio correcto. La frase de estimados ya no va bajo los totales del resultado: como las aplicaciones de rutas comparables, Stopedia ahora guarda sus condiciones y limitaciones en una sola página legal, enlazada desde el pie de cada pestaña como «Aviso legal». La página nueva se publica en borrador, en inglés y español, con las secciones estándar: qué es Stopedia, «tal cual» sin garantías, rutas y tiempos como estimaciones, no usar mientras se conduce, tu propia clave de TomTom y tu responsabilidad por ella, servicios de terceros y sus condiciones — incluidas las condiciones que TomTom exige trasladar a los usuarios finales —, tus direcciones y tu responsabilidad por ellas, sin garantía profesional ni de seguridad, limitación de responsabilidad, indemnización, cambios, ley aplicable y contacto. La etiqueta «Ejemplo» de la demostración de Inicio se queda: rotula una demostración, no es un descargo.
 
 Nuevo en la 0.22 (31 de octubre de 2026): los números ahora llevan su advertencia. Justo debajo de los totales del resultado — en rutas optimizadas, órdenes ajustados a mano y resultados restaurados por igual — una línea pequeña con ⚠ lo dice claro: los tiempos y las distancias son estimados, y pueden cambiar según el tráfico, el estado de las vías y el clima. La nota vive en la tarjeta del resultado, justo debajo de los números que matiza, para que viaje con ellos en pantalla; no se agrega al texto de la ruta compartida. Y la tarjeta de totales de la demostración de Inicio lleva ahora la etiqueta «Ejemplo», para que los ilustrativos 32 min · 18,4 mi de la vitrina nunca se confundan con una ruta real calculada.
 
