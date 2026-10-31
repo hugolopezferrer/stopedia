@@ -40,6 +40,14 @@
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
   a.mapslink { display:block; text-align:center; background:#188038; color:#fff; text-decoration:none; border-radius:10px; padding:14px; font-size:17px; font-weight:700; margin-top:12px; }
   .hidden { display:none; }
+  .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .progress { height:10px; background:#e5e9f2; border-radius:5px; overflow:hidden; margin-top:12px; }
+  .progress > div { height:100%; width:0%; background: var(--blue); transition: width .2s; }
+  .reviewrow { display:flex; gap:6px; align-items:center; margin-top:8px; }
+  .reviewrow input { flex:1; }
+  .reviewrow .warn { min-width:22px; text-align:center; font-size:16px; }
+  #addstatus { font-size:14px; margin-top:10px; min-height:20px; }
+  button[disabled] { opacity:.5; cursor:default; }
   ol.steps { padding-left: 20px; margin: 8px 0 4px; }
   ol.steps li { margin: 7px 0; font-size: 15px; }
   .stopbox { display:flex; gap:8px; align-items:center; margin-top:8px; }
@@ -107,6 +115,54 @@
     </div>
   </section>
 
+  <section id="addstops">
+    <h2 data-i18n="addTitle">Add stops from a photo or a list</h2>
+    <p class="hint" data-i18n="addText">Scan one address, scan a whole sheet, paste a list, or ask your AI to clean the addresses up. Everything goes through a review screen first: nothing is used until you check it.</p>
+    <div class="btnrow">
+      <button class="secondary" id="scanone" type="button" data-i18n="scanOne">📷 Scan one address</button>
+      <button class="secondary" id="scansheet" type="button" data-i18n="scanSheet">📄 Scan a full sheet</button>
+      <button class="secondary" id="pastebtn" type="button" data-i18n="pasteBtn">📋 Paste a list</button>
+      <button class="secondary" id="aibtn" type="button" data-i18n="aiBtn">🤖 Ask my AI to help with the route</button>
+    </div>
+    <input type="file" id="scanfile" accept="image/*" capture="environment" class="hidden">
+    <div id="ocrprogress" class="hidden">
+      <div class="progress"><div id="ocrbarfill"></div></div>
+      <p id="ocrpct" class="hint"></p>
+    </div>
+    <div id="pastearea" class="hidden">
+      <label for="pastetext" data-i18n="pasteLabel">Paste the addresses here (one per line)</label>
+      <textarea id="pastetext" data-i18n-ph="pastePh" placeholder="One address per line"></textarea>
+      <button class="secondary" id="pastego" type="button" data-i18n="pasteGo">Review these addresses</button>
+    </div>
+    <div id="aimenu" class="hidden">
+      <p class="hint" data-i18n="aiNote">Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.</p>
+      <div class="btnrow">
+        <button class="small" type="button" data-ai="chatgpt">ChatGPT</button>
+        <button class="small" type="button" data-ai="claude">Claude</button>
+        <button class="small" type="button" data-ai="perplexity">Perplexity</button>
+        <button class="small" type="button" data-ai="grok">Grok</button>
+        <button class="small" type="button" data-ai="gemini">Gemini</button>
+      </div>
+    </div>
+    <p id="addstatus"></p>
+  </section>
+
+  <section id="review" class="hidden">
+    <h2 data-i18n="reviewTitle">Review the addresses</h2>
+    <p class="hint" data-i18n="reviewText">Check each address and fix any mistakes. Rows marked ⚠ look incomplete or badly read. Nothing is used until you tap Apply.</p>
+    <div id="sharerow" class="hidden">
+      <button class="secondary" id="sharephoto" type="button" data-i18n="sharePhoto">📤 Share the photo with my AI</button>
+      <p id="sharenote" class="hint"></p>
+    </div>
+    <div id="reviewlist"></div>
+    <p id="reviewextra" class="hint hidden"></p>
+    <div class="btnrow">
+      <button class="secondary" id="reviewadd" type="button" data-i18n="reviewAdd">＋ Add a row</button>
+      <button class="secondary" id="reviewapply" type="button" data-i18n="reviewApply">Apply to the stop boxes</button>
+      <button class="secondary" id="reviewcancel" type="button" data-i18n="reviewCancel">Cancel</button>
+    </div>
+  </section>
+
   <section id="saved">
     <h2 data-i18n="savedTitle">3. Saved routes</h2>
     <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
@@ -146,7 +202,7 @@ const STR = {
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.5 — draft, in progress.",
+    footerText: "Version 0.7 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -166,7 +222,35 @@ const STR = {
     open: "Open in Maps", edit: "Edit", del: "Delete",
     confirmDel: "Delete this saved route?",
     stopsWord: "stops", savedOn: "Saved",
-    editing: "Loaded for editing. Change the addresses above and order again; saving will replace the old version."
+    editing: "Loaded for editing. Change the addresses above and order again; saving will replace the old version.",
+    addTitle: "Add stops from a photo or a list",
+    addText: "Scan one address, scan a whole sheet, paste a list, or ask your AI to clean the addresses up. Everything goes through a review screen first: nothing is used until you check it.",
+    scanOne: "📷 Scan one address",
+    scanSheet: "📄 Scan a full sheet",
+    pasteBtn: "📋 Paste a list",
+    aiBtn: "🤖 Ask my AI to help with the route",
+    ocrWorking: "Reading the photo…",
+    scanAdded: "Address read from the photo and placed in a stop box. Check it and fix any letter that looks wrong.",
+    scanNoRead: "I could not read that photo. Try again closer, with more light, and the text straight.",
+    scanBoxesFull: "All 8 stop boxes are already full.",
+    ocrLoadFail: "The photo reader could not be loaded. Check your internet connection and try again.",
+    pasteLabel: "Paste the addresses here (one per line)",
+    pastePh: "One address per line",
+    pasteGo: "Review these addresses",
+    pasteEmpty: "Paste at least one address first.",
+    reviewTitle: "Review the addresses",
+    reviewText: "Check each address and fix any mistakes. Rows marked ⚠ look incomplete or badly read. Nothing is used until you tap Apply.",
+    reviewAdd: "＋ Add a row",
+    reviewApply: "Apply to the stop boxes",
+    reviewCancel: "Cancel",
+    reviewExtra: "Only 8 stops fit: the first 8 were applied and the rest stay here so none are lost.",
+    reviewApplied: "Addresses placed in the stop boxes. Now tap “Order my stops”.",
+    aiNote: "Your AI opens with the question already written. Paste your text or attach your photo there, copy its answer (one address per line), and bring it back with “Paste a list”.",
+    geminiCopied: "The question was copied. In Gemini, paste it (long-press, then Paste), then attach your photo or text.",
+    geminiNoCopy: "The copy did not work. In Gemini, ask it to extract the addresses, one per line, with ZIP codes.",
+    sharePhoto: "📤 Share the photo with my AI",
+    shareNoSupport: "This browser cannot share the photo from here. Open your AI app and attach the photo there.",
+    aiPromptText: "I will paste text or attach a photo containing addresses. Extract and clean each full address (street, city, state, and 5-digit ZIP code). Reply with ONLY the addresses, one per line, with no numbering and no comments."
   },
   es: {
     tagline: "Tus paradas, en el orden correcto.",
@@ -193,7 +277,7 @@ const STR = {
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.5 — borrador, en avance.",
+    footerText: "Versión 0.7 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
@@ -213,7 +297,35 @@ const STR = {
     open: "Abrir en Maps", edit: "Editar", del: "Borrar",
     confirmDel: "¿Borrar esta ruta guardada?",
     stopsWord: "paradas", savedOn: "Guardada el",
-    editing: "Cargada para editar. Cambia las direcciones arriba y ordena de nuevo; al guardar se reemplaza la versión anterior."
+    editing: "Cargada para editar. Cambia las direcciones arriba y ordena de nuevo; al guardar se reemplaza la versión anterior.",
+    addTitle: "Agregar paradas desde una foto o una lista",
+    addText: "Escanea una dirección, escanea una hoja completa, pega una lista o pídele a tu IA que limpie las direcciones. Todo pasa primero por una pantalla de revisión: nada se usa sin que lo revises.",
+    scanOne: "📷 Escanear una dirección",
+    scanSheet: "📄 Escanear una hoja completa",
+    pasteBtn: "📋 Pegar una lista",
+    aiBtn: "🤖 Pedirle a mi IA que me ayude con la ruta",
+    ocrWorking: "Leyendo la foto…",
+    scanAdded: "Dirección leída de la foto y colocada en una casilla. Revísala y corrige cualquier letra que se vea mal.",
+    scanNoRead: "No pude leer esa foto. Inténtalo de nuevo más de cerca, con más luz y el texto derecho.",
+    scanBoxesFull: "Las 8 casillas de paradas ya están llenas.",
+    ocrLoadFail: "El lector de fotos no se pudo cargar. Revisa tu conexión a internet e inténtalo de nuevo.",
+    pasteLabel: "Pega aquí las direcciones (una por línea)",
+    pastePh: "Una dirección por línea",
+    pasteGo: "Revisar estas direcciones",
+    pasteEmpty: "Primero pega al menos una dirección.",
+    reviewTitle: "Revisa las direcciones",
+    reviewText: "Revisa cada dirección y corrige los errores. Las filas con ⚠ se ven incompletas o mal leídas. Nada se usa hasta que toques Aplicar.",
+    reviewAdd: "＋ Agregar una fila",
+    reviewApply: "Aplicar a las casillas",
+    reviewCancel: "Cancelar",
+    reviewExtra: "Solo caben 8 paradas: se aplicaron las primeras 8 y las demás quedan aquí para que no se pierda ninguna.",
+    reviewApplied: "Direcciones colocadas en las casillas de paradas. Ahora toca «Ordenar mis paradas».",
+    aiNote: "Tu IA se abre con la pregunta ya escrita. Pégale tu texto o adjúntale tu foto allá, copia su respuesta (una dirección por línea) y tráela con «Pegar una lista».",
+    geminiCopied: "La pregunta quedó copiada. En Gemini, pégala (mantén pulsado y elige Pegar) y después adjunta tu foto o tu texto.",
+    geminiNoCopy: "No se pudo copiar automáticamente. En Gemini, pídele que extraiga las direcciones, una por línea, con el código postal.",
+    sharePhoto: "📤 Compartir la foto con mi IA",
+    shareNoSupport: "Este navegador no puede compartir la foto desde aquí. Abre tu aplicación de IA y adjunta la foto allá.",
+    aiPromptText: "Te voy a pegar un texto o adjuntar una foto con direcciones. Extrae y limpia cada dirección completa (calle, ciudad, estado y código postal ZIP de 5 dígitos). Responde SOLO con las direcciones, una por línea, sin numerar y sin comentarios."
   }
 };
 let lang = localStorage.getItem("stopedia.lang") || "en";
@@ -518,6 +630,230 @@ function renderSaved(){
     list.appendChild(card);
   });
 }
+/* ---------- Pure text helpers for photo reading & pasting (unit-testable) ---------- */
+/* === PURE-TEXT-HELPERS-BEGIN === */
+const ZIP_RE = /\b\d{5}(?:-\d{4})?\b/;
+function ocrCleanLines(raw){
+  return String(raw || "").replace(/\r/g, "").split("\n")
+    .map(s => s.replace(/\s+/g, " ").trim()).filter(Boolean);
+}
+function ocrCleanSingle(raw){
+  // One address read from a photo: join its lines into a single line.
+  return ocrCleanLines(raw).join(", ").replace(/,\s*,/g, ", ").replace(/\s+/g, " ").trim();
+}
+function ocrSymbolRatio(s){
+  const cleaned = String(s || "").replace(/[\s,.\-#]/g, "");
+  if (!cleaned.length) return 1;
+  const good = (cleaned.match(/[A-Za-z0-9]/g) || []).length;
+  return 1 - good / cleaned.length;
+}
+function ocrLooksGarbage(text){
+  const s = String(text || "").trim();
+  if (s.length < 5) return true;
+  return ocrSymbolRatio(s) > 0.4;
+}
+function isDubiousAddress(text){
+  const s = String(text || "").trim();
+  if (s.length < 8) return true;                 // too short to be a full address
+  if (!ZIP_RE.test(s)) return true;              // no ZIP code
+  if (/[|~^{}]/.test(s)) return true;            // typical OCR garbage characters
+  if (ocrSymbolRatio(s) > 0.2) return true;      // too many symbols vs letters/digits
+  return false;
+}
+function splitSheetText(raw){
+  // Full-sheet heuristic: an address ends at the line that carries its ZIP
+  // code. Lines left over after the last ZIP (no ZIP of their own) become one
+  // final entry, which the review screen will flag as dubious.
+  const out = [];
+  let cur = [];
+  for (const line of ocrCleanLines(raw)) {
+    cur.push(line);
+    if (ZIP_RE.test(line)) { out.push(cur.join(", ")); cur = []; }
+  }
+  if (cur.length) out.push(cur.join(", "));
+  return out;
+}
+function splitPastedText(raw){
+  return String(raw || "").split(/\n\s*\n|\n/)
+    .map(s => s.replace(/\s+/g, " ").trim()).filter(Boolean);
+}
+/* === PURE-TEXT-HELPERS-END === */
+
+/* ---------- OCR adapter (engine: Tesseract.js, lazy loaded from CDN) ---------- */
+/* The engine script is fetched ONLY when the user starts a scan. To swap
+   engines later (e.g. PaddleOCR), replace ocrRecognize — nothing else in
+   the app talks to the engine directly. */
+const OCR_CDN = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+let _ocrLoadPromise = null;
+function loadOcrEngine(){
+  if (window.Tesseract) return Promise.resolve();
+  if (_ocrLoadPromise) return _ocrLoadPromise;
+  _ocrLoadPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = OCR_CDN;
+    s.onload = () => resolve();
+    s.onerror = () => { _ocrLoadPromise = null; reject(new Error("OCR engine failed to load")); };
+    document.head.appendChild(s);
+  });
+  return _ocrLoadPromise;
+}
+async function ocrRecognize(imageFile, onProgress){
+  await loadOcrEngine();
+  const result = await window.Tesseract.recognize(imageFile, "eng", {
+    logger: (m) => { if (m.status === "recognizing text" && onProgress) onProgress(m.progress); }
+  });
+  return (result && result.data && result.data.text) || "";
+}
+function showOcrProgress(p){
+  const wrap = document.getElementById("ocrprogress");
+  if (p === null || p === undefined) { wrap.classList.add("hidden"); return; }
+  wrap.classList.remove("hidden");
+  document.getElementById("ocrbarfill").style.width = Math.round(p * 100) + "%";
+  document.getElementById("ocrpct").textContent = t("ocrWorking") + " " + Math.round(p * 100) + "%";
+}
+
+/* ---------- Photo scanning: one address (0.6) & full sheet (0.7) ---------- */
+let lastFocusBox = null;
+boxInputs.forEach(inp => inp.addEventListener("focus", () => { lastFocusBox = inp; }));
+let lastSheetFile = null;   // last full-sheet photo, for "share with my AI"
+function pickScanTarget(){
+  if (lastFocusBox && !lastFocusBox.value.trim()) return lastFocusBox;
+  return boxInputs.find(b => !b.value.trim()) || null;
+}
+let scanMode = "one"; // "one" | "sheet"
+const scanInput = document.getElementById("scanfile");
+document.getElementById("scanone").addEventListener("click", () => { scanMode = "one"; scanInput.value = ""; scanInput.click(); });
+document.getElementById("scansheet").addEventListener("click", () => { scanMode = "sheet"; scanInput.value = ""; scanInput.click(); });
+scanInput.addEventListener("change", async () => {
+  const file = scanInput.files && scanInput.files[0];
+  if (!file) return;
+  const addStatus = document.getElementById("addstatus");
+  addStatus.textContent = "";
+  showOcrProgress(0);
+  try {
+    const raw = await ocrRecognize(file, (p) => showOcrProgress(p));
+    showOcrProgress(null);
+    if (scanMode === "one") {
+      const txt = ocrCleanSingle(raw);
+      if (ocrLooksGarbage(txt)) { addStatus.textContent = t("scanNoRead"); return; }
+      const target = pickScanTarget();
+      if (!target) { addStatus.textContent = t("scanBoxesFull"); return; }
+      target.value = txt;
+      target.dispatchEvent(new Event("input"));
+      target.focus();
+      addStatus.textContent = t("scanAdded");
+    } else {
+      lastSheetFile = file;
+      const parts = splitSheetText(raw);
+      if (!parts.length) { addStatus.textContent = t("scanNoRead"); return; }
+      openReview(parts, true);
+    }
+  } catch (e) {
+    showOcrProgress(null);
+    addStatus.textContent = t("ocrLoadFail");
+  }
+});
+
+/* ---------- Review screen (mandatory for scans and pasted lists) ---------- */
+const reviewSection = document.getElementById("review");
+const reviewList = document.getElementById("reviewlist");
+const reviewWarn = document.getElementById("reviewextra");
+function makeReviewRow(value){
+  const row = document.createElement("div"); row.className = "reviewrow";
+  const warn = document.createElement("span"); warn.className = "warn"; warn.textContent = "⚠";
+  const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false; inp.value = value || "";
+  const del = document.createElement("button"); del.type = "button"; del.className = "small danger"; del.textContent = "✕";
+  const flag = () => { warn.style.visibility = isDubiousAddress(inp.value) ? "visible" : "hidden"; };
+  inp.addEventListener("input", flag);
+  del.addEventListener("click", () => row.remove());
+  row.append(warn, inp, del);
+  flag();
+  return row;
+}
+function openReview(candidates, fromSheet){
+  reviewList.innerHTML = "";
+  candidates.forEach(c => reviewList.appendChild(makeReviewRow(c)));
+  reviewWarn.classList.add("hidden");
+  const shareWrap = document.getElementById("sharerow");
+  if (fromSheet && lastSheetFile) {
+    shareWrap.classList.remove("hidden");
+    let can = false;
+    try { can = !!(navigator.canShare && navigator.canShare({ files: [lastSheetFile] })); } catch (e) { can = false; }
+    document.getElementById("sharephoto").disabled = !can;
+    document.getElementById("sharenote").textContent = can ? "" : t("shareNoSupport");
+  } else {
+    shareWrap.classList.add("hidden");
+  }
+  reviewSection.classList.remove("hidden");
+  reviewSection.scrollIntoView({ behavior: "smooth" });
+}
+function closeReview(){
+  reviewSection.classList.add("hidden");
+  reviewList.innerHTML = "";
+  reviewWarn.classList.add("hidden");
+}
+document.getElementById("reviewadd").addEventListener("click", () => {
+  const r = makeReviewRow("");
+  reviewList.appendChild(r);
+  r.querySelector("input").focus();
+});
+document.getElementById("reviewcancel").addEventListener("click", closeReview);
+document.getElementById("reviewapply").addEventListener("click", () => {
+  const filled = Array.from(reviewList.children).filter(r => r.querySelector("input").value.trim());
+  if (!filled.length) { closeReview(); return; }
+  const vals = filled.map(r => r.querySelector("input").value.trim());
+  fillBoxes(vals.slice(0, MAXSTOPS));
+  filled.slice(0, MAXSTOPS).forEach(r => r.remove());
+  document.getElementById("addstatus").textContent = t("reviewApplied");
+  const leftFilled = Array.from(reviewList.querySelectorAll(".reviewrow input")).some(i => i.value.trim());
+  if (leftFilled) {
+    reviewWarn.textContent = t("reviewExtra");
+    reviewWarn.classList.remove("hidden");
+    reviewSection.scrollIntoView({ behavior: "smooth" });
+  } else {
+    closeReview();
+    document.getElementById("builder").scrollIntoView({ behavior: "smooth" });
+  }
+});
+document.getElementById("sharephoto").addEventListener("click", async () => {
+  if (!lastSheetFile) return;
+  try { await navigator.share({ files: [lastSheetFile], title: "Stopedia" }); } catch (e) { /* user cancelled the share sheet */ }
+});
+
+/* ---------- Import by pasting (0.6) ---------- */
+document.getElementById("pastebtn").addEventListener("click", () => {
+  document.getElementById("pastearea").classList.toggle("hidden");
+});
+document.getElementById("pastego").addEventListener("click", () => {
+  const parts = splitPastedText(document.getElementById("pastetext").value);
+  if (!parts.length) { document.getElementById("addstatus").textContent = t("pasteEmpty"); return; }
+  lastSheetFile = null;
+  openReview(parts, false);
+});
+
+/* ---------- "Ask my AI" button (0.6) ---------- */
+const AI_URLS = {
+  chatgpt: "https://chatgpt.com/?q=",
+  claude: "https://claude.ai/new?q=",
+  perplexity: "https://www.perplexity.ai/search?q=",
+  grok: "https://grok.com/?q="
+};
+document.getElementById("aibtn").addEventListener("click", () => {
+  document.getElementById("aimenu").classList.toggle("hidden");
+});
+document.querySelectorAll("[data-ai]").forEach(btn => btn.addEventListener("click", async () => {
+  const prompt = t("aiPromptText");
+  if (btn.dataset.ai === "gemini") {
+    // Gemini does not accept a pre-filled question in the link: copy & open.
+    let copied = false;
+    try { await navigator.clipboard.writeText(prompt); copied = true; } catch (e) { copied = false; }
+    document.getElementById("addstatus").textContent = copied ? t("geminiCopied") : t("geminiNoCopy");
+    window.open("https://gemini.google.com/app", "_blank");
+    return;
+  }
+  window.open(AI_URLS[btn.dataset.ai] + encodeURIComponent(prompt), "_blank");
+}));
+
 applyLang();
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(() => {}); }
 </script>

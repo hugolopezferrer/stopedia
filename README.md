@@ -1,6 +1,10 @@
 # Stopedia
 
-**Version 0.5** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.7** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.7 (released together with 0.6 as version 0.7 on October 31, 2026): full-sheet scanning. Photograph a whole page of addresses; Stopedia reads it on the phone itself, splits it into addresses at each ZIP code, and opens the review screen. From that screen you can also share the photo with your AI app, when the browser supports sharing files.
+
+New in 0.6 (released together with 0.7 as version 0.7 on October 31, 2026): scan one address at a time with the camera — the reading happens on your phone (the Tesseract.js reader loads only when you start a scan), and the result lands in a stop box for you to check. Also new: paste-a-list import, the mandatory review screen for everything read or pasted (editable rows, a ⚠ mark on addresses that look incomplete or badly read, and Apply sends them to the stop boxes), and the "Ask my AI to help with the route" button — it opens ChatGPT, Claude, Perplexity or Grok with the question already written; for Gemini, which does not accept the question in a link, the question is copied so you can paste it.
 
 New in 0.5: drag to reorder by hand. Every stop box and every stop in the ordered route has a ⠿ handle — press and hold it (finger or mouse) and drag. The optimized order is the starting point; the order you leave is the order the Google Maps link and the saved route use.
 
@@ -31,6 +35,7 @@ After building a route you can save it with a name. Saved routes stay in a list 
 - Google Maps links accept up to 10 points in total (start + up to 8 stops + destination).
 - Stop order is optimized by TomTom with real road travel times (the fastest order for the given stops). Those are typical road times, not live traffic — Google Maps keeps adjusting each leg with live traffic while you drive.
 - An internet connection is required to geocode new addresses.
+- Reading addresses from a photo needs an internet connection the first time you scan, while the on-phone reader loads. Photo reading is never perfect — blurry photos and handwriting read poorly — which is why every scanned or pasted address passes through the review screen before it is used.
 
 ## Install
 
@@ -44,7 +49,11 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.5** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.7** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.7 (publicada junto con la 0.6 como versión 0.7 el 31 de octubre de 2026): escaneo de la hoja completa. Fotografías una página entera de direcciones; Stopedia la lee en el propio teléfono, la parte en direcciones en cada código postal y abre la pantalla de revisión. Desde esa pantalla también puedes compartir la foto con tu aplicación de IA, cuando el navegador permite compartir archivos.
+
+Nuevo en la 0.6 (publicada junto con la 0.7 como versión 0.7 el 31 de octubre de 2026): escaneo de una dirección a la vez con la cámara — la lectura ocurre en tu teléfono (el lector Tesseract.js se carga solo cuando empiezas un escaneo) y el resultado cae en una casilla de parada para que lo revises. También nuevo: la importación pegando una lista, la pantalla de revisión obligatoria para todo lo leído o pegado (filas editables, marca ⚠ en las direcciones que se ven incompletas o mal leídas, y Aplicar las manda a las casillas), y el botón «Pedirle a mi IA que me ayude con la ruta» — abre ChatGPT, Claude, Perplexity o Grok con la pregunta ya escrita; para Gemini, que no acepta la pregunta en un enlace, la pregunta se copia para que la pegues.
 
 Nuevo en la 0.5: arrastrar para reordenar a mano. Cada casilla de parada y cada parada de la ruta ordenada tiene un asa ⠿: mantenla pulsada (dedo o mouse) y arrastra. El orden optimizado es el punto de partida; el orden que dejes es el que usan el enlace de Google Maps y la ruta guardada.
 
@@ -75,6 +84,7 @@ Después de armar una ruta puedes guardarla con un nombre. Las rutas guardadas q
 - Los enlaces de Google Maps aceptan hasta 10 puntos en total (salida + hasta 8 paradas + destino).
 - El orden de las paradas lo optimiza TomTom con los tiempos reales por calle (el orden más rápido para esas paradas). Son tiempos típicos de calle, no tráfico en vivo: Google Maps sigue ajustando cada tramo con el tráfico mientras manejas.
 - Se necesita conexión a internet para geocodificar direcciones nuevas.
+- Leer direcciones de una foto necesita conexión a internet la primera vez que escaneas, mientras se carga el lector del teléfono. La lectura de fotos nunca es perfecta — las fotos borrosas y la letra a mano se leen mal — y por eso toda dirección escaneada o pegada pasa por la pantalla de revisión antes de usarse.
 
 ## Instalación
 
