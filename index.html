@@ -98,10 +98,10 @@
   @keyframes rise { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
   h2 { margin:0 0 12px; font-size:22px; font-weight:600; letter-spacing:-.2px; color: var(--ink); }
   label { display:block; font-size:14px; font-weight:600; margin:14px 0 5px; color: var(--muted); }
-  input[type="text"], textarea, select { width:100%; padding:13px 15px; font-size:16px; color: var(--ink); background: var(--surface-2); border:1px solid var(--line); border-radius:12px; transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
-  input[type="text"]::placeholder, textarea::placeholder { color: var(--muted); opacity:.7; }
+  input[type="text"], input[type="password"], textarea, select { width:100%; padding:13px 15px; font-size:16px; color: var(--ink); background: var(--surface-2); border:1px solid var(--line); border-radius:12px; transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease; }
+  input[type="text"]::placeholder, input[type="password"]::placeholder, textarea::placeholder { color: var(--muted); opacity:.7; }
   select option { background: var(--surface-2); color: var(--ink); }
-  input[type="text"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,120,67,.32); }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(240,120,67,.32); }
   .fieldwrap { position: relative; }
   .fieldwrap .fieldlogo { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); height: 20px; width: auto; pointer-events: none; }
   .fieldwrap input[type="text"] { padding-left: 40px; }
@@ -523,6 +523,46 @@
     <h2 data-i18n="savedTitle">Saved routes</h2>
     <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
     <input type="text" id="savedsearch" autocomplete="off" data-i18n-ph="searchSavedPh" placeholder="Search by name…">
+    <div class="btnrow">
+      <button class="secondary" id="exportbtn" type="button" data-i18n="exportBtn">Export routes</button>
+      <button class="secondary" id="importbtn" type="button" data-i18n="importBtn">Import routes</button>
+    </div>
+    <input type="file" id="importfile" accept=".json,application/json" class="hidden">
+    <div class="notice hidden" id="exportpanel" style="margin:14px 0">
+      <p style="margin-top:0" data-i18n="exportText">This file contains your saved routes and batches, with your addresses. Save it wherever you decide: this device, your computer, or your cloud (Drive, iCloud…).</p>
+      <div id="exportkeyrow" class="hidden">
+        <label style="display:flex; gap:8px; align-items:flex-start; margin:10px 0">
+          <input type="checkbox" id="exportwithkey" style="margin-top:3px">
+          <span data-i18n="exportKeyOpt">Also include my TomTom key, encrypted with a password</span>
+        </label>
+        <div id="exportpwfields" class="hidden">
+          <input type="password" id="exportpw1" autocomplete="new-password" data-i18n-ph="exportPw1Ph" placeholder="Password (8 characters or more)">
+          <input type="password" id="exportpw2" autocomplete="new-password" data-i18n-ph="exportPw2Ph" placeholder="Repeat the password" style="margin-top:8px">
+          <p class="hint" data-i18n="exportPwHint">If you forget this password, the key inside the file cannot be recovered — your routes still can.</p>
+        </div>
+      </div>
+      <p id="exporterror" class="keybad hidden"></p>
+      <div class="btnrow">
+        <button class="secondary" id="exportgo" type="button" data-i18n="exportGoBtn">Download the file</button>
+        <button class="secondary" id="exportcancel" type="button" data-i18n="cancelKey">Cancel</button>
+      </div>
+    </div>
+    <div class="notice hidden" id="importkeypanel" style="margin:14px 0">
+      <p style="margin-top:0"><strong id="importkeytitle">This backup also contains an encrypted TomTom key.</strong></p>
+      <div id="importpwrow">
+        <input type="password" id="importpw" autocomplete="off" data-i18n-ph="importPwPh" placeholder="Password for the key in this file">
+      </div>
+      <p id="importkeyerror" class="keybad hidden"></p>
+      <div class="btnrow" id="importkeybtns">
+        <button class="secondary" id="importkeygo" type="button" data-i18n="importKeyBtn">Import key</button>
+        <button class="secondary" id="importkeyskip" type="button" data-i18n="skipBtn">Skip</button>
+      </div>
+      <div class="btnrow hidden" id="importreplacebtns">
+        <button class="secondary danger" id="importreplace" type="button" data-i18n="replaceBtn">Replace</button>
+        <button class="secondary" id="importkeep" type="button" data-i18n="keepMineBtn">Keep mine</button>
+      </div>
+    </div>
+    <p id="backupstatus" class="hint"></p>
     <div id="savedlist"></div>
     <p id="savednomatch" class="hint hidden" data-i18n="searchNoMatch">No saved routes match that name.</p>
     <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
@@ -530,7 +570,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.31 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.32 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -606,7 +646,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.31 — draft, in progress.",
+    footerText: "Version 0.32 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -631,6 +671,27 @@ const STR = {
     viewSaved: "View",
     searchSavedPh: "Search by name…",
     searchNoMatch: "No saved routes match that name.",
+    exportBtn: "Export routes",
+    importBtn: "Import routes",
+    exportText: "This file contains your saved routes and batches, with your addresses. Save it wherever you decide: this device, your computer, or your cloud (Drive, iCloud…).",
+    exportKeyOpt: "Also include my TomTom key, encrypted with a password",
+    exportPw1Ph: "Password (8 characters or more)",
+    exportPw2Ph: "Repeat the password",
+    exportPwHint: "If you forget this password, the key inside the file cannot be recovered — your routes still can.",
+    exportPwShort: "The password needs at least 8 characters.",
+    exportPwMismatch: "The two passwords do not match.",
+    exportGoBtn: "Download the file",
+    importInvalid: "That file is not a valid Stopedia backup. Nothing was imported.",
+    importDone: "Imported: {r} routes, {b} batches.",
+    importKeyTitle: "This backup also contains an encrypted TomTom key.",
+    importPwPh: "Password for the key in this file",
+    importKeyBtn: "Import key",
+    skipBtn: "Skip",
+    keyWrongPw: "Wrong password — the key was not imported. Your routes are already imported.",
+    keyImported: "Key imported ✓",
+    keyReplaceQ: "This device already has a TomTom key. Replace it with the one from the file?",
+    replaceBtn: "Replace",
+    keepMineBtn: "Keep mine",
     open: "Open in Maps", edit: "Edit", del: "Delete",
     confirmDel: "Delete this saved route?",
     stopsWord: "stops", savedOn: "Saved",
@@ -775,7 +836,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.31 — borrador, en avance.",
+    footerText: "Versión 0.32 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -800,6 +861,27 @@ const STR = {
     viewSaved: "Ver",
     searchSavedPh: "Buscar por nombre…",
     searchNoMatch: "Ninguna ruta guardada coincide con ese nombre.",
+    exportBtn: "Exportar rutas",
+    importBtn: "Importar rutas",
+    exportText: "Este archivo contiene tus rutas y lotes guardados, con tus direcciones. Guárdalo donde tú decidas: este aparato, tu computadora o tu nube (Drive, iCloud…).",
+    exportKeyOpt: "Incluir también mi clave de TomTom, cifrada con una contraseña",
+    exportPw1Ph: "Contraseña (8 caracteres o más)",
+    exportPw2Ph: "Repite la contraseña",
+    exportPwHint: "Si olvidas esta contraseña, la clave dentro del archivo no se podrá recuperar; tus rutas sí.",
+    exportPwShort: "La contraseña necesita al menos 8 caracteres.",
+    exportPwMismatch: "Las dos contraseñas no coinciden.",
+    exportGoBtn: "Descargar el archivo",
+    importInvalid: "Ese archivo no es un respaldo válido de Stopedia. No se importó nada.",
+    importDone: "Importado: {r} rutas, {b} lotes.",
+    importKeyTitle: "Este respaldo también contiene una clave de TomTom cifrada.",
+    importPwPh: "Contraseña de la clave en este archivo",
+    importKeyBtn: "Importar clave",
+    skipBtn: "Saltar",
+    keyWrongPw: "Contraseña incorrecta: la clave no se importó. Tus rutas ya quedaron importadas.",
+    keyImported: "Clave importada ✓",
+    keyReplaceQ: "Este aparato ya tiene una clave de TomTom. ¿Reemplazarla por la del archivo?",
+    replaceBtn: "Reemplazar",
+    keepMineBtn: "Dejar la mía",
     open: "Abrir en Maps", edit: "Editar", del: "Borrar",
     confirmDel: "¿Borrar esta ruta guardada?",
     stopsWord: "paradas", savedOn: "Guardada el",
@@ -1735,12 +1817,292 @@ function renderSaved(){
       storeRoutes(loadRoutes().filter(x => x.id !== r.id));
       renderSaved();
     });
-    acts.append(edit, del);
+    /* GPX export of this one item (0.32): a standard file other map
+       tools (Google My Maps, Google Earth, GPS apps) can open to VIEW
+       the points — appended LAST so the Open/Edit/Delete order the
+       rest of the card uses never shifts. */
+    const gpx = document.createElement("button"); gpx.className = "small"; gpx.textContent = "GPX";
+    gpx.addEventListener("click", () => {
+      downloadTextFile("stopedia-" + gpxSlug(r.name) + "-" + dateStamp() + ".gpx", gpxForRecord(r), "application/gpx+xml");
+    });
+    acts.append(edit, del, gpx);
     card.appendChild(acts);
     list.appendChild(card);
   });
 }
 document.getElementById("savedsearch").addEventListener("input", renderSaved);
+
+/* ---------- Backup: export / import the saved routes (0.32) ---------- */
+/* Everything above lives only in this browser's localStorage: no
+   server, no account. The backup is the bridge — ONE JSON file the
+   user saves wherever they decide (this device, a computer, their
+   own cloud) and imports on any other device, on Windows, Mac,
+   Linux or a phone, because it all runs through Blob downloads and
+   a file picker. The TomTom key can travel inside the same file,
+   but only encrypted with a password the user chooses (Web Crypto:
+   PBKDF2-SHA256 → AES-GCM 256); the plaintext key never touches the
+   file. No navigator app imports route files for navigation — the
+   file is for storage and moving; delivery to a navigator stays
+   Stopedia's links. Each saved item can also be exported on its own
+   as GPX, a standard file map tools like Google My Maps can open
+   to view the points. */
+function dateStamp(d){
+  d = d || new Date();
+  const p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate());
+}
+function downloadTextFile(name, text, mime){
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) {} }, 4000);
+}
+function bytesToB64(bytes){
+  let s = "";
+  const CH = 0x8000;
+  for (let i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+  return btoa(s);
+}
+function b64ToBytes(b64){
+  const s = atob(String(b64 || ""));
+  const out = new Uint8Array(s.length);
+  for (let i = 0; i < s.length; i++) out[i] = s.charCodeAt(i);
+  return out;
+}
+const KEYVAULT_ITERATIONS = 210000;
+async function encryptKeyVault(plainKey, password){
+  const enc = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+  const aes = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: salt, iterations: KEYVAULT_ITERATIONS, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["encrypt"]);
+  const data = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, aes, enc.encode(plainKey));
+  return { kdf: "PBKDF2-SHA256", iterations: KEYVAULT_ITERATIONS, salt: bytesToB64(salt), iv: bytesToB64(iv), data: bytesToB64(new Uint8Array(data)) };
+}
+async function decryptKeyVault(vault, password){
+  const enc = new TextEncoder();
+  const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+  const aes = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: b64ToBytes(vault.salt), iterations: vault.iterations, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64ToBytes(vault.iv) }, aes, b64ToBytes(vault.data));
+  return new TextDecoder().decode(plain);
+}
+function buildBackupEnvelope(keyVault){
+  const env = { app: "stopedia", kind: "backup", version: 1, exportedAt: new Date().toISOString(), routes: loadRoutes() };
+  if (keyVault) env.keyVault = keyVault;
+  return env;
+}
+/* --- Export panel --- */
+document.getElementById("exportbtn").addEventListener("click", () => {
+  document.getElementById("exportkeyrow").classList.toggle("hidden", !hasKey());
+  document.getElementById("exportwithkey").checked = false;
+  document.getElementById("exportpwfields").classList.add("hidden");
+  document.getElementById("exportpw1").value = "";
+  document.getElementById("exportpw2").value = "";
+  document.getElementById("exporterror").classList.add("hidden");
+  document.getElementById("exportpanel").classList.remove("hidden");
+});
+document.getElementById("exportcancel").addEventListener("click", () => {
+  document.getElementById("exportpanel").classList.add("hidden");
+});
+document.getElementById("exportwithkey").addEventListener("change", (ev) => {
+  document.getElementById("exportpwfields").classList.toggle("hidden", !ev.target.checked);
+});
+document.getElementById("exportgo").addEventListener("click", async () => {
+  const err = document.getElementById("exporterror");
+  err.classList.add("hidden");
+  let vault = null;
+  if (hasKey() && document.getElementById("exportwithkey").checked) {
+    const p1 = document.getElementById("exportpw1").value;
+    const p2 = document.getElementById("exportpw2").value;
+    if (p1.length < 8) { err.textContent = t("exportPwShort"); err.classList.remove("hidden"); return; }
+    if (p1 !== p2) { err.textContent = t("exportPwMismatch"); err.classList.remove("hidden"); return; }
+    const key = (localStorage.getItem("stopedia.key") || "").trim();
+    if (key) vault = await encryptKeyVault(key, p1);
+  }
+  downloadTextFile("stopedia-backup-" + dateStamp() + ".json", JSON.stringify(buildBackupEnvelope(vault), null, 2), "application/json");
+  document.getElementById("exportpanel").classList.add("hidden");
+});
+/* --- Import: validate, then merge (never overwrite) --- */
+function isBackupPoint(p){
+  if (!p || typeof p !== "object") return false;
+  if (typeof p.label !== "string") return false;
+  if (typeof p.lat !== "number" || !isFinite(p.lat)) return false;
+  const lng = (typeof p.lng === "number") ? p.lng : p.lon;
+  return typeof lng === "number" && isFinite(lng);
+}
+function normalizeBackupPoint(p){
+  return { label: p.label, lat: p.lat, lng: (typeof p.lng === "number") ? p.lng : p.lon };
+}
+function validateBackupData(data){
+  if (!data || typeof data !== "object") return null;
+  if (data.app !== "stopedia" || data.kind !== "backup") return null;
+  if (typeof data.version !== "number" || data.version > 1) return null;
+  if (!Array.isArray(data.routes)) return null;
+  for (const r of data.routes) {
+    if (!r || typeof r !== "object") return null;
+    if (typeof r.name !== "string" || !r.name) return null;
+    if (!isBackupPoint(r.origin) || !isBackupPoint(r.destination)) return null;
+    if (!Array.isArray(r.stops)) return null;
+    for (const s of r.stops) if (!isBackupPoint(s)) return null;
+  }
+  return data;
+}
+/* The part of an imported lote's name that is the user's own: a
+   leading "Batch 12 — " / "Lote 12 — " prefix is dropped (the number
+   is about to be rewritten anyway); anything else is kept whole, so
+   "My big day" survives as the suffix of its new numbered name. */
+function importedBatchSuffix(name){
+  const nm = String(name || "");
+  const m = /^(?:Batch|Lote)\s+\d+\s*(?:—\s*)?/.exec(nm);
+  return (m ? nm.slice(m[0].length) : nm).trim();
+}
+function mergeImportedRoutes(records){
+  const routes = loadRoutes();
+  let nextId = routes.reduce((m, r) => Math.max(m, typeof r.id === "number" ? r.id : 0), 0);
+  nextId = Math.max(nextId, Date.now());
+  let nextBatch = routes.reduce((m, r) => Math.max(m, r.mode === "batch" ? (r.batchNo || 0) : 0), 0);
+  let nRoutes = 0, nBatches = 0;
+  records.forEach(src => {
+    const rec = Object.assign({}, src);
+    rec.id = ++nextId;
+    rec.origin = normalizeBackupPoint(src.origin);
+    rec.destination = normalizeBackupPoint(src.destination);
+    rec.stops = src.stops.map(normalizeBackupPoint);
+    if (src.mode === "batch") {
+      nextBatch += 1;
+      rec.batchNo = nextBatch;
+      const suffix = importedBatchSuffix(src.name);
+      rec.name = t("batchWord") + " " + nextBatch + (suffix ? " — " + suffix : "");
+      nBatches++;
+    } else {
+      nRoutes++;
+    }
+    routes.push(rec);
+  });
+  storeRoutes(routes);
+  renderSaved();
+  return { routes: nRoutes, batches: nBatches };
+}
+let pendingKeyVault = null;   // the keyVault of the last imported file, while its question is open
+let pendingImportKey = null;  // a decrypted key waiting on the replace decision (memory only)
+let lastImportMsg = "";       // the counts line, so the key outcome can join it in #backupstatus
+function showImportKeyPanel(){
+  document.getElementById("importkeytitle").textContent = t("importKeyTitle");
+  document.getElementById("importpwrow").classList.remove("hidden");
+  document.getElementById("importkeybtns").classList.remove("hidden");
+  document.getElementById("importreplacebtns").classList.add("hidden");
+  document.getElementById("importkeyerror").classList.add("hidden");
+  document.getElementById("importpw").value = "";
+  pendingImportKey = null;
+  document.getElementById("importkeypanel").classList.remove("hidden");
+}
+function closeImportKeyPanel(){
+  pendingKeyVault = null;
+  pendingImportKey = null;
+  document.getElementById("importkeypanel").classList.add("hidden");
+}
+function finishKeyImport(key){
+  try { localStorage.setItem("stopedia.key", key); } catch (e) {}
+  try { localStorage.removeItem("stopedia.keybad"); } catch (e) {}
+  closeImportKeyPanel();
+  renderKeyPanel();
+  document.getElementById("backupstatus").textContent = (lastImportMsg ? lastImportMsg + " " : "") + t("keyImported");
+}
+async function importBackupText(text){
+  let data = null;
+  try { data = JSON.parse(text); } catch (e) { data = null; }
+  const valid = data ? validateBackupData(data) : null;
+  if (!valid) {
+    closeImportKeyPanel();
+    lastImportMsg = "";
+    document.getElementById("backupstatus").textContent = t("importInvalid");
+    return { ok: false };
+  }
+  const counts = mergeImportedRoutes(valid.routes);
+  lastImportMsg = t("importDone").replace("{r}", counts.routes).replace("{b}", counts.batches);
+  document.getElementById("backupstatus").textContent = lastImportMsg;
+  if (valid.keyVault && typeof valid.keyVault === "object" && typeof valid.keyVault.data === "string") {
+    pendingKeyVault = valid.keyVault;
+    showImportKeyPanel();
+  } else {
+    closeImportKeyPanel();
+  }
+  return { ok: true, counts: counts };
+}
+document.getElementById("importbtn").addEventListener("click", () => {
+  const f = document.getElementById("importfile");
+  f.value = "";
+  f.click();
+});
+document.getElementById("importfile").addEventListener("change", async (ev) => {
+  const file = ev.target && ev.target.files && ev.target.files[0];
+  if (!file) return;
+  let text = "";
+  try {
+    if (typeof file.text === "function") text = await file.text();
+    else text = await new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result || "")); fr.onerror = rej; fr.readAsText(file); });
+  } catch (e) { text = ""; }
+  importBackupText(text || "");
+});
+document.getElementById("importkeygo").addEventListener("click", async () => {
+  if (!pendingKeyVault) return;
+  const err = document.getElementById("importkeyerror");
+  let plain = null;
+  try { plain = await decryptKeyVault(pendingKeyVault, document.getElementById("importpw").value); } catch (e) { plain = null; }
+  if (plain === null || !String(plain).trim()) {
+    err.textContent = t("keyWrongPw");
+    err.classList.remove("hidden");
+    return;
+  }
+  err.classList.add("hidden");
+  const key = String(plain).trim();
+  const existing = (localStorage.getItem("stopedia.key") || "").trim();
+  if (existing && existing !== key) {
+    /* A DIFFERENT key already lives here: ask before replacing it. */
+    pendingImportKey = key;
+    document.getElementById("importkeytitle").textContent = t("keyReplaceQ");
+    document.getElementById("importpwrow").classList.add("hidden");
+    document.getElementById("importkeybtns").classList.add("hidden");
+    document.getElementById("importreplacebtns").classList.remove("hidden");
+    return;
+  }
+  finishKeyImport(key);
+});
+document.getElementById("importkeyskip").addEventListener("click", closeImportKeyPanel);
+document.getElementById("importkeep").addEventListener("click", closeImportKeyPanel);
+document.getElementById("importreplace").addEventListener("click", () => {
+  if (pendingImportKey) finishKeyImport(pendingImportKey);
+});
+/* --- GPX for one saved item (0.32) --- */
+function xmlEscape(s){
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+function gpxSlug(name){
+  const s = String(name || "route").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return s || "route";
+}
+function gpxForRecord(r){
+  const pts = [r.origin].concat(r.stops, [r.destination]);
+  const lines = [];
+  lines.push('<?xml version="1.0" encoding="UTF-8"?>');
+  lines.push('<gpx version="1.1" creator="Stopedia" xmlns="http://www.topografix.com/GPX/1/1">');
+  lines.push("<metadata><name>" + xmlEscape(r.name) + "</name></metadata>");
+  pts.forEach(p => { lines.push('<wpt lat="' + p.lat + '" lon="' + p.lng + '"><name>' + xmlEscape(p.label) + "</name></wpt>"); });
+  lines.push("<rte><name>" + xmlEscape(r.name) + "</name>");
+  pts.forEach(p => { lines.push('<rtept lat="' + p.lat + '" lon="' + p.lng + '"><name>' + xmlEscape(p.label) + "</name></rtept>"); });
+  lines.push("</rte>");
+  lines.push("</gpx>");
+  return lines.join("\n");
+}
 /* The user's own part of a lote's auto-name ("Lote 2 — Friday run" →
    "Friday run"), so editing a lote shows just that in the name field. */
 function batchNameSuffix(name){
