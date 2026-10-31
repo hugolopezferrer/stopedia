@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.7** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.8** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.8 (October 31, 2026): privacy fix — the example addresses in the start and destination fields are now generic sample addresses; no personal addresses appear anywhere in the app.
 
 New in 0.7 (released together with 0.6 as version 0.7 on October 31, 2026): full-sheet scanning. Photograph a whole page of addresses; Stopedia reads it on the phone itself, splits it into addresses at each ZIP code, and opens the review screen. From that screen you can also share the photo with your AI app, when the browser supports sharing files.
 
@@ -49,7 +51,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.7** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.8** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.8 (31 de octubre de 2026): corrección de privacidad — las direcciones de ejemplo en los campos de salida y destino ahora son direcciones genéricas de muestra; no aparece ninguna dirección personal en la app.
 
 Nuevo en la 0.7 (publicada junto con la 0.6 como versión 0.7 el 31 de octubre de 2026): escaneo de la hoja completa. Fotografías una página entera de direcciones; Stopedia la lee en el propio teléfono, la parte en direcciones en cada código postal y abre la pantalla de revisión. Desde esa pantalla también puedes compartir la foto con tu aplicación de IA, cuando el navegador permite compartir archivos.
 

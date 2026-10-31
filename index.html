@@ -95,9 +95,9 @@
   <section id="builder">
     <h2 data-i18n="buildTitle">2. Build a route</h2>
     <label for="origin" data-i18n="originLabel">Start (where you leave from)</label>
-    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 36239 Emeralda Ave, Leesburg, FL">
+    <input type="text" id="origin" data-i18n-ph="originPh" placeholder="e.g. 123 Main St, Orlando, FL 32801">
     <label for="destination" data-i18n="destLabel">Final destination</label>
-    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 12911 Sunstone Ave, Orlando, FL">
+    <input type="text" id="destination" data-i18n-ph="destPh" placeholder="e.g. 456 Oak Ave, Orlando, FL 32801">
     <label data-i18n="stopsLabel">Stops — one address per box, in any order</label>
     <div id="stopboxes"></div>
     <p class="hint" data-i18n="limitHint">Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.</p>
@@ -191,8 +191,8 @@ const STR = {
     keyWorks: "Your key works. You can build routes now.",
     keyFails: "That key did not work. Check that you copied the whole key and try again.",
     buildTitle: "2. Build a route",
-    originLabel: "Start (where you leave from)", originPh: "e.g. 36239 Emeralda Ave, Leesburg, FL",
-    destLabel: "Final destination", destPh: "e.g. 12911 Sunstone Ave, Orlando, FL",
+    originLabel: "Start (where you leave from)", originPh: "e.g. 123 Main St, Orlando, FL 32801",
+    destLabel: "Final destination", destPh: "e.g. 456 Oak Ave, Orlando, FL 32801",
     stopsLabel: "Stops — one address per box, in any order", stopsPh: "One address per line",
     stopWord: "Stop",
     limitHint: "Google Maps accepts up to 10 points in total (start + stops + destination), so up to 8 stops per route. Filled boxes get a check mark; empty boxes are ignored.",
@@ -202,7 +202,7 @@ const STR = {
     savedTitle: "3. Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.7 — draft, in progress.",
+    footerText: "Version 0.8 — draft, in progress.",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
     manualNote: "Order adjusted by hand: the route and its saved copy will use exactly this order.",
     keySaved: "Key saved on this phone.",
@@ -266,8 +266,8 @@ const STR = {
     keyWorks: "Tu clave funciona. Ya puedes armar rutas.",
     keyFails: "Esa clave no funcionó. Revisa que la hayas copiado completa e inténtalo de nuevo.",
     buildTitle: "2. Armar una ruta",
-    originLabel: "Salida (desde dónde sales)", originPh: "ej. 36239 Emeralda Ave, Leesburg, FL",
-    destLabel: "Destino final", destPh: "ej. 12911 Sunstone Ave, Orlando, FL",
+    originLabel: "Salida (desde dónde sales)", originPh: "ej. 123 Main St, Orlando, FL 32801",
+    destLabel: "Destino final", destPh: "ej. 456 Oak Ave, Orlando, FL 32801",
     stopsLabel: "Paradas — una dirección por casilla, en cualquier orden", stopsPh: "Una dirección por línea",
     stopWord: "Parada",
     limitHint: "Google Maps acepta hasta 10 puntos en total (salida + paradas + destino), así que hasta 8 paradas por ruta. Las casillas llenas se marcan con un check; las vacías se ignoran.",
@@ -277,7 +277,7 @@ const STR = {
     savedTitle: "3. Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.7 — borrador, en avance.",
+    footerText: "Versión 0.8 — borrador, en avance.",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
     manualNote: "Orden ajustado a mano: la ruta y su copia guardada usarán exactamente este orden.",
     keySaved: "Clave guardada en este teléfono.",
