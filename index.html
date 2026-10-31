@@ -96,6 +96,9 @@
   .route-card .actions { display:flex; flex-wrap:wrap; gap:6px; }
   a.mapslink { display:block; text-align:center; background: var(--accent); color: var(--paper); text-decoration:none; border-radius:12px; padding:15px; font-size:17px; font-weight:700; margin-top:12px; transition: background-color .2s ease; }
   a.mapslink:hover { background: var(--amber); }
+  /* a.mapslink (0,1,1) outranks .hidden (0,1,0): without this line a
+     "hidden" maps link still renders — the empty orange bar of 0.26 (0.27). */
+  a.mapslink.hidden { display:none; }
   #shareroute { width:100%; margin-top:10px; padding:14px; font-size:16px; }
   .hidden { display:none; }
   .btnrow { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
@@ -455,7 +458,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.26 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.27 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -523,7 +526,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.26 — draft, in progress.",
+    footerText: "Version 0.27 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -680,7 +683,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.26 — borrador, en avance.",
+    footerText: "Versión 0.27 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
