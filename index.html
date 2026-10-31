@@ -451,6 +451,12 @@
       <label for="routename" data-i18n="routeNameLabel">Name for this route</label>
       <input type="text" id="routename" data-i18n-ph="routeNamePh" placeholder="e.g. Pharmacies — Friday">
       <button class="primary" id="saveroute" type="button" data-i18n="saveRouteBtn">Save this route</button>
+      <div id="saveconfirm" class="notice hidden">
+        <p style="margin-top:0"><strong id="saveconfirmtext">Saved in Saved routes ✓</strong></p>
+        <div class="btnrow">
+          <button class="secondary" id="saveconfirmview" type="button" data-i18n="viewSaved">View</button>
+        </div>
+      </div>
     </div>
   </section>
     </div>
@@ -516,13 +522,15 @@
   <section id="saved">
     <h2 data-i18n="savedTitle">Saved routes</h2>
     <p class="hint" data-i18n="savedText">Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.</p>
+    <input type="text" id="savedsearch" autocomplete="off" data-i18n-ph="searchSavedPh" placeholder="Search by name…">
     <div id="savedlist"></div>
+    <p id="savednomatch" class="hint hidden" data-i18n="searchNoMatch">No saved routes match that name.</p>
     <p id="noroutes" class="hint" data-i18n="noRoutes">No saved routes yet.</p>
   </section>
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.30 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.31 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -598,7 +606,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.30 — draft, in progress.",
+    footerText: "Version 0.31 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -618,7 +626,11 @@ const STR = {
     originNotFound: "⚠ The start address was not recognized. Edit it or clear it and try another way.",
     destNotFound: "⚠ The final destination was not recognized. Edit it or clear it and try another way.",
     routeSaved: "Route saved. Find it below in Saved routes.",
-    needName: "Give the route a name first.",
+    savedConfirm: "Saved in Saved routes ✓",
+    savedUpdated: "Saved route updated ✓",
+    viewSaved: "View",
+    searchSavedPh: "Search by name…",
+    searchNoMatch: "No saved routes match that name.",
     open: "Open in Maps", edit: "Edit", del: "Delete",
     confirmDel: "Delete this saved route?",
     stopsWord: "stops", savedOn: "Saved",
@@ -763,7 +775,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.30 — borrador, en avance.",
+    footerText: "Versión 0.31 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
@@ -783,7 +795,11 @@ const STR = {
     originNotFound: "⚠ La dirección de salida no fue reconocida. Edítala o límpiala y prueba de otra manera.",
     destNotFound: "⚠ El destino final no fue reconocido. Edítalo o límpialo y prueba de otra manera.",
     routeSaved: "Ruta guardada. Está abajo, en Rutas guardadas.",
-    needName: "Primero ponle un nombre a la ruta.",
+    savedConfirm: "Guardada en Rutas guardadas ✓",
+    savedUpdated: "Ruta guardada actualizada ✓",
+    viewSaved: "Ver",
+    searchSavedPh: "Buscar por nombre…",
+    searchNoMatch: "Ninguna ruta guardada coincide con ese nombre.",
     open: "Abrir en Maps", edit: "Editar", del: "Borrar",
     confirmDel: "¿Borrar esta ruta guardada?",
     stopsWord: "paradas", savedOn: "Guardada el",
@@ -872,6 +888,7 @@ function applyLang(){
   if (typeof refreshHomeLang === "function") refreshHomeLang();
   if (typeof renderNavUI === "function") renderNavUI();
   if (typeof renderModeUI === "function") renderModeUI();
+  if (typeof refreshSaveConfirm === "function") refreshSaveConfirm();
   renderSaved();
   if (window.__stopediaBooted) {
     if (typeof currentRoute !== "undefined" && currentRoute && typeof renderResult === "function") renderResult();
@@ -1575,6 +1592,7 @@ document.getElementById("build").addEventListener("click", async () => {
     buildInfo = { method, totalSec, totalMeters, manual: false, geometry, batch };
     doneStops = new Set();
     remindWanted = true;
+    hideSaveConfirm();
     renderResult();
     saveWorkState();
     activateSubtab("result");
@@ -1588,6 +1606,34 @@ document.getElementById("build").addEventListener("click", async () => {
 /* ---------- Saved routes (localStorage) ---------- */
 function loadRoutes(){ try { return JSON.parse(localStorage.getItem("stopedia.routes") || "[]"); } catch { return []; } }
 function storeRoutes(r){ localStorage.setItem("stopedia.routes", JSON.stringify(r)); }
+/* Auto-name for a single route saved with an empty name field (0.31):
+   "Route — <destination> · Oct 31" / "Ruta — <destino> · 31 oct" — the
+   same spirit as the lote's "Batch N": a save always has a name to
+   land under. A typed name always wins. */
+function autoRouteName(){
+  const d = new Date();
+  const dateTxt = lang === "es"
+    ? d.getDate() + " " + d.toLocaleDateString("es-ES", { month: "short" }).replace(/\./g, "")
+    : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return t("routeWord") + " — " + currentRoute.destination.label + " · " + dateTxt;
+}
+/* Save confirmation (0.31): after every successful save, the result
+   area itself says so — where it can't be missed — with a jump to the
+   Saved tab. A save that replaced the item being edited says
+   "updated": an overwrite is never silent again. The notice survives
+   re-renders of the result until the work it describes is replaced
+   (a new build) or thrown away (discard / New route). */
+let saveConfirmState = null;  // null = hidden · false = fresh save · true = updated an existing item
+function refreshSaveConfirm(){
+  const box = document.getElementById("saveconfirm");
+  if (!box) return;
+  if (saveConfirmState === null) { box.classList.add("hidden"); return; }
+  document.getElementById("saveconfirmtext").textContent = t(saveConfirmState ? "savedUpdated" : "savedConfirm");
+  box.classList.remove("hidden");
+}
+function showSaveConfirm(updated){ saveConfirmState = !!updated; refreshSaveConfirm(); }
+function hideSaveConfirm(){ saveConfirmState = null; refreshSaveConfirm(); }
+document.getElementById("saveconfirmview").addEventListener("click", () => activateTab("saved"));
 document.getElementById("saveroute").addEventListener("click", () => {
   if (!currentRoute) return;
   const userName = document.getElementById("routename").value.trim();
@@ -1613,25 +1659,37 @@ document.getElementById("saveroute").addEventListener("click", () => {
       createdAt: new Date().toISOString().slice(0,10)
     };
   } else {
-    if (!userName) { statusEl.textContent = t("needName"); return; }
-    rec = { id: editingId || Date.now(), name: userName, origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops, createdAt: new Date().toISOString().slice(0,10) };
+    /* A save always lands (0.31): with no typed name, the route files
+       itself under the auto-name instead of dying silently behind a
+       "give it a name first" status line the user may never see —
+       the failure that made a saved route "disappear". */
+    rec = { id: editingId || Date.now(), name: userName || autoRouteName(), origin: currentRoute.origin, destination: currentRoute.destination, stops: currentRoute.stops, createdAt: new Date().toISOString().slice(0,10) };
   }
   const idx = routes.findIndex(r => r.id === rec.id);
-  if (idx >= 0) routes[idx] = rec; else routes.push(rec);
+  const wasUpdate = idx >= 0;
+  if (wasUpdate) routes[idx] = rec; else routes.push(rec);
   storeRoutes(routes);
   editingId = null;
   statusEl.textContent = t("routeSaved");
   renderSaved();
   remindWanted = false;
   updateReminder();
+  showSaveConfirm(wasUpdate);
   saveWorkState();
 });
 function renderSaved(){
   const routes = loadRoutes();
+  /* Search by name (0.31): the box filters routes AND batches live,
+     case-insensitively, on the name alone. It is a view-only filter —
+     it never touches the stored records — and its text simply lives
+     in the input while the app is open. */
+  const q = (document.getElementById("savedsearch").value || "").trim().toLowerCase();
+  const visible = q ? routes.filter(r => String(r.name || "").toLowerCase().includes(q)) : routes;
   const list = document.getElementById("savedlist");
   list.innerHTML = "";
   document.getElementById("noroutes").style.display = routes.length ? "none" : "block";
-  routes.forEach(r => {
+  document.getElementById("savednomatch").classList.toggle("hidden", !(routes.length > 0 && visible.length === 0));
+  visible.forEach(r => {
     const isBatch = r.mode === "batch";
     const card = document.createElement("div"); card.className = "route-card";
     const h = document.createElement("h3"); h.textContent = r.name; card.appendChild(h);
@@ -1682,6 +1740,7 @@ function renderSaved(){
     list.appendChild(card);
   });
 }
+document.getElementById("savedsearch").addEventListener("input", renderSaved);
 /* The user's own part of a lote's auto-name ("Lote 2 — Friday run" →
    "Friday run"), so editing a lote shows just that in the name field. */
 function batchNameSuffix(name){
@@ -1749,7 +1808,7 @@ function renderResult(){
   const resEl = document.getElementById("result");
   closeShareMenu();
   syncResultSubtab();
-  if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); renderDelivery(); return; }
+  if (!currentRoute) { resEl.classList.add("hidden"); updateReminder(); renderDelivery(); hideSaveConfirm(); return; }
   const nav = getNav();
   const legMode = nav !== "google";
   /* Batch results (0.26) render in segments: a "Route N" heading before
