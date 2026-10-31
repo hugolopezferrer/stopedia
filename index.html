@@ -64,8 +64,21 @@
   .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .25s ease, background-color .25s ease; }
   .topbar.scrolled { border-bottom-color: var(--line); background: rgba(9,27,37,.88); }
   .topbar-in { max-width: 760px; margin: 0 auto; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .wordmark { font-size: 17px; font-weight: 650; letter-spacing: .2px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-  .barlogo { width: 24px; height: 24px; border-radius: 50%; display: block; }
+  /* Wordmark = the logo (0.33): the name itself, large and orange with
+     the buttons' embossed relief (light line top-left, soft dark shade
+     below), and the flat pin inside an oversized O — St[O]pedia. The
+     gradient fill is clipped text where supported; solid --accent is
+     the base color and the fallback everywhere else. The O's short
+     line-height lets the glyph overflow the bar slightly (painted,
+     overflow visible) instead of pushing the bar taller. */
+  .wordmark { font-size: 25px; font-weight: 800; letter-spacing: .2px; line-height: 1; color: var(--accent); display: flex; align-items: center;
+    text-shadow: -1px -1px 0 rgba(255,230,200,.45), 0 2px 3px rgba(0,0,0,.5); }
+  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .wm-t { background-image: linear-gradient(180deg, #ffb98c 0%, var(--accent) 52%, #d2542a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+  }
+  .wm-o { position: relative; display: inline-grid; place-items: center; font-size: 1.64em; line-height: .82; }
+  .wm-o > * { grid-area: 1 / 1; }
+  .wm-pin { height: .55em; margin-top: -.04em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
   .dd { position: relative; }
@@ -269,7 +282,7 @@
 <body>
 <div class="topbar" id="topbar">
   <div class="topbar-in">
-    <span class="wordmark"><img class="barlogo" src="logo-badge.png" alt="">Stopedia</span>
+    <span class="wordmark" role="img" aria-label="Stopedia"><span class="wm-t" aria-hidden="true">St</span><span class="wm-o" aria-hidden="true"><span class="wm-t">O</span><img class="wm-pin" src="logo-flat.png" alt=""></span><span class="wm-t" aria-hidden="true">pedia</span></span>
     <div class="dd dd-right" id="langdd">
       <button type="button" class="dd-trigger langtrigger" id="langtrigger" aria-haspopup="true" aria-expanded="false"><span data-i18n="langCurrent">English</span><span class="dd-chev" aria-hidden="true">▾</span></button>
       <div class="dd-panel" id="langmenu" role="menu">
@@ -570,7 +583,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.32 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.33 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -646,7 +659,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in Maps, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.32 — draft, in progress.",
+    footerText: "Version 0.33 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     dragHint: "Tip: press and hold the ⠿ handle and drag to change a stop's order — here, and again in the ordered route below.",
@@ -836,7 +849,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en Maps, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.32 — borrador, en avance.",
+    footerText: "Versión 0.33 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     dragHint: "Consejo: mantén pulsado el asa ⠿ y arrastra para cambiar el orden de una parada, aquí y también en la ruta ordenada de abajo.",
