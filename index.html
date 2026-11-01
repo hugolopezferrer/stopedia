@@ -160,15 +160,28 @@
      .48em of the O so the ring breathes around it; the -.04em nudge
      stays — it compensates the O glyph's counter sitting high, a
      property of the letter, not of the pin's size. Size (28px) and
-     the O ratio (1.64×) are untouched, as are buttons and accents. */
-  .wordmark { font-size: 28px; font-weight: 800; letter-spacing: .02em; line-height: 1; color: var(--accent); display: flex; align-items: center;
+     the O ratio (1.64×) are untouched, as are buttons and accents.
+     0.38: the name grows — Hugo's call: presence first; if it needs
+     to be bigger, make it bigger, and let mobile fit adapt around
+     it. The letters go 28px → 32px, the O — the frame the logo
+     lives in — grows 1.64× → 1.85× (a 59.2px em), and the pin
+     follows at .52em of the O (≈30.8px, up from 22.0px): bigger in
+     absolute terms, while its relative air stays in the comfortable
+     band 0.37 established (52%, not the cramped 55% of 0.33–0.34).
+     The O's line box grows to ≈48.5px, so the bar stands ~11px
+     taller — accepted; the glyph's em-box overflow (≈5.3px a side)
+     still lands inside the bar's 10px padding, never over the tab
+     bar below. The gradients, the pin's filter, the -.04em nudge
+     (a property of the O glyph; it scales with the em) and the
+     .02em letter spacing are exactly as in 0.37 — scale only. */
+  .wordmark { font-size: 32px; font-weight: 800; letter-spacing: .02em; line-height: 1; color: var(--accent); display: flex; align-items: center;
     text-shadow: -1px -1px 0 rgba(255,230,200,.45), 0 2px 3px rgba(0,0,0,.5); }
   @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .wm-t { background-image: linear-gradient(180deg, #ff8a3d 0%, #ff6600 52%, #e04e00 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
   }
-  .wm-o { position: relative; display: inline-grid; place-items: center; font-size: 1.64em; line-height: .82; }
+  .wm-o { position: relative; display: inline-grid; place-items: center; font-size: 1.85em; line-height: .82; }
   .wm-o > * { grid-area: 1 / 1; }
-  .wm-pin { height: .48em; margin-top: -.04em; filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+  .wm-pin { height: .52em; margin-top: -.04em; filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
   /* Theme toggle (0.34; destination semantics 0.35): a pill beside
@@ -187,8 +200,11 @@
   /* Narrow phones (0.35): the 28px wordmark plus the two bar controls
      no longer fit one row under ~460px, so the bar wraps gracefully —
      wordmark on its own row, the controls right-aligned below it,
-     every control still full-size and tappable. */
-  @media (max-width: 460px) {
+     every control still full-size and tappable. 0.38: the wordmark
+     grows to 32px with a 1.85× O, so the threshold widens to 500px —
+     the bigger mark wraps before it can ever crowd the controls,
+     and the mark itself never shrinks at any width. */
+  @media (max-width: 500px) {
     .topbar-in { flex-wrap: wrap; row-gap: 6px; }
     .topbar-actions { margin-left: auto; }
   }
@@ -738,7 +754,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.37 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.38 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -814,7 +830,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in your navigator, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.37 — draft, in progress.",
+    footerText: "Version 0.38 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     themeDark: "Dark",
@@ -1019,7 +1035,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en tu navegador, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.37 — borrador, en avance.",
+    footerText: "Versión 0.38 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     themeDark: "Oscuro",
