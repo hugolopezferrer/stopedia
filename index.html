@@ -98,10 +98,14 @@
   html[data-theme="light"] .topbar { background: rgba(243,239,232,.78); }
   html[data-theme="light"] .topbar.scrolled { background: rgba(243,239,232,.93); }
   /* Wordmark: same emboss, deeper gradient stops and a softer shade.
-     0.35 deepens the stops again (see the .wordmark note below). */
+     0.35 deepens the stops again (see the .wordmark note below).
+     0.37: the same vivid Dutch-orange family as the dark theme, one
+     step deeper so every stop still clears 3:1 against the light
+     paper (#e55e00 3.09, #e04e00 3.48, #b33c00 5.14), and the in-O
+     pin gets the same saturation push as in the dark theme. */
   html[data-theme="light"] .wordmark { text-shadow: -1px -1px 0 rgba(255,255,255,.6), 0 2px 3px rgba(90,40,20,.35); }
-  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #dd6418 0%, #cf5f2e 52%, #9c3c1a 100%); }
-  html[data-theme="light"] .wm-pin { filter: drop-shadow(0 1px 1px rgba(90,40,20,.35)); }
+  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #e55e00 0%, #e04e00 52%, #b33c00 100%); }
+  html[data-theme="light"] .wm-pin { filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(90,40,20,.35)); }
   /* Big solid action buttons: flat --accent (#cf5f2e) reaches 4.5:1
      with neither cream nor ink text, so the bright --amber carries
      them with dark ink text — the same pairing the dark theme uses
@@ -147,15 +151,24 @@
      ratio and the pin scales with it), and deepens the LIGHT theme's
      gradient — the pale #f08a52 top stop washed out on the light
      paper; every stop of the new light gradient clears 3:1 against
-     --paper, the large-text floor. The dark gradient is unchanged. */
+     --paper, the large-text floor. The dark gradient is unchanged.
+     0.37: BOTH themes turn a stronger Dutch orange (the #FF6600
+     family) — the pale #ffb98c top stop is gone; the dark scale is
+     #ff8a3d → #ff6600 → #e04e00 (7.49 / 5.98 / 4.40 against the dark
+     paper). The pin follows: saturate/contrast in its filter pushes
+     the flat asset's orange to match, and it shrinks from .55em to
+     .48em of the O so the ring breathes around it; the -.04em nudge
+     stays — it compensates the O glyph's counter sitting high, a
+     property of the letter, not of the pin's size. Size (28px) and
+     the O ratio (1.64×) are untouched, as are buttons and accents. */
   .wordmark { font-size: 28px; font-weight: 800; letter-spacing: .02em; line-height: 1; color: var(--accent); display: flex; align-items: center;
     text-shadow: -1px -1px 0 rgba(255,230,200,.45), 0 2px 3px rgba(0,0,0,.5); }
   @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    .wm-t { background-image: linear-gradient(180deg, #ffb98c 0%, var(--accent) 52%, #d2542a 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+    .wm-t { background-image: linear-gradient(180deg, #ff8a3d 0%, #ff6600 52%, #e04e00 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
   }
   .wm-o { position: relative; display: inline-grid; place-items: center; font-size: 1.64em; line-height: .82; }
   .wm-o > * { grid-area: 1 / 1; }
-  .wm-pin { height: .55em; margin-top: -.04em; filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+  .wm-pin { height: .48em; margin-top: -.04em; filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
   /* Theme toggle (0.34; destination semantics 0.35): a pill beside
@@ -273,6 +286,16 @@
   .stopbox .stopclear:hover { color:var(--terra); background:var(--surface-2); }
   .draghandle { touch-action:none; cursor:grab; font-size:20px; line-height:1; padding:8px 6px; color: var(--line-strong); user-select:none; -webkit-user-select:none; }
   .draghandle:active { cursor:grabbing; }
+  /* ---------- Batch form separators (0.37) ---------- */
+  /* View only: labeled rows between the stop boxes that mirror the
+     segmentation the result already produces — route headers in the
+     result seghead's voice (bold, --amber) for Google Maps, slim leg
+     dividers (small muted text + a hairline) for Apple Maps / Waze.
+     Plain divs: never a card, never a button, never draggable. */
+  .formsep { display:flex; align-items:center; gap:10px; margin:12px 2px 4px; font-size:13px; font-weight:800; letter-spacing:.03em; color:var(--amber); }
+  .formsep::after { content:""; flex:1 1 auto; border-top:1px solid var(--line); }
+  .formsep-leg { font-size:12px; font-weight:600; color:var(--muted); margin:8px 2px 2px; }
+  html[data-theme="light"] .formsep { color:#a8431f; }
   .dragging { opacity:.6; background: var(--blue-soft); border-radius:8px; }
   #result li.stopitem { display:flex; align-items:center; gap:6px; }
   #result li .draghandle { padding:4px; font-size:17px; }
@@ -715,7 +738,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.36 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.37 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -791,7 +814,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in your navigator, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.36 — draft, in progress.",
+    footerText: "Version 0.37 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     themeDark: "Dark",
@@ -917,6 +940,8 @@ const STR = {
     routeWord: "Route",
     openRouteIn: "Open Route {n} in Google Maps",
     progressRouteOf: "Route {n} of {m}",
+    formRouteSep: "Route {n} · stops {a}–{b}",
+    formLegSep: "Leg {n}",
     batchWord: "Batch",
     routesWord: "routes",
     openLote: "Open batch",
@@ -994,7 +1019,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en tu navegador, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.36 — borrador, en avance.",
+    footerText: "Versión 0.37 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     themeDark: "Oscuro",
@@ -1120,6 +1145,8 @@ const STR = {
     routeWord: "Ruta",
     openRouteIn: "Abrir Ruta {n} en Google Maps",
     progressRouteOf: "Ruta {n} de {m}",
+    formRouteSep: "Ruta {n} · paradas {a} a {b}",
+    formLegSep: "Tramo {n}",
     batchWord: "Lote",
     routesWord: "rutas",
     openLote: "Abrir lote",
@@ -1511,18 +1538,70 @@ let buildMode = "single"; // "single" | "batch" — the Direcciones form mode (p
 const boxWrap = document.getElementById("stopboxes");
 const boxInputs = [];
 const boxClearBtns = [];
+/* The single filter every box operation goes through (0.37): since
+   the batch form grew separator rows (.formsep divs interleaved as
+   siblings), only real .stopbox rows may be counted, indexed,
+   renumbered, trimmed or dragged. */
+function stopRows(){ return Array.from(boxWrap.children).filter(r => r.classList.contains("stopbox")); }
 function syncBoxArrays(){
   boxInputs.length = 0;
   boxClearBtns.length = 0;
-  Array.from(boxWrap.children).forEach(r => { boxInputs.push(r._input); boxClearBtns.push(r._clear); });
+  stopRows().forEach(r => { boxInputs.push(r._input); boxClearBtns.push(r._clear); });
 }
 function renumberBoxes(){
-  Array.from(boxWrap.children).forEach((row, i) => { row._num.textContent = i + 1; });
+  stopRows().forEach((row, i) => { row._num.textContent = i + 1; });
+}
+/* ---------- Batch form separators (0.37) ---------- */
+/* View only: in batch mode the stop list is grouped by labeled
+   separator rows that mirror EXACTLY the segmentation the result
+   already produces — nothing about saving or delivery changes.
+   Google Maps: a header before the first stop of each segment, the
+   boundaries computed by segmentStops() itself (the very function
+   routeSegments() runs on the built route, final-segment rebalance
+   included), labeled with the segment's 1-based stop range. Apple
+   Maps / Waze: their delivery unit is the leg (two points), so a
+   slim divider marks each leg — before the first filled box (the
+   leg from the start point), before every later filled box, and
+   after the last filled box (the leg to the destination). The start
+   and destination fields live OUTSIDE #stopboxes, both above the
+   list, so the first and last leg dividers sit at the list's top
+   and bottom edges — the closest edges to those fields. Separators
+   key off the FILLED boxes in order (the same stops
+   collectStopTexts() hands to the build; empty boxes are ignored,
+   exactly as at build time) and are rebuilt from scratch on every
+   change: typing, per-box clear, add/remove box, drag drop,
+   navigator, mode, language and restore all funnel into the hooks
+   that call this. In single-route mode there are never separators. */
+function renderFormSeparators(){
+  Array.from(boxWrap.querySelectorAll(".formsep")).forEach(d => d.remove());
+  if (buildMode !== "batch") return;
+  const filled = stopRows().filter(r => r._input.value.trim());
+  if (!filled.length) return;
+  const mk = (cls, txt) => {
+    const d = document.createElement("div");
+    d.className = "formsep " + cls;
+    d.setAttribute("aria-hidden", "true");
+    d.textContent = txt;
+    return d;
+  };
+  if (getNav() === "google") {
+    const groups = segmentStops(filled.map(r => r._input.value.trim()));
+    let a = 1;
+    groups.forEach((g, k) => {
+      const b = a + g.length - 1;
+      boxWrap.insertBefore(mk("formsep-route", t("formRouteSep").replace("{n}", k + 1).replace("{a}", a).replace("{b}", b)), filled[a - 1]);
+      a = b + 1;
+    });
+  } else {
+    filled.forEach((r, i) => boxWrap.insertBefore(mk("formsep-leg", t("formLegSep").replace("{n}", i + 1)), r));
+    const last = filled[filled.length - 1];
+    boxWrap.insertBefore(mk("formsep-leg", t("formLegSep").replace("{n}", filled.length + 1)), last.nextSibling);
+  }
 }
 function createStopBox(){
   const row = document.createElement("div"); row.className = "stopbox";
   const handle = document.createElement("span"); handle.className = "draghandle"; handle.textContent = "⠿";
-  const num = document.createElement("span"); num.className = "num"; num.textContent = boxWrap.children.length + 1;
+  const num = document.createElement("span"); num.className = "num"; num.textContent = stopRows().length + 1;
   const inp = document.createElement("input"); inp.type = "text"; inp.autocomplete = "off"; inp.spellcheck = false;
   /* Per-box clear button (0.20): empties ONLY its own box (a misread can
      be wiped and retried another way). Shown while the box has content
@@ -1535,12 +1614,26 @@ function createStopBox(){
   row._input = inp;
   row._clear = clr;
   row._num = num;
-  attachDrag(handle, row, () => Array.from(boxWrap.children), () => {
+  /* getItems returns ONLY real stop rows (0.37): the batch form's
+     separator divs are siblings in #stopboxes but are never drag
+     items. The drop callback receives attachDrag's rearranged row
+     array and APPLIES it to the DOM (appendChild moves each row, so
+     the children order becomes the drop order), then resyncs. FIX
+     (0.37): before this version the callback ignored the rearranged
+     array entirely, so a form drag animated and then snapped back —
+     the computed drop order was discarded and the box order never
+     changed (the result list's drag was unaffected: its callback
+     consumes the array). Verified by a jsdom pointer-drag probe
+     against 0.36 (order unchanged) and 0.37 (order applied). */
+  attachDrag(handle, row, () => stopRows(), (rows) => {
+    rows.forEach(r => boxWrap.appendChild(r));
     syncBoxArrays();
+    renumberBoxes();
     refreshBoxPlaceholders();
+    renderFormSeparators();
     queueSaveWork();
   });
-  inp.addEventListener("input", () => { row.classList.toggle("filled", !!inp.value.trim()); queueSaveWork(); });
+  inp.addEventListener("input", () => { row.classList.toggle("filled", !!inp.value.trim()); renderFormSeparators(); queueSaveWork(); });
   inp.addEventListener("focus", () => { lastFocusBox = inp; });
   inp.addEventListener("keydown", (e) => {
     if (e.key === "Enter") { e.preventDefault(); const nx = boxInputs[boxInputs.indexOf(inp) + 1]; if (nx) nx.focus(); }
@@ -1564,11 +1657,12 @@ function createStopBox(){
 function ensureBoxCount(n){
   const cap = buildMode === "batch" ? MAXBATCHSTOPS : MAXSTOPS;
   n = Math.max(0, Math.min(cap, n));
-  while (boxWrap.children.length < n) boxWrap.appendChild(createStopBox());
-  while (boxWrap.children.length > n) { const kids = boxWrap.children; kids[kids.length - 1].remove(); }
+  while (stopRows().length < n) boxWrap.appendChild(createStopBox());
+  while (stopRows().length > n) { const rows = stopRows(); rows[rows.length - 1].remove(); }
   syncBoxArrays();
   renumberBoxes();
   refreshBoxPlaceholders();
+  renderFormSeparators();
 }
 ensureBoxCount(MAXSTOPS);
 function refreshBoxPlaceholders(){
@@ -2499,6 +2593,7 @@ function renderNavUI(){
   const db = document.getElementById("discardroute");
   if (db) db.setAttribute("aria-label", t("discardRoute"));
   renderNavAck();
+  renderFormSeparators();
 }
 document.querySelectorAll("[data-navsel]").forEach(b => b.addEventListener("click", () => {
   try { localStorage.setItem("stopedia.nav", b.dataset.navsel); } catch (e) {}
@@ -2612,6 +2707,7 @@ function renderModeUI(){
   const ab = document.getElementById("addstop");
   if (ab) ab.classList.toggle("hidden", buildMode !== "batch");
   renderBatchTip();
+  renderFormSeparators();
 }
 function setBuildMode(m){
   if (m !== "batch" && m !== "single") return;
@@ -2624,9 +2720,9 @@ function setBuildMode(m){
     /* Back to a single route: drop trailing EMPTY boxes beyond the
        classic 8 (filled boxes are never thrown away silently — the
        build's tooMany guard speaks up instead). */
-    while (boxWrap.children.length > MAXSTOPS) {
-      const kids = boxWrap.children;
-      const last = kids[kids.length - 1];
+    while (stopRows().length > MAXSTOPS) {
+      const rows = stopRows();
+      const last = rows[rows.length - 1];
       if (last._input.value.trim()) break;
       last.remove();
       syncBoxArrays(); renumberBoxes(); refreshBoxPlaceholders();
@@ -2637,8 +2733,8 @@ function setBuildMode(m){
 }
 document.querySelectorAll("[data-modesel]").forEach(b => b.addEventListener("click", () => setBuildMode(b.dataset.modesel)));
 document.getElementById("addstop").addEventListener("click", () => {
-  if (boxWrap.children.length >= MAXBATCHSTOPS) return;
-  ensureBoxCount(boxWrap.children.length + 1);
+  if (stopRows().length >= MAXBATCHSTOPS) return;
+  ensureBoxCount(stopRows().length + 1);
   const inp = boxInputs[boxInputs.length - 1];
   if (inp) inp.focus();
   saveWorkState();
@@ -3153,8 +3249,8 @@ scanInput.addEventListener("change", async () => {
       const txt = pickSingleAddress(raw);
       if (ocrLooksGarbage(txt)) { addStatus.textContent = t("scanNoRead"); return; }
       let target = pickScanTarget();
-      if (!target && buildMode === "batch" && boxWrap.children.length < MAXBATCHSTOPS) {
-        ensureBoxCount(boxWrap.children.length + 1);
+      if (!target && buildMode === "batch" && stopRows().length < MAXBATCHSTOPS) {
+        ensureBoxCount(stopRows().length + 1);
         target = boxInputs[boxInputs.length - 1];
       }
       if (!target) { addStatus.textContent = t(buildMode === "batch" ? "scanBoxesFullBatch" : "scanBoxesFull"); return; }
