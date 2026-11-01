@@ -97,15 +97,9 @@
   html[data-theme="light"] body { background-image: radial-gradient(rgba(10,43,60,.055) 1px, transparent 1.4px); }
   html[data-theme="light"] .topbar { background: rgba(243,239,232,.78); }
   html[data-theme="light"] .topbar.scrolled { background: rgba(243,239,232,.93); }
-  /* Wordmark: same emboss, deeper gradient stops and a softer shade.
-     0.35 deepens the stops again (see the .wordmark note below).
-     0.37: the same vivid Dutch-orange family as the dark theme, one
-     step deeper so every stop still clears 3:1 against the light
-     paper (#e55e00 3.09, #e04e00 3.48, #b33c00 5.14), and the in-O
-     pin gets the same saturation push as in the dark theme. */
-  html[data-theme="light"] .wordmark { text-shadow: -1px -1px 0 rgba(255,255,255,.6), 0 2px 3px rgba(90,40,20,.35); }
-  html[data-theme="light"] .wm-t { background-image: linear-gradient(180deg, #e55e00 0%, #e04e00 52%, #b33c00 100%); }
-  html[data-theme="light"] .wm-pin { filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(90,40,20,.35)); }
+  /* Brand bar (0.39): the header plaque is the same navy artwork in
+     both themes; the file shown still swaps with the theme.
+     The .brandbar rules sit with the top bar styles below. */
   /* Big solid action buttons: flat --accent (#cf5f2e) reaches 4.5:1
      with neither cream nor ink text, so the bright --amber carries
      them with dark ink text — the same pairing the dark theme uses
@@ -140,48 +134,23 @@
   .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.72); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid transparent; transition: border-color .25s ease, background-color .25s ease; }
   .topbar.scrolled { border-bottom-color: var(--line); background: rgba(9,27,37,.88); }
   .topbar-in { max-width: 760px; margin: 0 auto; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  /* Wordmark = the logo (0.33): the name itself, large and orange with
-     the buttons' embossed relief (light line top-left, soft dark shade
-     below), and the flat pin inside an oversized O — St[O]pedia. The
-     gradient fill is clipped text where supported; solid --accent is
-     the base color and the fallback everywhere else. The O's short
-     line-height lets the glyph overflow the bar slightly (painted,
-     overflow visible) instead of pushing the bar taller. 0.35 grows
-     the word to 28px with .02em letter spacing (the O keeps its 1.64×
-     ratio and the pin scales with it), and deepens the LIGHT theme's
-     gradient — the pale #f08a52 top stop washed out on the light
-     paper; every stop of the new light gradient clears 3:1 against
-     --paper, the large-text floor. The dark gradient is unchanged.
-     0.37: BOTH themes turn a stronger Dutch orange (the #FF6600
-     family) — the pale #ffb98c top stop is gone; the dark scale is
-     #ff8a3d → #ff6600 → #e04e00 (7.49 / 5.98 / 4.40 against the dark
-     paper). The pin follows: saturate/contrast in its filter pushes
-     the flat asset's orange to match, and it shrinks from .55em to
-     .48em of the O so the ring breathes around it; the -.04em nudge
-     stays — it compensates the O glyph's counter sitting high, a
-     property of the letter, not of the pin's size. Size (28px) and
-     the O ratio (1.64×) are untouched, as are buttons and accents.
-     0.38: the name grows — Hugo's call: presence first; if it needs
-     to be bigger, make it bigger, and let mobile fit adapt around
-     it. The letters go 28px → 32px, the O — the frame the logo
-     lives in — grows 1.64× → 1.85× (a 59.2px em), and the pin
-     follows at .52em of the O (≈30.8px, up from 22.0px): bigger in
-     absolute terms, while its relative air stays in the comfortable
-     band 0.37 established (52%, not the cramped 55% of 0.33–0.34).
-     The O's line box grows to ≈48.5px, so the bar stands ~11px
-     taller — accepted; the glyph's em-box overflow (≈5.3px a side)
-     still lands inside the bar's 10px padding, never over the tab
-     bar below. The gradients, the pin's filter, the -.04em nudge
-     (a property of the O glyph; it scales with the em) and the
-     .02em letter spacing are exactly as in 0.37 — scale only. */
-  .wordmark { font-size: 32px; font-weight: 800; letter-spacing: .02em; line-height: 1; color: var(--accent); display: flex; align-items: center;
-    text-shadow: -1px -1px 0 rgba(255,230,200,.45), 0 2px 3px rgba(0,0,0,.5); }
-  @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-    .wm-t { background-image: linear-gradient(180deg, #ff8a3d 0%, #ff6600 52%, #e04e00 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
-  }
-  .wm-o { position: relative; display: inline-grid; place-items: center; font-size: 1.85em; line-height: .82; }
-  .wm-o > * { grid-area: 1 / 1; }
-  .wm-pin { height: .52em; margin-top: -.04em; filter: saturate(1.5) contrast(1.05) drop-shadow(0 1px 1px rgba(0,0,0,.45)); }
+  /* Brand bar (0.39): the name is now a crafted plaque — artwork Hugo
+     chose outside the app (a generated bar, judged on paper first) and
+     ordered into the header. A navy bar with the name carved in its
+     own blue and the orange pin embossed as the O at full letter
+     height, no ring. Hugo settled the pairing on the blue plaque for
+     BOTH themes ("en azul de Huis, no gris"): the two files are the
+     same crop of the same artwork, and CSS still shows the one
+     matching <html data-theme>. The plaque stands 48px tall
+     (40px under 500px, where the bar wraps as before) and its width
+     follows the image's aspect (1600x431 in both files).
+     The built wordmark of 0.33-0.38 — gradient type, an oversized O,
+     a pin fitted into its counter — is retired whole: artwork this
+     time, not type, so there is nothing left to misalign. */
+  .brandbar { height: 48px; width: auto; display: block; border-radius: 10px; }
+  .brandbar-light { display: none; }
+  html[data-theme="light"] .brandbar-dark { display: none; }
+  html[data-theme="light"] .brandbar-light { display: block; }
   .langtrigger { background: var(--glass-bg); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: var(--ink); border: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 20px; padding: 6px 8px 6px 14px; font-size: 14px; font-weight: 600; cursor: pointer; min-width: 118px; }
   .langtrigger:hover { background: var(--glass-bg-hover); border-color: var(--glass-border-strong); }
   /* Theme toggle (0.34; destination semantics 0.35): a pill beside
@@ -197,16 +166,16 @@
   .themebtn:hover { background: #fffdf9; border-color: rgba(255,248,238,.85); }
   html[data-theme="light"] .themebtn { background: #0d2734; color: #fff8ee; border-color: rgba(9,27,37,.5); }
   html[data-theme="light"] .themebtn:hover { background: #133543; border-color: rgba(9,27,37,.65); }
-  /* Narrow phones (0.35): the 28px wordmark plus the two bar controls
-     no longer fit one row under ~460px, so the bar wraps gracefully —
-     wordmark on its own row, the controls right-aligned below it,
-     every control still full-size and tappable. 0.38: the wordmark
-     grows to 32px with a 1.85× O, so the threshold widens to 500px —
-     the bigger mark wraps before it can ever crowd the controls,
-     and the mark itself never shrinks at any width. */
+  /* Narrow phones: the plaque plus the two bar controls do not fit
+     one row under ~500px, so the bar wraps gracefully — plaque on
+     its own row, the controls right-aligned below it, every control
+     still full-size and tappable. The wrap arrived with the growing
+     text wordmark (0.35, threshold widened in 0.38); 0.39 keeps the
+     same threshold and drops the plaque to 40px on the narrow row. */
   @media (max-width: 500px) {
     .topbar-in { flex-wrap: wrap; row-gap: 6px; }
     .topbar-actions { margin-left: auto; }
+    .brandbar { height: 40px; }
   }
   .dd { position: relative; }
   .dd-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -429,7 +398,7 @@
 <body>
 <div class="topbar" id="topbar">
   <div class="topbar-in">
-    <span class="wordmark" role="img" aria-label="Stopedia"><span class="wm-t" aria-hidden="true">St</span><span class="wm-o" aria-hidden="true"><span class="wm-t">O</span><img class="wm-pin" src="logo-flat.png" alt=""></span><span class="wm-t" aria-hidden="true">pedia</span></span>
+    <img class="brandbar brandbar-dark" src="bar-dark.webp" alt="Stopedia" width="1600" height="431"><img class="brandbar brandbar-light" src="bar-light.webp" alt="Stopedia" width="1600" height="431">
     <div class="topbar-actions">
       <button type="button" class="themebtn" id="themebtn" aria-label="Switch to light theme"><span id="themeicon" aria-hidden="true">☀</span><span id="themelabel">Light</span></button>
       <div class="dd dd-right" id="langdd">
@@ -754,7 +723,7 @@
   </div>
 
 </main>
-<footer>Stopedia · <span data-i18n="footerText">Version 0.38 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
+<footer>Stopedia · <span data-i18n="footerText">Version 0.39 — draft, in progress.</span><br><span data-i18n="satCredit">Satellite imagery: Esri, Maxar, Earthstar Geographics</span><br><span data-i18n="ttCredit">Routing &amp; maps by TomTom © TomTom</span><br><a class="footerlink" href="legal.html" data-i18n="legalLink">Legal notice</a></footer>
 
 <script>
 "use strict";
@@ -830,7 +799,7 @@ const STR = {
     savedTitle: "Saved routes",
     savedText: "Routes you save stay on this phone. Open one in your navigator, edit its stops, or delete it.",
     noRoutes: "No saved routes yet.",
-    footerText: "Version 0.38 — draft, in progress.",
+    footerText: "Version 0.39 — draft, in progress.",
     satCredit: "Satellite imagery: Esri, Maxar, Earthstar Geographics",
     legalLink: "Legal notice",
     themeDark: "Dark",
@@ -1035,7 +1004,7 @@ const STR = {
     savedTitle: "Rutas guardadas",
     savedText: "Las rutas que guardes quedan en este teléfono. Ábrelas en tu navegador, edita sus paradas o bórralas.",
     noRoutes: "Todavía no hay rutas guardadas.",
-    footerText: "Versión 0.38 — borrador, en avance.",
+    footerText: "Versión 0.39 — borrador, en avance.",
     satCredit: "Imagen satelital: Esri, Maxar, Earthstar Geographics",
     legalLink: "Aviso legal",
     themeDark: "Oscuro",

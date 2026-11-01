@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.38** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.39** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.39 (October 31, 2026): The name is now a forged bar: the header carries the crafted navy-blue plaque in both themes — the name carved in its own blue, the orange pin embossed as the O.
 
 New in 0.38 (October 31, 2026): The name grows: bigger letters, a bigger O, and the pin larger inside it — the orange you see first. The wordmark's letters go from 28 to 32px; the O — the frame the logo lives in — from 1.64 to 1.85 times the letters' size; and the pin inside it from 48% to 52% of the O, just under 31px tall: bigger, with the same even ring of air around it, not the cramped fit of the first wordmark. The Dutch-orange gradients, the embossed gloss and the pin's saturation are exactly as in 0.37 — only the scale changes. The top bar stands a little taller to make room, and on narrow screens it wraps a touch earlier (under 500px instead of 460px) so the bigger name never crowds the theme and language controls; the name itself never shrinks. Like every visual version, this one is provisional until it has been judged live.
 
@@ -111,7 +113,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.38** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.39** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.39 (31 de octubre de 2026): El nombre es ahora una barra forjada: la cabecera lleva la placa azul marino artesanal en ambos temas — el nombre tallado en su propio azul, el pin naranja repujado como la O.
 
 Nuevo en la 0.38 (31 de octubre de 2026): El nombre crece: letras más grandes, una O más grande y el pin más grande dentro de ella — el naranja que se ve primero. Las letras del nombre pasan de 28 a 32px; la O — el marco donde vive el logo — de 1,64 a 1,85 veces el tamaño de las letras; y el pin dentro de ella del 48% al 52% de la O, con casi 31px de alto: más grande, con el mismo aro parejo de aire a su alrededor, no el ajuste apretado del primer nombre. Los degradados naranja holandés, el brillo con relieve y la saturación del pin quedan exactamente como en la 0.37 — solo cambia la escala. La barra superior queda un poco más alta para hacerle sitio, y en pantallas angostas se acomoda un poco antes (bajo 500px en vez de 460px) para que el nombre grande nunca apriete los controles de tema e idioma; el nombre en sí nunca se achica. Como toda versión visual, esta es provisional hasta que se juzgue en vivo.
 

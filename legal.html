@@ -46,8 +46,18 @@
     background-size: 24px 24px; }
   .topbar { position: sticky; top: 0; z-index: 60; background: rgba(9,27,37,.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
   .topbar-in { max-width: 760px; margin: 0 auto; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  .wordmark { font-size: 17px; font-weight: 650; letter-spacing: .2px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-  .barlogo { width: 24px; height: 24px; border-radius: 50%; display: block; }
+  /* Brand bar (0.39): the same crafted plaque as the app header —
+     the navy bar with the name carved in its own blue, in both
+     themes. Same sizes as the app (48px, 40px under 500px, where
+     this bar wraps like it). */
+  .brandbar { height: 48px; width: auto; display: block; border-radius: 10px; }
+  .brandbar-light { display: none; }
+  html[data-theme="light"] .brandbar-dark { display: none; }
+  html[data-theme="light"] .brandbar-light { display: block; }
+  @media (max-width: 500px) {
+    .topbar-in { flex-wrap: wrap; row-gap: 6px; }
+    .brandbar { height: 40px; }
+  }
   .langswitch { display: flex; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px; }
   .langswitch button { background: transparent; border: none; color: var(--muted); font-family: inherit; font-size: 13.5px; font-weight: 700; padding: 6px 13px; border-radius: 999px; cursor: pointer; }
   .langswitch button.active { background: var(--accent); color: var(--paper); }
@@ -78,7 +88,7 @@
 <body>
 <div class="topbar">
   <div class="topbar-in">
-    <span class="wordmark"><img class="barlogo" src="logo-badge.png" alt="">Stopedia</span>
+    <img class="brandbar brandbar-dark" src="bar-dark.webp" alt="Stopedia" width="1600" height="431"><img class="brandbar brandbar-light" src="bar-light.webp" alt="Stopedia" width="1600" height="431">
     <div class="langswitch" role="group" aria-label="Language / Idioma">
       <button type="button" id="btn-en" class="active">English</button>
       <button type="button" id="btn-es">Español</button>
