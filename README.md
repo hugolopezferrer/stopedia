@@ -1,6 +1,8 @@
 # Stopedia
 
-**Version 0.39** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+**Version 0.40** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
+
+New in 0.40 (October 31, 2026): The plaque is cropped to the bar's exact edges — no scene halo around it in light mode.
 
 New in 0.39 (October 31, 2026): The name is now a forged bar: the header carries the crafted navy-blue plaque in both themes — the name carved in its own blue, the orange pin embossed as the O.
 
@@ -113,7 +115,9 @@ No accounts, no server, no tracking. Your API key, your addresses, and your save
 
 # Stopedia (español)
 
-**Versión 0.39** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+**Versión 0.40** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
+
+Nuevo en la 0.40 (31 de octubre de 2026): La placa va recortada a los bordes exactos de la barra — sin halo de escena alrededor en el modo claro.
 
 Nuevo en la 0.39 (31 de octubre de 2026): El nombre es ahora una barra forjada: la cabecera lleva la placa azul marino artesanal en ambos temas — el nombre tallado en su propio azul, el pin naranja repujado como la O.
 
