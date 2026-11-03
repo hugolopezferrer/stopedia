@@ -2,6 +2,10 @@
 
 # Stopedia
 
+[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+
+**Status:** In development — draft in progress on the way to version 1.0, not yet final.
+
 **Route optimizer web app: arrange up to 10 stops in the best order with TomTom, drag to reorder, import addresses from a photo with on-device OCR, and open each leg in Apple Maps, Google Maps or Waze.**
 
 **Version 0.40** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
@@ -129,6 +133,10 @@ MIT — see [LICENSE](LICENSE).
 ---
 
 # Stopedia (español)
+
+[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+
+**Estado:** En desarrollo — borrador en avance camino a la versión 1.0, aún no final.
 
 **App web para optimizar rutas: ordena hasta 10 paradas en el mejor orden con TomTom, arrastra para reordenar, importa direcciones desde una foto con OCR en el propio teléfono y abre cada tramo en Apple Maps, Google Maps o Waze.**
 
