@@ -2,6 +2,8 @@
 
 # Stopedia
 
+**Route optimizer web app: arrange up to 10 stops in the best order with TomTom, drag to reorder, import addresses from a photo with on-device OCR, and open each leg in Apple Maps, Google Maps or Waze.**
+
 **Version 0.40** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
 
 New in 0.40 (October 31, 2026): The plaque is cropped to the bar's exact edges — no scene halo around it in light mode.
@@ -88,6 +90,8 @@ Stopedia is a small web app (PWA) for people who visit several addresses in one 
 
 You paste a start address, a final destination, and your stops (one per box). Stopedia finds each address on the map with the [TomTom](https://my.tomtom.com) search service, asks TomTom for the fastest order of stops, and gives you one button that opens the finished route in Google Maps.
 
+**Contents:** [Saved routes](#saved-routes) · [What you need](#what-you-need) · [Limits](#limits) · [Install](#install) · [Privacy](#privacy) · [Credits](#credits) · [License](#license)
+
 ## Saved routes
 
 After building a route you can save it with a name. Saved routes stay in a list on your phone, ready to open in Maps another day. You can also edit a saved route — remove stops, add new ones — and save it again. Routes are stored only on your device (browser local storage), together with their map coordinates, so reopening a saved route costs no geocoding calls.
@@ -113,6 +117,11 @@ Open the published page in your phone browser and choose "Add to Home screen" / 
 
 No accounts, no server, no tracking. Your API key, your addresses, and your saved routes never leave your phone, except the requests sent to TomTom and the route you open in Google Maps.
 
+## Credits
+
+- Maps, geocoding and route optimization: [TomTom](https://www.tomtom.com).
+- Photo text reading (OCR), running on your phone: [Tesseract.js](https://tesseract.projectnaptha.com).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
@@ -120,6 +129,8 @@ MIT — see [LICENSE](LICENSE).
 ---
 
 # Stopedia (español)
+
+**App web para optimizar rutas: ordena hasta 10 paradas en el mejor orden con TomTom, arrastra para reordenar, importa direcciones desde una foto con OCR en el propio teléfono y abre cada tramo en Apple Maps, Google Maps o Waze.**
 
 **Versión 0.40** — borrador en avance. Las versiones avanzan como 0.1, 0.2, … mientras la app se construye y se pule; cuando esté lista, pasa a ser la **versión 1.0**.
 
@@ -207,6 +218,8 @@ Stopedia es una aplicación web pequeña (PWA) para quienes visitan varias direc
 
 Pegas una dirección de salida, un destino final y tus paradas (una por casilla). Stopedia busca cada dirección en el mapa con el servicio de búsqueda de [TomTom](https://my.tomtom.com), le pide a TomTom el orden más rápido de paradas, y te da un solo botón que abre la ruta terminada en Google Maps.
 
+**Contenido:** [Rutas guardadas](#rutas-guardadas) · [Qué necesitas](#qué-necesitas) · [Límites](#límites) · [Instalación](#instalación) · [Privacidad](#privacidad) · [Créditos](#créditos) · [Licencia](#licencia)
+
 ## Rutas guardadas
 
 Después de armar una ruta puedes guardarla con un nombre. Las rutas guardadas quedan en una lista en tu teléfono, listas para abrirse en Maps otro día. También puedes editar una ruta guardada — quitar paradas, agregar otras — y guardarla de nuevo. Las rutas se guardan solo en tu aparato (almacenamiento local del navegador), junto con sus coordenadas, así que reabrir una ruta guardada no gasta llamadas de geocodificación.
@@ -231,6 +244,11 @@ Abre la página publicada en el navegador de tu teléfono y elige «Agregar a pa
 ## Privacidad
 
 Sin cuentas, sin servidor, sin rastreo. Tu clave API, tus direcciones y tus rutas guardadas nunca salen de tu teléfono, salvo las consultas enviadas a TomTom y la ruta que abras en Google Maps.
+
+## Créditos
+
+- Mapas, geocodificación y optimización de rutas: [TomTom](https://www.tomtom.com).
+- Lectura de texto en fotos (OCR), en tu propio teléfono: [Tesseract.js](https://tesseract.projectnaptha.com).
 
 ## Licencia
 
