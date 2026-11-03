@@ -1,3 +1,5 @@
+🇺🇸 [English](#stopedia) | 🇪🇸 [Español](#stopedia-español)
+
 # Stopedia
 
 **Version 0.40** — draft in progress. Versions advance as 0.1, 0.2, … while the app is being built and polished; when it is ready, it becomes **version 1.0**.
@@ -110,6 +112,10 @@ Open the published page in your phone browser and choose "Add to Home screen" / 
 ## Privacy
 
 No accounts, no server, no tracking. Your API key, your addresses, and your saved routes never leave your phone, except the requests sent to TomTom and the route you open in Google Maps.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
 ---
 
@@ -225,3 +231,7 @@ Abre la página publicada en el navegador de tu teléfono y elige «Agregar a pa
 ## Privacidad
 
 Sin cuentas, sin servidor, sin rastreo. Tu clave API, tus direcciones y tus rutas guardadas nunca salen de tu teléfono, salvo las consultas enviadas a TomTom y la ruta que abras en Google Maps.
+
+## Licencia
+
+MIT — ver [LICENSE](LICENSE).
